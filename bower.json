@@ -1,0 +1,11 @@
+{
+  "name": "ionic-pullup",
+  "description": "Ionic pull up footer",
+  "version": "1.0.0",
+  "homepage": "https://github.com/arielfaur",
+  "license": "MIT",
+  "private": true,
+  "devDependencies": {
+    "ionic": "~1.0.x"
+  }
+}
