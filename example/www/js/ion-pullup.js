@@ -31,13 +31,13 @@ angular.module('ionic-pull-up', [])
               }
 
               function expand() {
-                  $element.css('height', expandedHeight + 'px');
+                  $element.css('min-height', expandedHeight + 'px');
                   dragPrevHeight =  expandedHeight;
                   $scope.onExpand();
               }
 
               function collapse() {
-                  $element.css('height', defaultHeight + 'px');
+                  $element.css('min-height', defaultHeight + 'px');
                   dragPrevHeight = defaultHeight;
                   $scope.onCollapse();
               }
@@ -76,7 +76,7 @@ angular.module('ionic-pull-up', [])
                           break;
                   }
 
-                  $element.css('height', dragHeight + 'px');
+                  $element.css('min-height', dragHeight + 'px');
               };
 
               window.addEventListener('orientationchange', function() {
@@ -84,7 +84,7 @@ angular.module('ionic-pull-up', [])
                   computeHeights();
               });
 
-              $element.css({'-webkit-backface-visibility': 'hidden', 'backface-visibility': 'hidden'});
+              $element.css({'-webkit-backface-visibility': 'hidden', 'backface-visibility': 'hidden', 'min-height': defaultHeight + 'px'});
               if (tabs && hasBottomTabs) {
                   $element.css('bottom', tabs.offsetHeight + 'px');
               }
