@@ -10,16 +10,14 @@ angular.module('ionic-pull-up', [])
           },
           controller: function($scope, $element) {
               var isExpanded = false,
-                defaultHeight = $element[0].offsetHeight,
-                dragPrevHeight = defaultHeight,
-                dragHeight = defaultHeight,
                 expandedHeight,
                 tabs = document.querySelector('.tabs'),
                 hasBottomTabs = document.querySelector('.tabs-bottom'),
                 header = document.querySelector('.bar-header'),
-                tabsHeight = tabs.offsetHeight,
-                headerHeight = header.offsetHeight,
-                handleHeight = 0;
+                tabsHeight = tabs ? tabs.offsetHeight : 0,
+                headerHeight = header ? header.offsetHeight : 0,
+                handleHeight = 0,
+                posY = 0, lastPosY = 0;
 
               function computeHeights() {
                   $timeout(function() {
@@ -27,18 +25,21 @@ angular.module('ionic-pull-up', [])
                       if (tabs) {
                           expandedHeight = expandedHeight - tabsHeight;
                       }
+                      lastPosY = expandedHeight-headerHeight;
+                      $element.css({'height': expandedHeight + 'px', 'transform': 'translate3d(0, ' + lastPosY  + 'px, 0)'});
+
                   }, 300);
               }
 
               function expand() {
-                  $element.css('min-height', expandedHeight + 'px');
-                  dragPrevHeight =  expandedHeight;
+                  lastPosY = 0;
+                  $element.css('transform', 'translate3d(0, 0, 0)');
                   $scope.onExpand();
               }
 
               function collapse() {
-                  $element.css('min-height', defaultHeight + 'px');
-                  dragPrevHeight = defaultHeight;
+                  lastPosY = expandedHeight-headerHeight;
+                  $element.css('transform', 'translate3d(0, ' + lastPosY  + 'px, 0)');
                   $scope.onCollapse();
               }
 
@@ -66,17 +67,15 @@ angular.module('ionic-pull-up', [])
                           $element.css('transition', 'none');
                           break;
                       case 'drag':
-                          var newHeight = Math.round (dragPrevHeight - e.gesture.deltaY);
-                          dragHeight = expandedHeight > newHeight ? newHeight : expandedHeight;
+                          posY = Math.round(e.gesture.deltaY) + lastPosY;
+                          if (posY < 0 || posY > expandedHeight) return;
+                          $element.css('transform', 'translate3d(0, ' + posY + 'px, 0)');
                           break;
                       case 'dragend':
-                          dragPrevHeight = dragHeight;
-                          $element.css('transition', '300ms ease-in-out');
-                          (dragHeight == expandedHeight) && (isExpanded = true);
+                          $element.css({'transition': '300ms ease-in-out'});
+                          lastPosY = posY;
                           break;
                   }
-
-                  $element.css('min-height', dragHeight + 'px');
               };
 
               window.addEventListener('orientationchange', function() {
@@ -84,15 +83,12 @@ angular.module('ionic-pull-up', [])
                   computeHeights();
               });
 
-              $element.css({'-webkit-backface-visibility': 'hidden', 'backface-visibility': 'hidden', 'min-height': defaultHeight + 'px'});
+              computeHeights();
+              $element.css({'-webkit-backface-visibility': 'hidden', 'backface-visibility': 'hidden', 'transition': '300ms ease-in-out'});
               if (tabs && hasBottomTabs) {
                   $element.css('bottom', tabs.offsetHeight + 'px');
               }
 
-          },
-          link: function(scope, element, attrs, controller) {
-              // enable transitions
-              element.css({'transition': '300ms ease-in-out', transform: 'translate3d(0,0,0)'});
           }
       }
   }])
