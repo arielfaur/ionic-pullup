@@ -6,7 +6,9 @@ angular.module('ionic-pull-up', [])
           template: '<ng-transclude style="width: 100%;"></ng-transclude>',
           scope: {
               onExpand: '&',
-              onCollapse: '&'
+              onCollapse: '&',
+              onMinimize: '&',
+              minimize: '='
           },
           controller: function($scope, $element) {
               var isExpanded = false,
@@ -38,17 +40,34 @@ angular.module('ionic-pull-up', [])
               }
 
               function collapse() {
-                  lastPosY = expandedHeight-headerHeight;
+                  lastPosY = $scope.minimize ? expandedHeight : (expandedHeight - headerHeight);
                   $element.css('transform', 'translate3d(0, ' + lastPosY  + 'px, 0)');
-                  $scope.onCollapse();
+                  $scope.minimize ? $scope.onMinimize() : $scope.onCollapse();
               }
+
+              //function minimize() {
+              //    lastPosY = expandedHeight;
+              //    $element.css('transform', 'translate3d(0, ' + lastPosY  + 'px, 0)');
+              //    $scope.onMinimize();
+              //}
 
               this.setHandleHeight = function(height) {
                   handleHeight = height;
                   computeHeights();
               };
 
+              this.getHeight = function() {
+                  return $element[0].offsetHeight;
+              };
+
+              this.getBackground = function() {
+                return window.getComputedStyle($element[0]).background;
+              };
+
               this.onTap = function(e) {
+                  e.gesture.srcEvent.preventDefault();
+                  e.gesture.preventDefault();
+
                   if (!isExpanded) {
                       expand();
                   } else {
@@ -56,6 +75,12 @@ angular.module('ionic-pull-up', [])
                   }
 
                   isExpanded = !isExpanded;
+              };
+
+              this.onDoubleTap = function(e) {
+                  e.gesture.srcEvent.preventDefault();
+                  e.gesture.preventDefault();
+                  minimize();
               };
 
               this.onDrag = function(e) {
@@ -95,8 +120,11 @@ angular.module('ionic-pull-up', [])
   .directive('ionPullUpContent', [function() {
       return {
           restrict: 'AE',
-          link: function (scope, element, attrs) {
-              element.css('display', 'block');
+          require: '^ionPullUpFooter',
+          link: function (scope, element, attrs, controller) {
+              var hasHandle = element.parent().find('ion-pull-up-handle').length > 0,
+                footerHeight = controller.getHeight();
+              element.css({'display': 'block', 'margin-top': hasHandle ? 0 : footerHeight + 'px'});
               // add scrolling if needed
               if (attrs.scroll && attrs.scroll.toUpperCase() == 'TRUE') {
                   element.css({'overflow-y': 'scroll', 'overflow-x': 'hidden'});
@@ -107,7 +135,6 @@ angular.module('ionic-pull-up', [])
   .directive('ionPullUpTrigger', ['$ionicGesture', function($ionicGesture) {
       return {
           restrict: 'AE',
-          scope: {},
           require: '^ionPullUpFooter',
           link: function (scope, element, attrs, controller) {
               // add gesture
@@ -116,7 +143,7 @@ angular.module('ionic-pull-up', [])
           }
       }
   }])
-  .directive('ionPullUpHandle', ['$ionicGesture', function($ionicGesture) {
+  .directive('ionPullUpHandle', [function() {
       return {
           restrict: 'AE',
           scope: {
@@ -124,7 +151,7 @@ angular.module('ionic-pull-up', [])
           require: '^ionPullUpFooter',
           link: function (scope, element, attrs, controller) {
               var height = element.css('height'),
-                background =  window.getComputedStyle(element.parent().parent()[0]).background;
+                background =  controller.getBackground();
 
               controller.setHandleHeight(parseInt(height, 10));
 
@@ -136,9 +163,6 @@ angular.module('ionic-pull-up', [])
                   margin: '0 auto'
                   });
 
-              // add gesture
-              $ionicGesture.on('tap', controller.onTap, element);
-              $ionicGesture.on('drag dragstart dragend', controller.onDrag, element);
           }
       }
   }]);
