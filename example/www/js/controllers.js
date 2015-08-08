@@ -1,9 +1,10 @@
 angular.module('starter.controllers', [])
 
 .controller('DashCtrl', function($scope) {
-      $scope.onExpand = function(){
-          console.log('Expanded!');
-      }
+      $scope.$on('ionSideTab:event', function(e, action, index){
+          e.preventDefault();
+          console.log('Tab ' + index + ' has ' + action + 'ed' );
+      });
   })
 
 .controller('ChatsCtrl', function($scope, Chats) {

@@ -1,4 +1,4 @@
-angular.module('ionic-pull-up', [])
+angular.module('ionic-ui-toolkit', [])
   .directive('ionPullUpFooter', ['$timeout', function($timeout) {
       return {
           restrict: 'AE',
@@ -45,11 +45,6 @@ angular.module('ionic-pull-up', [])
                   $scope.minimize ? $scope.onMinimize() : $scope.onCollapse();
               }
 
-              //function minimize() {
-              //    lastPosY = expandedHeight;
-              //    $element.css('transform', 'translate3d(0, ' + lastPosY  + 'px, 0)');
-              //    $scope.onMinimize();
-              //}
 
               this.setHandleHeight = function(height) {
                   handleHeight = height;
@@ -75,12 +70,6 @@ angular.module('ionic-pull-up', [])
                   }
 
                   isExpanded = !isExpanded;
-              };
-
-              this.onDoubleTap = function(e) {
-                  e.gesture.srcEvent.preventDefault();
-                  e.gesture.preventDefault();
-                  minimize();
               };
 
               this.onDrag = function(e) {
@@ -178,32 +167,25 @@ angular.module('ionic-pull-up', [])
           restrict: 'AE',
           scope: {
           },
-          controller: function($scope, $element) {
+          controller: function() {
               var count = 0;
               this.addTab = function() {
-               return count++;
+                  return count++;
               };
-
-          },
-          link: function (scope, element, attrs) {
-
           }
       }
   }])
-  .directive('ionSideTab', ['$timeout', function($timeout) {
+  .directive('ionSideTab', ['$timeout', '$rootScope', function($timeout, $rootScope) {
       return {
           restrict: 'AE',
           scope: {
-              onExpand: '&',
-              onCollapse: '&'
           },
           transclude: true,
           template: '<ng-transclude></ng-transclude>',
           require: '^ionSideTabs',
           controller: function($scope, $element) {
               var tabClass = document.querySelector('.tabs') ? (document.querySelector('.tabs-bottom') ? 'has-tabs' : 'has-tabs-top') : '',
-                headerClass = document.querySelector('.bar-header') ? 'has-header' : '',
-                container = $element[0],
+                headerClass = document.querySelector('.bar-header') ? ' has-header' : '',
                 posX = 0, lastPosX = 0, handleWidth = 0, isExpanded = false,
                 expandedWidth;
 
@@ -213,24 +195,16 @@ angular.module('ionic-pull-up', [])
                   $timeout(function() {
                       expandedWidth = window.innerWidth;
                       lastPosX = expandedWidth;
-                      container.style.width = expandedWidth + 'px';
-                      container.style.transform = 'translate3d(' + lastPosX  + 'px, 0,  0)';
-
+                      $element.css({ width: expandedWidth + 'px', transform : 'translate3d(' + lastPosX  + 'px, 0,  0)'});
                   }, 300);
               }
 
-              container.style.transition = '300ms ease-in-out';
-              container.style.overflow = 'visible';
-              container.style.marginTop = '0';
-              container.style.marginBottom = '0';
               //container.style.boxShadow = '-1px 1px #888';
-              container.classList.add(tabClass);
-              container.classList.add(headerClass);
-
-
+              $element.css({transition: '300ms ease-in-out', overflow: 'visible', margin: '0 auto'});
+              $element.addClass(tabClass + headerClass);
               this.setHandleWidth = function(width) {
                   handleWidth = width;
-                  container.style.paddingRight = width + 10 + 'px';
+                  $element.css({'padding-right': width + 10 + 'px'});
               };
 
               this.onDrag = function(e) {
@@ -239,15 +213,15 @@ angular.module('ionic-pull-up', [])
 
                   switch (e.type) {
                       case 'dragstart':
-                          container.style.transition =  'none';
+                          $element.css({transition:'none'});
                           break;
                       case 'drag':
                           posX = Math.round(e.gesture.deltaX) + lastPosX;
                           if (posX < handleWidth || posX > expandedWidth) return;
-                          container.style.transform = 'translate3d(' + posX + 'px, 0, 0)';
+                          $element.css({transform: 'translate3d(' + posX + 'px, 0, 0)'});
                           break;
                       case 'dragend':
-                          container.style.transition = '300ms ease-in-out';
+                          $element.css({transition: '300ms ease-in-out'});
                           lastPosX = posX;
                           break;
                   }
@@ -259,12 +233,12 @@ angular.module('ionic-pull-up', [])
 
                   if (!isExpanded) {
                       lastPosX = handleWidth;
-                      $scope.onExpand && $scope.onExpand();
                   } else {
                       lastPosX = expandedWidth;
-                      $scope.onCollapse && $scope.onCollapse();
                   }
-                  container.style.transform = 'translate3d(' + lastPosX + 'px, 0, 0)';
+                  $element.css({transform: 'translate3d(' + lastPosX + 'px, 0, 0)'});
+
+                  $rootScope.$broadcast('ionSideTab:event', isExpanded ? 'collapse' : 'expand', $scope.tab.index);
                   isExpanded = !isExpanded;
               };
 
@@ -276,16 +250,9 @@ angular.module('ionic-pull-up', [])
 
 
           },
-          link: function (scope, element, attrs, controller, transclude) {
+          link: function (scope, element, attrs, controller) {
               scope.tab = {};
               scope.tab.index = controller.addTab();
-
-              //var content = '<ion-content></ion-content>';
-              //var handle = '<div style="height: 50px; width: 30px; display: block"></div>';
-              //var elem = $compile(content)(scope);
-              //angular.element(elem.find('div')[0]). append(handle). append(transclude());
-              //element.append(elem);
-
           }
       }
   }])
@@ -294,8 +261,8 @@ angular.module('ionic-pull-up', [])
           restrict: 'AE',
           require: '^ionSideTab',
           link: function (scope, element, attrs, controller) {
-              var height = attrs.height || 50,
-                width = attrs.width || 40;
+              var height = parseInt(attrs.height) || 50,
+                width = parseInt(attrs.width) || 40;
 
               element.css({
                   height: height + 'px',
@@ -309,7 +276,7 @@ angular.module('ionic-pull-up', [])
                   'align-items': 'center',
                   'justify-content': 'center'
               });
-              controller.setHandleWidth(parseInt(width,10));
+              controller.setHandleWidth(width);
 
               $ionicGesture.on('drag dragstart dragend', controller.onDrag, element);
               $ionicGesture.on('tap', controller.onTap, element);
