@@ -1,5 +1,5 @@
 angular.module('ionic-ui-toolkit', [])
-  .directive('ionPullUpFooter', ['$timeout', function($timeout) {
+  .directive('ionPullUpFooter', ['$timeout', '$ionicPlatform', function($timeout, $ionicPlatform) {
       return {
           restrict: 'AE',
           transclude: true,
@@ -22,26 +22,29 @@ angular.module('ionic-ui-toolkit', [])
                 posY = 0, lastPosY = 0;
 
               function computeHeights() {
-                  $timeout(function() {
+                  //$timeout(function() { 
                       expandedHeight = window.innerHeight - headerHeight - handleHeight;
                       if (tabs) {
                           expandedHeight = expandedHeight - tabsHeight;
                       }
-                      lastPosY = expandedHeight-headerHeight;
-                      $element.css({'height': expandedHeight + 'px', 'transform': 'translate3d(0, ' + lastPosY  + 'px, 0)'});
+                      lastPosY = (tabs && hasBottomTabs) ? expandedHeight - tabsHeight : expandedHeight - headerHeight;
+                      $element.css({'height': expandedHeight + 'px', 
+                        '-webkit-transform': 'translate3d(0, ' + lastPosY  + 'px, 0)',
+                        'transform': 'translate3d(0, ' + lastPosY  + 'px, 0)'
+                      });
 
-                  }, 300);
+                  //}, 300);
               }
 
               function expand() {
                   lastPosY = 0;
-                  $element.css('transform', 'translate3d(0, 0, 0)');
+                  $element.css({'-webkit-transform': 'translate3d(0, 0, 0)', 'transform': 'translate3d(0, 0, 0)'});
                   $scope.onExpand();
               }
 
               function collapse() {
-                  lastPosY = $scope.minimize ? expandedHeight : (expandedHeight - headerHeight);
-                  $element.css('transform', 'translate3d(0, ' + lastPosY  + 'px, 0)');
+                  lastPosY = $scope.minimize ? expandedHeight : (tabs && hasBottomTabs) ? expandedHeight - tabsHeight : expandedHeight - headerHeight;
+                  $element.css({'-webkit-transform': 'translate3d(0, ' + lastPosY  + 'px, 0)', 'transform': 'translate3d(0, ' + lastPosY  + 'px, 0)'});
                   $scope.minimize ? $scope.onMinimize() : $scope.onCollapse();
               }
 
@@ -83,7 +86,7 @@ angular.module('ionic-ui-toolkit', [])
                       case 'drag':
                           posY = Math.round(e.gesture.deltaY) + lastPosY;
                           if (posY < 0 || posY > expandedHeight) return;
-                          $element.css('transform', 'translate3d(0, ' + posY + 'px, 0)');
+                          $element.css({'-webkit-transform': 'translate3d(0, ' + posY + 'px, 0)', 'transform': 'translate3d(0, ' + posY + 'px, 0)'});
                           break;
                       case 'dragend':
                           $element.css({'transition': '300ms ease-in-out'});
@@ -92,12 +95,15 @@ angular.module('ionic-ui-toolkit', [])
                   }
               };
 
-              window.addEventListener('orientationchange', function() {
-                  isExpanded && collapse();
-                  computeHeights();
-              });
+              //$ionicPlatform.ready(function() {
+                window.addEventListener('orientationchange', function() {
+                    isExpanded && collapse();
+                    computeHeights();
+                });
+              //});
+              
 
-              computeHeights();
+              //computeHeights();
               $element.css({'-webkit-backface-visibility': 'hidden', 'backface-visibility': 'hidden', 'transition': '300ms ease-in-out'});
               if (tabs && hasBottomTabs) {
                   $element.css('bottom', tabs.offsetHeight + 'px');
@@ -139,7 +145,7 @@ angular.module('ionic-ui-toolkit', [])
           },
           require: '^ionPullUpFooter',
           link: function (scope, element, attrs, controller) {
-              var height = attrs.height || 25, width = attrs.width || 100,
+              var height = parseInt(attrs.height,10) || 25, width = parseInt(attrs.width, 10) || 100,
                 background =  controller.getBackground();
 
               controller.setHandleHeight(height);
@@ -195,7 +201,7 @@ angular.module('ionic-ui-toolkit', [])
                   $timeout(function() {
                       expandedWidth = window.innerWidth;
                       lastPosX = expandedWidth;
-                      $element.css({ width: expandedWidth + 'px', transform : 'translate3d(' + lastPosX  + 'px, 0,  0)'});
+                      $element.css({ width: expandedWidth + 'px', '-webkit-transform' : 'translate3d(' + lastPosX  + 'px, 0,  0)', transform : 'translate3d(' + lastPosX  + 'px, 0,  0)'});
                   }, 300);
               }
 
@@ -218,7 +224,7 @@ angular.module('ionic-ui-toolkit', [])
                       case 'drag':
                           posX = Math.round(e.gesture.deltaX) + lastPosX;
                           if (posX < handleWidth || posX > expandedWidth) return;
-                          $element.css({transform: 'translate3d(' + posX + 'px, 0, 0)'});
+                          $element.css({'-webkit-transform': 'translate3d(' + posX + 'px, 0, 0)', transform: 'translate3d(' + posX + 'px, 0, 0)'});
                           break;
                       case 'dragend':
                           $element.css({transition: '300ms ease-in-out'});
@@ -236,7 +242,7 @@ angular.module('ionic-ui-toolkit', [])
                   } else {
                       lastPosX = expandedWidth;
                   }
-                  $element.css({transform: 'translate3d(' + lastPosX + 'px, 0, 0)'});
+                  $element.css({'-webkit-transform': 'translate3d(' + lastPosX + 'px, 0, 0)', transform: 'translate3d(' + lastPosX + 'px, 0, 0)'});
 
                   $rootScope.$broadcast('ionSideTab:event', isExpanded ? 'collapse' : 'expand', $scope.tab.index);
                   isExpanded = !isExpanded;
@@ -261,8 +267,8 @@ angular.module('ionic-ui-toolkit', [])
           restrict: 'AE',
           require: '^ionSideTab',
           link: function (scope, element, attrs, controller) {
-              var height = parseInt(attrs.height) || 50,
-                width = parseInt(attrs.width) || 40;
+              var height = parseInt(attrs.height, 10) || 50,
+                width = parseInt(attrs.width, 10) || 40;
 
               element.css({
                   height: height + 'px',
@@ -271,9 +277,11 @@ angular.module('ionic-ui-toolkit', [])
                   left: '-' + width + 'px',
                   'z-index': '100',
                   //boxShadow: '0 1px #888',
-                  display: '-webkit-flex',
                   display: 'flex',
+                  display: '-webkit-flex',                  
+                  '-webkit-align-items': 'center',
                   'align-items': 'center',
+                  '-webkit-justify-content': 'center',
                   'justify-content': 'center'
               });
               controller.setHandleWidth(width);
