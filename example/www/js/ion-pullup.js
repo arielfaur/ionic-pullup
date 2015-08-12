@@ -1,5 +1,5 @@
 angular.module('ionic-ui-toolkit', [])
-  .directive('ionPullUpFooter', ['$timeout', '$ionicPlatform', function($timeout, $ionicPlatform) {
+  .directive('ionPullUpFooter', ['$timeout', function($timeout) {
       return {
           restrict: 'AE',
           transclude: true,
@@ -21,19 +21,23 @@ angular.module('ionic-ui-toolkit', [])
                 handleHeight = 0,
                 posY = 0, lastPosY = 0;
 
-              function computeHeights() {
-                  //$timeout(function() { 
-                      expandedHeight = window.innerHeight - headerHeight - handleHeight;
-                      if (tabs) {
-                          expandedHeight = expandedHeight - tabsHeight;
-                      }
-                      lastPosY = (tabs && hasBottomTabs) ? expandedHeight - tabsHeight : expandedHeight - headerHeight;
-                      $element.css({'height': expandedHeight + 'px', 
-                        '-webkit-transform': 'translate3d(0, ' + lastPosY  + 'px, 0)',
-                        'transform': 'translate3d(0, ' + lastPosY  + 'px, 0)'
-                      });
+              function init() {
+                  $element.css({'-webkit-backface-visibility': 'hidden', 'backface-visibility': 'hidden', 'transition': '300ms ease-in-out'});
+                  if (tabs && hasBottomTabs) {
+                      $element.css('bottom', tabs.offsetHeight + 'px');
+                  }
+              }
 
-                  //}, 300);
+              function computeHeights() {
+                  expandedHeight = window.innerHeight - headerHeight - handleHeight;
+                  if (tabs) {
+                      expandedHeight = expandedHeight - tabsHeight;
+                  }
+                  lastPosY = (tabs && hasBottomTabs) ? expandedHeight - tabsHeight : expandedHeight - headerHeight;
+                  $element.css({'height': expandedHeight + 'px',
+                    '-webkit-transform': 'translate3d(0, ' + lastPosY  + 'px, 0)',
+                    'transform': 'translate3d(0, ' + lastPosY  + 'px, 0)'
+                  });
               }
 
               function expand() {
@@ -95,20 +99,17 @@ angular.module('ionic-ui-toolkit', [])
                   }
               };
 
-              //$ionicPlatform.ready(function() {
-                window.addEventListener('orientationchange', function() {
+              window.addEventListener('orientationchange', function() {
                     isExpanded && collapse();
-                    computeHeights();
-                });
-              //});
-              
+                    $timeout(function() {
+                        computeHeights();
+                    }, 500);
+              });
 
-              //computeHeights();
-              $element.css({'-webkit-backface-visibility': 'hidden', 'backface-visibility': 'hidden', 'transition': '300ms ease-in-out'});
-              if (tabs && hasBottomTabs) {
-                  $element.css('bottom', tabs.offsetHeight + 'px');
-              }
-
+              init();
+          },
+          compile: function(element) {
+              element.addClass('bar bar-footer');
           }
       }
   }])
@@ -195,19 +196,19 @@ angular.module('ionic-ui-toolkit', [])
                 posX = 0, lastPosX = 0, handleWidth = 0, isExpanded = false,
                 expandedWidth;
 
-              $element.addClass('padding scroll-content ionic-scroll');
-
-              function computeWidths() {
-                  $timeout(function() {
-                      expandedWidth = window.innerWidth;
-                      lastPosX = expandedWidth;
-                      $element.css({ width: expandedWidth + 'px', '-webkit-transform' : 'translate3d(' + lastPosX  + 'px, 0,  0)', transform : 'translate3d(' + lastPosX  + 'px, 0,  0)'});
-                  }, 300);
+              function init() {
+                  $element.addClass('padding scroll-content ionic-scroll ' + tabClass + headerClass);
+                  $element.css({transition: '300ms ease-in-out', overflow: 'visible', margin: '0 auto'});
+                  //container.style.boxShadow = '-1px 1px #888';
+                  computeWidths();
               }
 
-              //container.style.boxShadow = '-1px 1px #888';
-              $element.css({transition: '300ms ease-in-out', overflow: 'visible', margin: '0 auto'});
-              $element.addClass(tabClass + headerClass);
+              function computeWidths() {
+                  expandedWidth = window.innerWidth;
+                  lastPosX = expandedWidth;
+                  $element.css({ width: expandedWidth + 'px', '-webkit-transform' : 'translate3d(' + lastPosX  + 'px, 0,  0)', transform : 'translate3d(' + lastPosX  + 'px, 0,  0)'});
+              }
+
               this.setHandleWidth = function(width) {
                   handleWidth = width;
                   $element.css({'padding-right': width + 10 + 'px'});
@@ -249,12 +250,12 @@ angular.module('ionic-ui-toolkit', [])
               };
 
               window.addEventListener('orientationchange', function() {
-                  computeWidths();
+                  $timeout(function() {
+                    computeWidths();
+                  }, 500);
               });
 
-              computeWidths();
-
-
+              init();
           },
           link: function (scope, element, attrs, controller) {
               scope.tab = {};
