@@ -172,7 +172,11 @@ angular.module('ionic-ui-toolkit', [])
   .directive('ionSideTabs', [function() {
       return {
           restrict: 'AE',
+          transclude: true,
+          template: '<ng-transclude></ng-transclude>',
           scope: {
+              onExpand: '&',
+              onCollapse: '&'
           },
           controller: function() {
               var count = 0;
@@ -182,11 +186,10 @@ angular.module('ionic-ui-toolkit', [])
           }
       }
   }])
-  .directive('ionSideTab', ['$timeout', '$rootScope', function($timeout, $rootScope) {
+  .directive('ionSideTab', ['$timeout', function($timeout) {
       return {
           restrict: 'AE',
-          scope: {
-          },
+          scope: true,
           transclude: true,
           template: '<ng-transclude></ng-transclude>',
           require: '^ionSideTabs',
@@ -240,12 +243,13 @@ angular.module('ionic-ui-toolkit', [])
 
                   if (!isExpanded) {
                       lastPosX = handleWidth;
+                      $scope.$parent.$parent.onExpand({ index: $scope.tab.index});
                   } else {
                       lastPosX = expandedWidth;
+                      $scope.$parent.$parent.onCollapse({ index: $scope.tab.index});
                   }
                   $element.css({'-webkit-transform': 'translate3d(' + lastPosX + 'px, 0, 0)', transform: 'translate3d(' + lastPosX + 'px, 0, 0)'});
 
-                  $rootScope.$broadcast('ionSideTab:event', isExpanded ? 'collapse' : 'expand', $scope.tab.index);
                   isExpanded = !isExpanded;
               };
 

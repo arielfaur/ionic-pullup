@@ -1,10 +1,19 @@
 angular.module('starter.controllers', [])
 
 .controller('DashCtrl', function($scope) {
-      $scope.$on('ionSideTab:event', function(e, action, index){
-          e.preventDefault();
-          console.log('Tab ' + index + ' has ' + action + 'ed' );
-      });
+      $scope.footerExpand = function() {
+        console.log('Footer expanded');
+      };
+      $scope.footerCollapse = function() {
+          console.log('Footer collapsed');
+      };
+
+      $scope.tabExpand = function(index) {
+          console.log('Tab ' + index + ' expanded');
+      };
+      $scope.tabCollapse = function(index) {
+          console.log('Tab ' + index + ' collapsed');
+      };
   })
 
 .controller('ChatsCtrl', function($scope, Chats) {
