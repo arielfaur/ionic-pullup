@@ -29,11 +29,11 @@ angular.module('ionic-ui-toolkit', [])
               }
 
               function computeHeights() {
-                  expandedHeight = window.innerHeight - headerHeight - handleHeight;
+                  expandedHeight = window.innerHeight - $element[0].offsetHeight  - handleHeight;   // max height = window - footer - handle
                   if (tabs) {
-                      expandedHeight = expandedHeight - tabsHeight;
+                      expandedHeight = expandedHeight - tabsHeight; // subtract tabs if needed
                   }
-                  lastPosY = (tabs && hasBottomTabs) ? expandedHeight - tabsHeight : expandedHeight - headerHeight;
+                  lastPosY = (tabs && hasBottomTabs) ? expandedHeight - tabsHeight : expandedHeight - headerHeight; // set initial position
                   $element.css({'height': expandedHeight + 'px',
                     '-webkit-transform': 'translate3d(0, ' + lastPosY  + 'px, 0)',
                     'transform': 'translate3d(0, ' + lastPosY  + 'px, 0)'
