@@ -8,7 +8,8 @@ angular.module('ionic-ui-toolkit', [])
               onExpand: '&',
               onCollapse: '&',
               onMinimize: '&',
-              minimize: '='
+              minimize: '=',
+              maxHeight: '='
           },
           controller: function($scope, $element) {
               var isExpanded = false,
@@ -29,14 +30,19 @@ angular.module('ionic-ui-toolkit', [])
               }
 
               function computeHeights() {
-                  expandedHeight = window.innerHeight - $element[0].offsetHeight  - handleHeight;   // max height = window - footer - handle
-                  if (tabs) {
-                      expandedHeight = expandedHeight - tabsHeight; // subtract tabs if needed
+                  if (!$scope.maxHeight) {
+                      expandedHeight = window.innerHeight - headerHeight - handleHeight;
+                      if (tabs) {
+                          expandedHeight = expandedHeight - tabsHeight;
+                      }
+                  } else {
+                      expandedHeight = parseInt($scope.maxHeight, 10);
                   }
-                  lastPosY = (tabs && hasBottomTabs) ? expandedHeight - tabsHeight : expandedHeight - headerHeight; // set initial position
+
+                  lastPosY = (tabs && hasBottomTabs) ? expandedHeight - tabsHeight : expandedHeight - $element[0].offsetHeight;
                   $element.css({'height': expandedHeight + 'px',
-                    '-webkit-transform': 'translate3d(0, ' + lastPosY  + 'px, 0)',
-                    'transform': 'translate3d(0, ' + lastPosY  + 'px, 0)'
+                      '-webkit-transform': 'translate3d(0, ' + lastPosY  + 'px, 0)',
+                      'transform': 'translate3d(0, ' + lastPosY  + 'px, 0)'
                   });
               }
 
