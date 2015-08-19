@@ -9,18 +9,31 @@ angular.module('ionic-ui-toolkit', [])
               onCollapse: '&',
               onMinimize: '&',
               minimize: '=',
-              maxHeight: '='
+              maxHeight: '=?',
+              defaultHeight: '=?'
           },
           controller: function($scope, $element) {
-              var isExpanded = false,
-                expandedHeight,
+              var FooterStatus = {
+                  DEFAULT: -1,
+                  MINIMIZED: 0,
+                  EXPANDED: 1
+              };
+              var
                 tabs = document.querySelector('.tabs'),
                 hasBottomTabs = document.querySelector('.tabs-bottom'),
                 header = document.querySelector('.bar-header'),
                 tabsHeight = tabs ? tabs.offsetHeight : 0,
                 headerHeight = header ? header.offsetHeight : 0,
                 handleHeight = 0,
-                posY = 0, lastPosY = 0;
+                footer = {
+                  height: 0,
+                  posY: 0,
+                  lastPosY: 0,
+                  status: FooterStatus.DEFAULT
+                };
+
+              $scope.maxHeight = parseInt($scope.maxHeight, 10) || 0;
+              $scope.defaultHeight = $element[0].offsetHeight;
 
               function init() {
                   $element.css({'-webkit-backface-visibility': 'hidden', 'backface-visibility': 'hidden', 'transition': '300ms ease-in-out'});
@@ -30,32 +43,34 @@ angular.module('ionic-ui-toolkit', [])
               }
 
               function computeHeights() {
-                  if (!$scope.maxHeight) {
-                      expandedHeight = window.innerHeight - headerHeight - handleHeight;
-                      if (tabs) {
-                          expandedHeight = expandedHeight - tabsHeight;
-                      }
-                  } else {
-                      expandedHeight = parseInt($scope.maxHeight, 10);
-                  }
+                  footer.height = $scope.maxHeight > 0 ? $scope.maxHeight : window.innerHeight - headerHeight - handleHeight - tabsHeight;
+                  footer.lastPosY = (tabs && hasBottomTabs) ? footer.height - tabsHeight : footer.height - $scope.defaultHeight;
 
-                  lastPosY = (tabs && hasBottomTabs) ? expandedHeight - tabsHeight : expandedHeight - $element[0].offsetHeight;
-                  $element.css({'height': expandedHeight + 'px',
-                      '-webkit-transform': 'translate3d(0, ' + lastPosY  + 'px, 0)',
-                      'transform': 'translate3d(0, ' + lastPosY  + 'px, 0)'
+                  $element.css({'height': footer.height + 'px',
+                      '-webkit-transform': 'translate3d(0, ' + footer.lastPosY  + 'px, 0)',
+                      'transform': 'translate3d(0, ' + footer.lastPosY  + 'px, 0)'
                   });
               }
 
               function expand() {
-                  lastPosY = 0;
+                  footer.lastPosY = 0;
                   $element.css({'-webkit-transform': 'translate3d(0, 0, 0)', 'transform': 'translate3d(0, 0, 0)'});
                   $scope.onExpand();
+                  footer.status = FooterStatus.EXPANDED;
               }
 
               function collapse() {
-                  lastPosY = $scope.minimize ? expandedHeight : (tabs && hasBottomTabs) ? expandedHeight - tabsHeight : expandedHeight - headerHeight;
-                  $element.css({'-webkit-transform': 'translate3d(0, ' + lastPosY  + 'px, 0)', 'transform': 'translate3d(0, ' + lastPosY  + 'px, 0)'});
-                  $scope.minimize ? $scope.onMinimize() : $scope.onCollapse();
+                  footer.lastPosY = (tabs && hasBottomTabs) ? footer.height - tabsHeight : footer.height - $scope.defaultHeight;
+                  $element.css({'-webkit-transform': 'translate3d(0, ' + footer.lastPosY  + 'px, 0)', 'transform': 'translate3d(0, ' + footer.lastPosY  + 'px, 0)'});
+                  $scope.onCollapse();
+                  footer.status = FooterStatus.DEFAULT
+              }
+
+              function minimize() {
+                  footer.lastPosY = footer.height;
+                  $element.css({'-webkit-transform': 'translate3d(0, ' + footer.lastPosY  + 'px, 0)', 'transform': 'translate3d(0, ' + footer.lastPosY  + 'px, 0)'});
+                  $scope.onMinimize();
+                  footer.status = FooterStatus.MINIMIZED;
               }
 
 
@@ -76,13 +91,25 @@ angular.module('ionic-ui-toolkit', [])
                   e.gesture.srcEvent.preventDefault();
                   e.gesture.preventDefault();
 
-                  if (!isExpanded) {
-                      expand();
+                  if (footer.status == FooterStatus.DEFAULT) {
+                      if ($scope.minimize) {
+                          minimize();
+                      } else {
+                          expand();
+                      }
                   } else {
-                      collapse();
+                      if (footer.status == FooterStatus.MINIMIZED) {
+                          if ($scope.minimize)
+                              collapse();
+                          else
+                              expand();
+                      } else {
+                          if ($scope.minimize)
+                              minimize();
+                          else
+                              collapse();
+                      }
                   }
-
-                  isExpanded = !isExpanded;
               };
 
               this.onDrag = function(e) {
@@ -94,19 +121,19 @@ angular.module('ionic-ui-toolkit', [])
                           $element.css('transition', 'none');
                           break;
                       case 'drag':
-                          posY = Math.round(e.gesture.deltaY) + lastPosY;
-                          if (posY < 0 || posY > expandedHeight) return;
-                          $element.css({'-webkit-transform': 'translate3d(0, ' + posY + 'px, 0)', 'transform': 'translate3d(0, ' + posY + 'px, 0)'});
+                          footer.posY = Math.round(e.gesture.deltaY) + footer.lastPosY;
+                          if (footer.posY < 0 || footer.posY > footer.height) return;
+                          $element.css({'-webkit-transform': 'translate3d(0, ' + footer.posY + 'px, 0)', 'transform': 'translate3d(0, ' + footer.posY + 'px, 0)'});
                           break;
                       case 'dragend':
                           $element.css({'transition': '300ms ease-in-out'});
-                          lastPosY = posY;
+                          footer.lastPosY = footer.posY;
                           break;
                   }
               };
 
               window.addEventListener('orientationchange', function() {
-                    isExpanded && collapse();
+                    footer.status != FooterStatus.DEFAULT && collapse();
                     $timeout(function() {
                         computeHeights();
                     }, 500);
@@ -114,7 +141,8 @@ angular.module('ionic-ui-toolkit', [])
 
               init();
           },
-          compile: function(element) {
+          compile: function(element, attrs) {
+              attrs.defaultHeight && element.css('height', parseInt(attrs.defaultHeight, 10) + 'px');
               element.addClass('bar bar-footer');
           }
       }
