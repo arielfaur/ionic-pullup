@@ -1,4 +1,9 @@
 angular.module('ionic-ui-toolkit', [])
+  .constant('ionPullUpFooterStatus', {
+      DEFAULT: -1,
+      MINIMIZED: 0,
+      EXPANDED: 1
+  })
   .directive('ionPullUpFooter', ['$timeout', function($timeout) {
       return {
           restrict: 'AE',
@@ -110,6 +115,8 @@ angular.module('ionic-ui-toolkit', [])
                               collapse();
                       }
                   }
+
+                  $scope.$broadcast('ionPullUp:tap', footer.status);
               };
 
               this.onDrag = function(e) {
@@ -176,8 +183,6 @@ angular.module('ionic-ui-toolkit', [])
   .directive('ionPullUpHandle', ['$ionicGesture', function($ionicGesture) {
       return {
           restrict: 'AE',
-          scope: {
-          },
           require: '^ionPullUpFooter',
           link: function (scope, element, attrs, controller) {
               var height = parseInt(attrs.height,10) || 25, width = parseInt(attrs.width, 10) || 100,
@@ -202,7 +207,17 @@ angular.module('ionic-ui-toolkit', [])
           }
       }
   }])
-
+  .directive('ionPullUpAnimate', [function() {
+      return {
+          restrict: 'AE',
+          link: function (scope, element, attrs) {
+              var classes = attrs.ionPullUpAnimate;
+              scope.$on('ionPullUp:tap', function() {
+                  element.toggleClass(classes);
+              });
+          }
+      }
+  }])
   .directive('ionSideTabs', [function() {
       return {
           restrict: 'AE',
