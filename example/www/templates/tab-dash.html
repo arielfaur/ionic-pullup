@@ -1,5 +1,5 @@
 <ion-view view-title="Dashboard">
-  <ion-content class="padding">
+    <ion-content class="padding">
     <div class="list card">
       <div class="item item-divider">Recent Updates</div>
       <div class="item item-body">
@@ -24,70 +24,10 @@
         </div>
       </div>
     </div>
-
-  </ion-content>
-    <ion-side-tabs on-expand="tabExpand(index)" on-collapse="tabCollapse(index)">
-        <ion-side-tab class="dark-bg" style="border-radius: 10px;">
-            <ion-side-tab-handle width="40" height="50" class="dark-bg stable" style="border-radius: 10px 0 0 10px"><i class="icon ion-chevron-left"></i></ion-side-tab-handle>
-            <div class="list card">
-                <div class="item item-divider">Upcoming</div>
-                <div class="item item-body item-stable">
-                    <div>
-                        You have <b>229</b> meetings on your calendar tomorrow.
-                    </div>
-                </div>
-            </div>
-            <div class="list card">
-                <div class="item item-divider">Upcoming</div>
-                <div class="item item-body item-stable">
-                    <div>
-                        You have <b>21</b> meetings on your calendar tomorrow.
-                    </div>
-                </div>
-            </div>
-        </ion-side-tab>
-        <ion-side-tab class="positive-bg" style="border-radius: 10px;">
-            <ion-side-tab-handle width="40" height="50" class="positive-bg" style="border-radius: 10px 0 0 10px"><i class="icon ion-chevron-left"></i></ion-side-tab-handle>
-            <div class="list card">
-                <div class="item item-divider">Upcoming</div>
-                <div class="item item-body item-stable">
-                    <div>
-                        You have <b>229</b> meetings on your calendar tomorrow.
-                    </div>
-                </div>
-            </div>
-            <div class="list card">
-                <div class="item item-divider">Upcoming</div>
-                <div class="item item-body item-stable">
-                    <div>
-                        You have <b>21</b> meetings on your calendar tomorrow.
-                    </div>
-                </div>
-            </div>
-        </ion-side-tab>
-        <ion-side-tab class="assertive-bg" style="border-radius: 10px;">
-            <ion-side-tab-handle width="40" height="50" class="assertive-bg" style="border-radius: 10px 0 0 10px"><i class="icon ion-chevron-left"></i></ion-side-tab-handle>
-            <div class="list card">
-                <div class="item item-divider">Upcoming</div>
-                <div class="item item-body item-stable">
-                    <div>
-                        You have <b>229</b> meetings on your calendar tomorrow.
-                    </div>
-                </div>
-            </div>
-            <div class="list card">
-                <div class="item item-divider">Upcoming</div>
-                <div class="item item-body item-stable">
-                    <div>
-                        You have <b>21</b> meetings on your calendar tomorrow.
-                    </div>
-                </div>
-            </div>
-        </ion-side-tab>
-    </ion-side-tabs>
-    <ion-pull-up-footer class="bar-calm" minimize="true"  on-expand="footerExpand()" on-collapse="footerCollapse()">
-        <ion-pull-up-handle width="100" height="25" style="border-radius: 25px 25px 0 0">
-            <i class="icon ion-chevron-up" ion-pull-up-animate="ion-chevron-up ion-chevron-down"></i>
+    </ion-content>
+    <ion-pull-up-footer class="bar-energized" on-expand="footerExpand()" on-collapse="footerCollapse()">
+        <ion-pull-up-handle width="100" height="25" toggle="ion-chevron-up ion-chevron-down" style="border-radius: 25px 25px 0 0">
+            <i class="icon ion-chevron-up"></i>
         </ion-pull-up-handle>
         <div class="title" ion-pull-up-trigger>More details</div>
         <ion-pull-up-content scroll="false">

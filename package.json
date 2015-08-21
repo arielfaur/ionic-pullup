@@ -1,6 +1,6 @@
 {
   "name": "ionic-pullup",
-  "private": true,
+  "private": false,
   "version": "1.0.0",
   "description": "Ionic pull up footer",
   "repository": "https://github.com/arielfaur",
