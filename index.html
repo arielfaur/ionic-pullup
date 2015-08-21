@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <title>Ionic-pullup by arielfaur</title>
+  </head>
+
+  <body>
+    <header>
+      <div class="inner">
+        <h1>Ionic-pullup</h1>
+        <h2>A pull-up footer component for Ionic</h2>
+        <a href="https://github.com/arielfaur/ionic-pullup" class="button"><small>View project on</small> GitHub</a>
+      </div>
+    </header>
+
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+          <h1>
+<a id="ionic-pullup" class="anchor" href="#ionic-pullup" aria-hidden="true"><span class="octicon octicon-link"></span></a>ionic-pullup</h1>
+
+<p>A pull-up footer component for Ionic. The pull-up footer is a UI component built on top of Ionic's footer and offers an efficient way to hide/reveal information.
+The footer can fully expand to cover the content area of the screen or can be configured to expand to a maximum height. The component will compute the available screen height
+providing for header and tabs.</p>
+
+<ul>
+<li>Easily customized</li>
+<li>Uses hardware accelerated CSS - great performance!</li>
+<li>Integrates with Ionic's themes</li>
+<li>Exposes interface for expand/collapse events</li>
+<li>Detects device orientation and adjusts height accordingly</li>
+<li>Works on iOS and Android (requires Chromium WebView available in Android 4.4+ or use Crosswalk)</li>
+</ul>
+
+<h2>
+<a id="demo" class="anchor" href="#demo" aria-hidden="true"><span class="octicon octicon-link"></span></a>Demo</h2>
+
+<h2>
+<a id="install-module" class="anchor" href="#install-module" aria-hidden="true"><span class="octicon octicon-link"></span></a>Install module</h2>
+
+<p>To get you started you can simply install via bower</p>
+
+<p><code>bower install ionic-pullup</code></p>
+
+<p>Then include <code>ion-pullup.js</code> in your HTML</p>
+
+<pre><code> &lt;script src="js/ion-pullup.js"&gt;&lt;/script&gt;
+</code></pre>
+
+<h2>
+<a id="add-dependencies-to-your-app" class="anchor" href="#add-dependencies-to-your-app" aria-hidden="true"><span class="octicon octicon-link"></span></a>Add dependencies to your App</h2>
+
+<pre><code>angular.module('starter', ['ionic', 'starter.controllers', 'ionic-pullup'])
+</code></pre>
+
+<h2>
+<a id="directives" class="anchor" href="#directives" aria-hidden="true"><span class="octicon octicon-link"></span></a>Directives</h2>
+
+<h3>
+<a id="ion-pull-up-footer" class="anchor" href="#ion-pull-up-footer" aria-hidden="true"><span class="octicon octicon-link"></span></a>ion-pull-up-footer</h3>
+
+<p>Main directive creates the configurable pull-up footer. Theming can be done using Ionic's predefined CSS classes, or custom
+inline styles. The pull-up handle will inherit the background color of the main directive by default.</p>
+
+<p>Directive attributes:</p>
+
+<ul>
+<li>minimize: creates a footer that can be minimized rather than expanded</li>
+<li>default-height: footer height (defaults to Ionic's footer height)</li>
+<li>max-height: specifies the maximum height to expand (whole content area by default)</li>
+<li>on-expand: callback for expand event</li>
+<li>on-collapse: callback for collapse event</li>
+<li>on-minimize: callback for minimize event</li>
+</ul>
+
+<pre><code>&lt;ion-pull-up-footer class="bar-energized" on-expand="footerExpand()" on-collapse="footerCollapse()"&gt;
+...
+&lt;/ion-pull-up-footer&gt;
+</code></pre>
+
+<h3>
+<a id="ion-pull-up-content" class="anchor" href="#ion-pull-up-content" aria-hidden="true"><span class="octicon octicon-link"></span></a>ion-pull-up-content</h3>
+
+<p>Main content area when footer is expanded. Adding a <code>scroll</code> attribute will add scrollbars if necessary.</p>
+
+<h3>
+<a id="ion-pull-up-handle" class="anchor" href="#ion-pull-up-handle" aria-hidden="true"><span class="octicon octicon-link"></span></a>ion-pull-up-handle</h3>
+
+<p>Creates the handle element that can be tapped to expand the footer, or dragged to reveal the footer content. Adding a
+<code>toggle</code> attribute will toggle CSS classes when changing states if using Ionicons.</p>
+
+<p>Directive attributes:</p>
+
+<ul>
+<li>height: handle height</li>
+<li>width: handle width</li>
+<li>toggle: CSS classes to toggle when switching states; requires child <code>&lt;i&gt;</code> element</li>
+</ul>
+
+<pre><code>&lt;ion-pull-up-handle width="100" height="25" toggle="ion-chevron-up ion-chevron-down" style="border-radius: 25px 25px 0 0"&gt;
+    &lt;i class="icon ion-chevron-up"&gt;&lt;/i&gt;
+&lt;/ion-pull-up-handle&gt;
+</code></pre>
+
+<h3>
+<a id="ion-pull-up-trigger" class="anchor" href="#ion-pull-up-trigger" aria-hidden="true"><span class="octicon octicon-link"></span></a>ion-pull-up-trigger</h3>
+
+<p>This directive adds tapping or dragging gestures to a specific element.</p>
+        </section>
+
+        <aside id="sidebar">
+          <a href="https://github.com/arielfaur/ionic-pullup/zipball/master" class="button">
+            <small>Download</small>
+            .zip file
+          </a>
+          <a href="https://github.com/arielfaur/ionic-pullup/tarball/master" class="button">
+            <small>Download</small>
+            .tar.gz file
+          </a>
+
+          <p class="repo-owner"><a href="https://github.com/arielfaur/ionic-pullup"></a> is maintained by <a href="https://github.com/arielfaur">arielfaur</a>.</p>
+
+          <p>This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
+        </aside>
+      </div>
+    </div>
+
+  
+  </body>
+</html>
