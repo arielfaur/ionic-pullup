@@ -1,4 +1,4 @@
-angular.module('ionic-ui-toolkit', [])
+angular.module('ionic-pullup', [])
   .constant('ionPullUpFooterStatus', {
       DEFAULT: -1,
       MINIMIZED: 0,
