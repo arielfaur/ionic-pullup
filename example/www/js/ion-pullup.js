@@ -4,11 +4,9 @@ angular.module('ionic-pullup', [])
       MINIMIZED: 0,
       EXPANDED: 1
   })
-  .directive('ionPullUpFooter', ['$timeout', function($timeout) {
+  .directive('ionPullUpFooter', ['$timeout', '$rootScope', function($timeout, $rootScope) {
       return {
           restrict: 'AE',
-          transclude: true,
-          template: '<ng-transclude style="width: 100%;"></ng-transclude>',
           scope: {
               onExpand: '&',
               onCollapse: '&',
@@ -41,7 +39,7 @@ angular.module('ionic-pullup', [])
               $scope.defaultHeight = $element[0].offsetHeight;
 
               function init() {
-                  $element.css({'-webkit-backface-visibility': 'hidden', 'backface-visibility': 'hidden', 'transition': '300ms ease-in-out'});
+                  $element.css({'-webkit-backface-visibility': 'hidden', 'backface-visibility': 'hidden', 'transition': '300ms ease-in-out', 'padding': 0});
                   if (tabs && hasBottomTabs) {
                       $element.css('bottom', tabs.offsetHeight + 'px');
                   }
@@ -116,7 +114,7 @@ angular.module('ionic-pullup', [])
                       }
                   }
 
-                  $scope.$broadcast('ionPullUp:tap', footer.status);
+                  $rootScope.$broadcast('ionPullUp:tap', footer.status);
               };
 
               this.onDrag = function(e) {
@@ -159,13 +157,25 @@ angular.module('ionic-pullup', [])
           restrict: 'AE',
           require: '^ionPullUpFooter',
           link: function (scope, element, attrs, controller) {
-              var hasHandle = element.parent().find('ion-pull-up-handle').length > 0,
+              var
                 footerHeight = controller.getHeight();
-              element.css({'display': 'block', 'margin-top': hasHandle ? 0 : footerHeight + 'px'});
+              element.css({'display': 'block', 'margin-top': footerHeight + 'px', width: '100%'});
               // add scrolling if needed
               if (attrs.scroll && attrs.scroll.toUpperCase() == 'TRUE') {
                   element.css({'overflow-y': 'scroll', 'overflow-x': 'hidden'});
               }
+          }
+      }
+  }])
+  .directive('ionPullUpBar', [function() {
+      return {
+          restrict: 'AE',
+          require: '^ionPullUpFooter',
+          link: function (scope, element, attrs, controller) {
+              var
+                footerHeight = controller.getHeight();
+              element.css({'display': 'flex', 'height': footerHeight + 'px', position: 'absolute', right: '0', left: '0'});
+
           }
       }
   }])
@@ -194,11 +204,12 @@ angular.module('ionic-pullup', [])
               element.css({
                   display: 'block',
                   background: background,
-                  position: 'relative',
-                  bottom: height + 'px',
+                  position: 'absolute',
+                  top: 1-height + 'px',
+                  left: ((screen.width - width) / 2) + 'px',
                   height: height + 'px',
                   width: width + 'px',
-                  margin: '0 auto',
+                  //margin: '0 auto',
                   'text-align': 'center'
                   });
 
@@ -208,6 +219,10 @@ angular.module('ionic-pullup', [])
 
               scope.$on('ionPullUp:tap', function() {
                   element.find('i').toggleClass(toggleClasses);
+              });
+
+              window.addEventListener('orientationchange', function() {
+                  element.css('left', ((screen.width - width) / 2) + 'px');
               });
           }
       }
