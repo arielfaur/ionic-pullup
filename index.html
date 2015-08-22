@@ -65,7 +65,7 @@ providing for header and tabs.</p>
 
 <p>Then include <code>ion-pullup.js</code> in your HTML</p>
 
-<pre><code> &lt;script src="js/ion-pullup.js"&gt;&lt;/script&gt;
+<pre><code>&lt;script src="js/ion-pullup.js"&gt;&lt;/script&gt;
 </code></pre>
 
 <h2>
@@ -97,6 +97,16 @@ inline styles. The pull-up handle will inherit the background color of the main 
 <pre><code>&lt;ion-pull-up-footer class="bar-energized" on-expand="footerExpand()" on-collapse="footerCollapse()"&gt;
 ...
 &lt;/ion-pull-up-footer&gt;
+</code></pre>
+
+<h3>
+    <a id="ion-pull-up-bar" class="anchor" href="#ion-pull-up-bar" aria-hidden="true"><span class="octicon octicon-link"></span></a>ion-pull-up-bar</h3>
+<p>To show other elements in the bar besides a title, group them with a  <code>ion-pull-up-bar</code> directive. </p>
+<pre><code>
+&lt;ion-pull-up-bar&gt;
+&lt;h1 class="title" ion-pull-up-trigger&gt;Tap here&lt;/h1&gt;
+&lt;button class="button icon ion-gear-a"&gt;&lt;/button&gt;
+&lt;/ion-pull-up-bar&gt;
 </code></pre>
 
 <h3>
