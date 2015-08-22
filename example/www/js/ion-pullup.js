@@ -190,7 +190,7 @@ angular.module('ionic-pullup', [])
           }
       }
   }])
-  .directive('ionPullUpHandle', ['$ionicGesture', function($ionicGesture) {
+  .directive('ionPullUpHandle', ['$ionicGesture', '$timeout', function($ionicGesture, $timeout) {
       return {
           restrict: 'AE',
           require: '^ionPullUpFooter',
@@ -206,7 +206,7 @@ angular.module('ionic-pullup', [])
                   background: background,
                   position: 'absolute',
                   top: 1-height + 'px',
-                  left: ((screen.width - width) / 2) + 'px',
+                  left: ((window.innerWidth - width) / 2) + 'px',
                   height: height + 'px',
                   width: width + 'px',
                   //margin: '0 auto',
@@ -222,7 +222,9 @@ angular.module('ionic-pullup', [])
               });
 
               window.addEventListener('orientationchange', function() {
-                  element.css('left', ((screen.width - width) / 2) + 'px');
+                  $timeout(function() {
+                      element.css('left', ((window.innerWidth - width) / 2) + 'px');
+                  }, 500);
               });
           }
       }
