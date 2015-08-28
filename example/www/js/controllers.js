@@ -7,13 +7,6 @@ angular.module('starter.controllers', [])
       $scope.footerCollapse = function() {
           console.log('Footer collapsed');
       };
-
-      $scope.tabExpand = function(index) {
-          console.log('Tab ' + index + ' expanded');
-      };
-      $scope.tabCollapse = function(index) {
-          console.log('Tab ' + index + ' collapsed');
-      };
   })
 
 .controller('ChatsCtrl', function($scope, Chats) {

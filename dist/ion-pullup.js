@@ -4,7 +4,7 @@ angular.module('ionic-pullup', [])
       MINIMIZED: 0,
       EXPANDED: 1
   })
-  .directive('ionPullUpFooter', ['$timeout', '$rootScope', function($timeout, $rootScope) {
+  .directive('ionPullUpFooter', ['$timeout', '$rootScope', '$window', function($timeout, $rootScope, $window) {
       return {
           restrict: 'AE',
           scope: {
@@ -15,7 +15,7 @@ angular.module('ionic-pullup', [])
               maxHeight: '=?',
               defaultHeight: '=?'
           },
-          controller: function($scope, $element) {
+          controller: ['$scope', '$element', function($scope, $element) {
               var FooterStatus = {
                   DEFAULT: -1,
                   MINIMIZED: 0,
@@ -46,7 +46,7 @@ angular.module('ionic-pullup', [])
               }
 
               function computeHeights() {
-                  footer.height = $scope.maxHeight > 0 ? $scope.maxHeight : window.innerHeight - headerHeight - handleHeight - tabsHeight;
+                  footer.height = $scope.maxHeight > 0 ? $scope.maxHeight : $window.innerHeight - headerHeight - handleHeight - tabsHeight;
                   footer.lastPosY = (tabs && hasBottomTabs) ? footer.height - tabsHeight : footer.height - $scope.defaultHeight;
 
                   $element.css({'height': footer.height + 'px',
@@ -87,7 +87,7 @@ angular.module('ionic-pullup', [])
               };
 
               this.getBackground = function() {
-                return window.getComputedStyle($element[0]).background;
+                return $window.getComputedStyle($element[0]).background;
               };
 
               this.onTap = function(e) {
@@ -137,7 +137,7 @@ angular.module('ionic-pullup', [])
                   }
               };
 
-              window.addEventListener('orientationchange', function() {
+              $window.addEventListener('orientationchange', function() {
                     footer.status != FooterStatus.DEFAULT && collapse();
                     $timeout(function() {
                         computeHeights();
@@ -145,7 +145,7 @@ angular.module('ionic-pullup', [])
               });
 
               init();
-          },
+          }],
           compile: function(element, attrs) {
               attrs.defaultHeight && element.css('height', parseInt(attrs.defaultHeight, 10) + 'px');
               element.addClass('bar bar-footer');
@@ -190,7 +190,7 @@ angular.module('ionic-pullup', [])
           }
       }
   }])
-  .directive('ionPullUpHandle', ['$ionicGesture', '$timeout', function($ionicGesture, $timeout) {
+  .directive('ionPullUpHandle', ['$ionicGesture', '$timeout', '$window',  function($ionicGesture, $timeout, $window) {
       return {
           restrict: 'AE',
           require: '^ionPullUpFooter',
@@ -206,7 +206,7 @@ angular.module('ionic-pullup', [])
                   background: background,
                   position: 'absolute',
                   top: 1-height + 'px',
-                  left: ((window.innerWidth - width) / 2) + 'px',
+                  left: (($window.innerWidth - width) / 2) + 'px',
                   height: height + 'px',
                   width: width + 'px',
                   //margin: '0 auto',
@@ -221,9 +221,9 @@ angular.module('ionic-pullup', [])
                   element.find('i').toggleClass(toggleClasses);
               });
 
-              window.addEventListener('orientationchange', function() {
+              $window.addEventListener('orientationchange', function() {
                   $timeout(function() {
-                      element.css('left', ((window.innerWidth - width) / 2) + 'px');
+                      element.css('left', (($window.innerWidth - width) / 2) + 'px');
                   }, 500);
               });
           }
