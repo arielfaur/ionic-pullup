@@ -84,16 +84,25 @@ providing for header and tabs.</p>
 
 <p>Main directive creates the configurable pull-up footer. Theming can be done using Ionic's predefined CSS classes, or custom
 inline styles. The pull-up handle will inherit the background color of the main directive by default.</p>
+<p>The footer behavior is configured by using the attributes <code>initial-state</code> and <code>default-behavior</code> together. See the examples below.</p>
 
 <p>Directive attributes:</p>
 
 <ul>
-<li>minimize: creates a footer that can be minimized rather than expanded</li>
-<li>default-height: footer height (defaults to Ionic's footer height)</li>
-<li>max-height: specifies the maximum height to expand (whole content area by default)</li>
-<li>on-expand: callback for expand event</li>
-<li>on-collapse: callback for collapse event</li>
-<li>on-minimize: callback for minimize event</li>
+<li><del><code>minimize</code>: creates a footer that can be minimized rather than expanded</del></li>
+<li><code>default-height</code>: footer height (defaults to Ionic's footer height)</li>
+<li><code>max-height</code>: specifies the maximum height to expand to (default covers the content area)</li>
+<li><code>initial-state</code>: sets the initial footer state to <code>collapsed</code> (defaults to Ionic's footer) or <code>minimized</code></li>
+<li><code>default-behavior</code>:
+    <ul>
+        <li><code>expand</code> (default) will expand the footer to cover the content area -or to the maximum height specified by <code>max-height</code>-
+            and either collapse or minimize, depending on <code>initial-state</code></li>
+        <li><code>hide</code> will create a footer that toggles between default footer state and a minimized state</li>
+    </ul>
+</li>
+<li><code>on-expand</code>: callback for expand event</li>
+<li><code>on-collapse</code>: callback for collapse event</li>
+<li><code>on-minimize</code>: callback for minimize event</li>
 </ul>
 
 <pre><code>&lt;ion-pull-up-footer class="bar-energized" on-expand="footerExpand()" on-collapse="footerCollapse()"&gt;
