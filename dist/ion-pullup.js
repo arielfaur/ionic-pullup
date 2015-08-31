@@ -1,8 +1,12 @@
 angular.module('ionic-pullup', [])
-  .constant('ionPullUpFooterStatus', {
-      COLLAPSED: -1,
-      MINIMIZED: 0,
-      EXPANDED: 1
+  .constant('ionPullUpFooterState', {
+      COLLAPSED: 'COLLAPSED',
+      MINIMIZED: 'MINIMIZED',
+      EXPANDED: 'EXPANDED'
+  })
+  .constant('ionPullUpFooterBehavior', {
+      HIDE: 'HIDE',
+      EXPAND: 'EXPAND'
   })
   .directive('ionPullUpFooter', ['$timeout', '$rootScope', '$window', function($timeout, $rootScope, $window) {
       return {
@@ -10,17 +14,9 @@ angular.module('ionic-pullup', [])
           scope: {
               onExpand: '&',
               onCollapse: '&',
-              onMinimize: '&',
-              minimize: '=',
-              maxHeight: '=?',
-              defaultHeight: '=?'
+              onMinimize: '&'
           },
-          controller: ['$scope', '$element', function($scope, $element) {
-              var FooterStatus = {
-                  COLLAPSED: -1,
-                  MINIMIZED: 0,
-                  EXPANDED: 1
-              };
+          controller: ['$scope', '$element', '$attrs', 'ionPullUpFooterState', 'ionPullUpFooterBehavior', function($scope, $element, $attrs, FooterState, FooterBehavior) {
               var
                 tabs = document.querySelector('.tabs'),
                 hasBottomTabs = document.querySelector('.tabs-bottom'),
@@ -29,14 +25,15 @@ angular.module('ionic-pullup', [])
                 headerHeight = header ? header.offsetHeight : 0,
                 handleHeight = 0,
                 footer = {
-                  height: 0,
-                  posY: 0,
-                  lastPosY: 0,
-                  state: FooterStatus.COLLAPSED
+                    height: 0,
+                    posY: 0,
+                    lastPosY: 0,
+                    state: FooterState.COLLAPSED,
+                    defaultHeight : $element[0].offsetHeight,
+                    maxHeight: parseInt($attrs.maxHeight, 10) || 0,
+                    initialState: $attrs.initialState ? $attrs.initialState.toUpperCase() : FooterState.COLLAPSED,
+                    defaultBehavior: $attrs.defaultBehavior ? $attrs.defaultBehavior.toUpperCase() : FooterBehavior.EXPAND
                 };
-
-              $scope.maxHeight = parseInt($scope.maxHeight, 10) || 0;
-              $scope.defaultHeight = $element[0].offsetHeight;
 
               function init() {
                   $element.css({'-webkit-backface-visibility': 'hidden', 'backface-visibility': 'hidden', 'transition': '300ms ease-in-out', 'padding': 0});
@@ -46,34 +43,35 @@ angular.module('ionic-pullup', [])
               }
 
               function computeHeights() {
-                  footer.height = $scope.maxHeight > 0 ? $scope.maxHeight : $window.innerHeight - headerHeight - handleHeight - tabsHeight;
-                  footer.lastPosY = (tabs && hasBottomTabs) ? footer.height - tabsHeight : footer.height - $scope.defaultHeight;
+                  footer.height = footer.maxHeight > 0 ? footer.maxHeight : $window.innerHeight - headerHeight - handleHeight - tabsHeight;
+                  $element.css({'height': footer.height + 'px'});
 
-                  $element.css({'height': footer.height + 'px',
-                      '-webkit-transform': 'translate3d(0, ' + footer.lastPosY  + 'px, 0)',
-                      'transform': 'translate3d(0, ' + footer.lastPosY  + 'px, 0)'
-                  });
+                  if (footer.initialState == FooterState.MINIMIZED) {
+                      minimize();
+                  }  else {
+                      collapse();
+                  }
               }
 
               function expand() {
                   footer.lastPosY = 0;
                   $element.css({'-webkit-transform': 'translate3d(0, 0, 0)', 'transform': 'translate3d(0, 0, 0)'});
                   $scope.onExpand();
-                  footer.state = FooterStatus.EXPANDED;
+                  footer.state = FooterState.EXPANDED;
               }
 
               function collapse() {
-                  footer.lastPosY = (tabs && hasBottomTabs) ? footer.height - tabsHeight : footer.height - $scope.defaultHeight;
+                  footer.lastPosY = (tabs && hasBottomTabs) ? footer.height - tabsHeight : footer.height - footer.defaultHeight;
                   $element.css({'-webkit-transform': 'translate3d(0, ' + footer.lastPosY  + 'px, 0)', 'transform': 'translate3d(0, ' + footer.lastPosY  + 'px, 0)'});
                   $scope.onCollapse();
-                  footer.state = FooterStatus.COLLAPSED
+                  footer.state = FooterState.COLLAPSED
               }
 
               function minimize() {
                   footer.lastPosY = footer.height;
                   $element.css({'-webkit-transform': 'translate3d(0, ' + footer.lastPosY  + 'px, 0)', 'transform': 'translate3d(0, ' + footer.lastPosY  + 'px, 0)'});
                   $scope.onMinimize();
-                  footer.state = FooterStatus.MINIMIZED;
+                  footer.state = FooterState.MINIMIZED;
               }
 
 
@@ -94,23 +92,21 @@ angular.module('ionic-pullup', [])
                   e.gesture.srcEvent.preventDefault();
                   e.gesture.preventDefault();
 
-                  if (footer.state == FooterStatus.COLLAPSED) {
-                      if ($scope.minimize) {
+                  if (footer.state == FooterState.COLLAPSED) {
+                      if (footer.defaultBehavior == FooterBehavior.HIDE) {
                           minimize();
                       } else {
                           expand();
                       }
                   } else {
-                      if (footer.state == FooterStatus.MINIMIZED) {
-                          if ($scope.minimize)
+                      if (footer.state == FooterState.MINIMIZED) {
+                          if (footer.defaultBehavior == FooterBehavior.HIDE)
                               collapse();
                           else
                               expand();
                       } else {
-                          if ($scope.minimize)
-                              minimize();
-                          else
-                              collapse();
+                          // footer is expanded
+                          footer.initialState == FooterState.MINIMIZED ? minimize() : collapse();
                       }
                   }
 
@@ -138,7 +134,6 @@ angular.module('ionic-pullup', [])
               };
 
               $window.addEventListener('orientationchange', function() {
-                    footer.state != FooterStatus.COLLAPSED && collapse();
                     $timeout(function() {
                         computeHeights();
                     }, 500);

@@ -25,16 +25,15 @@ angular.module('ionic-pullup', [])
                 headerHeight = header ? header.offsetHeight : 0,
                 handleHeight = 0,
                 footer = {
-                  height: 0,
-                  posY: 0,
-                  lastPosY: 0,
-                  state: FooterState.COLLAPSED
+                    height: 0,
+                    posY: 0,
+                    lastPosY: 0,
+                    state: FooterState.COLLAPSED,
+                    defaultHeight : $element[0].offsetHeight,
+                    maxHeight: parseInt($attrs.maxHeight, 10) || 0,
+                    initialState: $attrs.initialState ? $attrs.initialState.toUpperCase() : FooterState.COLLAPSED,
+                    defaultBehavior: $attrs.defaultBehavior ? $attrs.defaultBehavior.toUpperCase() : FooterBehavior.EXPAND
                 };
-
-              $scope.maxHeight = parseInt($attrs.maxHeight, 10) || 0;
-              $scope.defaultHeight = $element[0].offsetHeight;
-              $scope.initialState = $attrs.initialState ? $attrs.initialState.toUpperCase() : FooterState.COLLAPSED;
-              $scope.defaultBehavior = $attrs.defaultBehavior ? $attrs.defaultBehavior.toUpperCase() : FooterBehavior.EXPAND;
 
               function init() {
                   $element.css({'-webkit-backface-visibility': 'hidden', 'backface-visibility': 'hidden', 'transition': '300ms ease-in-out', 'padding': 0});
@@ -44,10 +43,10 @@ angular.module('ionic-pullup', [])
               }
 
               function computeHeights() {
-                  footer.height = $scope.maxHeight > 0 ? $scope.maxHeight : $window.innerHeight - headerHeight - handleHeight - tabsHeight;
+                  footer.height = footer.maxHeight > 0 ? footer.maxHeight : $window.innerHeight - headerHeight - handleHeight - tabsHeight;
                   $element.css({'height': footer.height + 'px'});
 
-                  if ($scope.initialState == FooterState.MINIMIZED) {
+                  if (footer.initialState == FooterState.MINIMIZED) {
                       minimize();
                   }  else {
                       collapse();
@@ -62,7 +61,7 @@ angular.module('ionic-pullup', [])
               }
 
               function collapse() {
-                  footer.lastPosY = (tabs && hasBottomTabs) ? footer.height - tabsHeight : footer.height - $scope.defaultHeight;
+                  footer.lastPosY = (tabs && hasBottomTabs) ? footer.height - tabsHeight : footer.height - footer.defaultHeight;
                   $element.css({'-webkit-transform': 'translate3d(0, ' + footer.lastPosY  + 'px, 0)', 'transform': 'translate3d(0, ' + footer.lastPosY  + 'px, 0)'});
                   $scope.onCollapse();
                   footer.state = FooterState.COLLAPSED
@@ -94,20 +93,20 @@ angular.module('ionic-pullup', [])
                   e.gesture.preventDefault();
 
                   if (footer.state == FooterState.COLLAPSED) {
-                      if ($scope.defaultBehavior == FooterBehavior.HIDE) {
+                      if (footer.defaultBehavior == FooterBehavior.HIDE) {
                           minimize();
                       } else {
                           expand();
                       }
                   } else {
                       if (footer.state == FooterState.MINIMIZED) {
-                          if ($scope.defaultBehavior == FooterBehavior.HIDE)
+                          if (footer.defaultBehavior == FooterBehavior.HIDE)
                               collapse();
                           else
                               expand();
                       } else {
                           // footer is expanded
-                          $scope.initialState == FooterState.MINIMIZED ? minimize() : collapse();
+                          footer.initialState == FooterState.MINIMIZED ? minimize() : collapse();
                       }
                   }
 
@@ -135,7 +134,6 @@ angular.module('ionic-pullup', [])
               };
 
               $window.addEventListener('orientationchange', function() {
-                    //footer.state != FooterState.DEFAULT && collapse();
                     $timeout(function() {
                         computeHeights();
                     }, 500);
