@@ -65,11 +65,7 @@ angular.module('ionic-pullup', [])
               }
 
               function recomputeAllHeights() {
-                  tabs = document.querySelector('.tabs');
-                  hasBottomTabs = document.querySelector('.tabs-bottom');
-                  header = document.querySelector('.bar-header');
-                  tabsHeight = tabs ? tabs.offsetHeight : 0;
-                  headerHeight = header ? header.offsetHeight : 0;
+                  computeDefaultHeights();
                   footer.height = footer.maxHeight > 0 ? footer.maxHeight : $window.innerHeight - headerHeight - handleHeight - tabsHeight;
                 }
 
