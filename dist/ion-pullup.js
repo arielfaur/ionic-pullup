@@ -60,7 +60,9 @@ angular.module('ionic-pullup', [])
               }
 
               function updateUI() {
-                 computeHeights();
+                  $timeout(function() {
+                      computeHeights();
+                  }, 300);
                   $element.css({'transition': 'none', 'padding': 0});
               }
 
