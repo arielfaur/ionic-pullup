@@ -1,7 +1,7 @@
 {
-  "name": "ionic-pullup",
+  "name": "ionic-pullup-auxo",
   "private": false,
-  "version": "1.0.3",
+  "version": "1.1.0",
   "description": "Ionic pull up footer",
   "repository": "https://github.com/arielfaur",
   "license": "MIT",
