@@ -14,7 +14,8 @@ angular.module('ionic-pullup', [])
           scope: {
               onExpand: '&',
               onCollapse: '&',
-              onMinimize: '&'
+              onMinimize: '&',
+              allowMidRange: '='
           },
           controller: ['$scope', '$element', '$attrs', 'ionPullUpFooterState', 'ionPullUpFooterBehavior', function($scope, $element, $attrs, FooterState, FooterBehavior) {
               var
@@ -148,6 +149,14 @@ angular.module('ionic-pullup', [])
                       case 'dragend':
                           $element.css({'transition': '300ms ease-in-out'});
                           footer.lastPosY = footer.posY;
+                          if(!$scope.allowMidRange){
+                            if(footer.lastPosY > footer.posY;){
+                              collapse();
+                            }
+                            else if(footer.lastPosY < footer.posY;){
+                              expand();
+                            }
+                          }
                           break;
                   }
               };
