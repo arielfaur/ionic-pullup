@@ -24,7 +24,6 @@ angular.module('ionic-pullup', [])
                     height: 0,
                     posY: 0,
                     lastPosY: 0,
-                    //state: FooterState.COLLAPSED,
                     defaultHeight : $element[0].offsetHeight,
                     maxHeight: parseInt($attrs.maxHeight, 10) || 0,
                     initialState: $attrs.initialState ? $attrs.initialState.toUpperCase() : FooterState.COLLAPSED,
