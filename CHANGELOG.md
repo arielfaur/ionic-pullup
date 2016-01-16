@@ -1,3 +1,6 @@
+# v1.0.4
+Added ```state``` parameter to dynamically set the footer state. ```state``` accepts an expression with the expected footer state. 
+
 # v1.0.3
 Fixes issue #1 where component height was wrong after changing device orientation
 
