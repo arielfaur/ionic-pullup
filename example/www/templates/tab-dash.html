@@ -6,6 +6,7 @@
         <div>
           There is a fire in <b>sector 3</b>
         </div>
+        <button class="button button-positive button-clear icon ion-arrow-up-b" ng-click="expand()"> Expand footer</button>
       </div>
     </div>
     <div class="list card">
@@ -24,7 +25,7 @@
       </div>
     </div>
     </ion-content>
-    <ion-pull-up-footer class="bar-energized" on-expand="footerExpand()" on-collapse="footerCollapse()">
+    <ion-pull-up-footer class="bar-energized" on-expand="onFooterExpand()" on-collapse="onFooterCollapse()" state="footerState">
         <ion-pull-up-handle toggle="ion-chevron-up ion-chevron-down" style="border-radius: 25px 25px 0 0">
             <i class="icon ion-chevron-up"></i>
         </ion-pull-up-handle>

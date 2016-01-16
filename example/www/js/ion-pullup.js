@@ -12,6 +12,7 @@ angular.module('ionic-pullup', [])
       return {
           restrict: 'AE',
           scope: {
+              state: '=',
               onExpand: '&',
               onCollapse: '&',
               onMinimize: '&'
@@ -23,7 +24,7 @@ angular.module('ionic-pullup', [])
                     height: 0,
                     posY: 0,
                     lastPosY: 0,
-                    state: FooterState.COLLAPSED,
+                    //state: FooterState.COLLAPSED,
                     defaultHeight : $element[0].offsetHeight,
                     maxHeight: parseInt($attrs.maxHeight, 10) || 0,
                     initialState: $attrs.initialState ? $attrs.initialState.toUpperCase() : FooterState.COLLAPSED,
@@ -52,6 +53,7 @@ angular.module('ionic-pullup', [])
                   $element.css({'height': footer.height + 'px'});
 
                   if (footer.initialState == FooterState.MINIMIZED) {
+		
                       minimize();
                   }  else {
                       collapse();
@@ -62,6 +64,7 @@ angular.module('ionic-pullup', [])
                   $timeout(function() {
                       computeHeights();
                   }, 300);
+                  $element.css({'transition': 'none', 'padding': 0});
               }
 
               function recomputeAllHeights() {
@@ -75,22 +78,23 @@ angular.module('ionic-pullup', [])
                   footer.lastPosY = 0;
                   // adjust CSS values with new heights in case they changed
                   $element.css({'height':footer.height + 'px',  '-webkit-transform': 'translate3d(0, 0, 0)', 'transform': 'translate3d(0, 0, 0)'});
+                  $element.css({'transition': '300ms ease-in-out', 'padding': 0});
                   $scope.onExpand();
-                  footer.state = FooterState.EXPANDED;
+                  $scope.state = FooterState.EXPANDED;
               }
 
               function collapse() {
                   footer.lastPosY = (tabs && hasBottomTabs) ? footer.height - tabsHeight : footer.height - footer.defaultHeight;
                   $element.css({'-webkit-transform': 'translate3d(0, ' + footer.lastPosY  + 'px, 0)', 'transform': 'translate3d(0, ' + footer.lastPosY  + 'px, 0)'});
                   $scope.onCollapse();
-                  footer.state = FooterState.COLLAPSED
+                  $scope.state = FooterState.COLLAPSED;
               }
 
               function minimize() {
                   footer.lastPosY = footer.height;
                   $element.css({'-webkit-transform': 'translate3d(0, ' + footer.lastPosY  + 'px, 0)', 'transform': 'translate3d(0, ' + footer.lastPosY  + 'px, 0)'});
                   $scope.onMinimize();
-                  footer.state = FooterState.MINIMIZED;
+                  $scope.state = FooterState.MINIMIZED;
               }
 
 
@@ -111,25 +115,25 @@ angular.module('ionic-pullup', [])
                   e.gesture.srcEvent.preventDefault();
                   e.gesture.preventDefault();
 
-                  if (footer.state == FooterState.COLLAPSED) {
-                      if (footer.defaultBehavior == FooterBehavior.HIDE) {
-                          minimize();
-                      } else {
-                          expand();
-                      }
-                  } else {
-                      if (footer.state == FooterState.MINIMIZED) {
-                          if (footer.defaultBehavior == FooterBehavior.HIDE)
-                              collapse();
-                          else
-                              expand();
-                      } else {
-                          // footer is expanded
-                          footer.initialState == FooterState.MINIMIZED ? minimize() : collapse();
-                      }
-                  }
-
-                  $rootScope.$broadcast('ionPullUp:tap', footer.state);
+                  $timeout(function() {
+                    if ($scope.state == FooterState.COLLAPSED) {
+                        if (footer.defaultBehavior == FooterBehavior.HIDE) {
+                            $scope.state = FooterState.MINIMIZED;
+                        } else {
+                            $scope.state = FooterState.EXPANDED;
+                        }
+                    } else {
+                        if ($scope.state == FooterState.MINIMIZED) {
+                            if (footer.defaultBehavior == FooterBehavior.HIDE)
+                              $scope.state = FooterState.COLLAPSED;
+                            else
+                              $scope.state = FooterState.EXPANDED;
+                        } else {
+                            // footer is expanded
+                            $scope.state = footer.initialState == FooterState.MINIMIZED ? FooterState.MINIMIZED : FooterState.COLLAPSED; 
+                        }
+                    }
+                });
               };
 
               this.onDrag = function(e) {
@@ -151,6 +155,24 @@ angular.module('ionic-pullup', [])
                           break;
                   }
               };
+
+              var deregisterWatch = $scope.$watch('state', function(newState, oldState) {
+                  if (newState == oldState) return;
+                  switch (newState) {
+                    case FooterState.COLLAPSED: 
+                      collapse();
+                      break;
+                    case FooterState.EXPANDED:
+                      expand();
+                      break;
+                    case FooterState.MINIMIZED:
+                      minimize();
+                      break;    
+                  }
+                  $rootScope.$broadcast('ionPullUp:tap', $scope.state);
+              });
+
+              $scope.$on('$destroy', deregisterWatch);
 
               init();
 
@@ -235,9 +257,8 @@ angular.module('ionic-pullup', [])
               });
 
               function updateUI() {
-                  $timeout(function() {
-                      element.css('left', (($window.innerWidth - width) / 2) + 'px');
-                  }, 300);
+		      $timeout ( function() {
+                      	element.css('left', (($window.innerWidth - width) / 2) + 'px');},300);
               }
 
               $ionicPlatform.ready(function() {
