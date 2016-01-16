@@ -1,11 +1,15 @@
 angular.module('starter.controllers', [])
 
-.controller('DashCtrl', function($scope) {
-      $scope.footerExpand = function() {
+.controller('DashCtrl', function($scope, $timeout, ionPullUpFooterState) {
+      $scope.onFooterExpand = function() {
         console.log('Footer expanded');
       };
-      $scope.footerCollapse = function() {
+      $scope.onFooterCollapse = function() {
           console.log('Footer collapsed');
+      };
+
+      $scope.expand = function() {
+        $scope.footerState = ionPullUpFooterState.EXPANDED;  
       };
   })
 
