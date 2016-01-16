@@ -231,14 +231,15 @@ angular.module('ionic-pullup', [])
           require: '^ionPullUpFooter',
           link: function (scope, element, attrs, controller) {
               var height = parseInt(attrs.height,10) || 25, width = parseInt(attrs.width, 10) || 100,
-                background =  controller.getBackground(),
+                //background =  controller.getBackground(),
                 toggleClasses = attrs.toggle;
 
               controller.setHandleHeight(height);
 
               element.css({
                   display: 'block',
-                  background: background,
+                  //background: background,
+                  'background-color' : 'inherit',
                   position: 'absolute',
                   top: 1-height + 'px',
                   left: (($window.innerWidth - width) / 2) + 'px',
