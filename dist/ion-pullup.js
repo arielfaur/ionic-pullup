@@ -30,6 +30,12 @@ angular.module('ionic-pullup', [])
                     defaultBehavior: $attrs.defaultBehavior ? $attrs.defaultBehavior.toUpperCase() : FooterBehavior.EXPAND
                 };
 
+                //test if user informed maxHeight as a percentage
+                if ( $attrs.maxHeight.match(/\d+\%$/) ) {   // digits followed by percent sign
+                    footer.percentHeight = true;
+                }
+
+
               function init() {
                   computeDefaultHeights();
 
@@ -47,8 +53,19 @@ angular.module('ionic-pullup', [])
                   headerHeight = header ? header.offsetHeight : 0;
               }
 
+              function computeFooterHeight() {
+                  if (footer.percentHeight) {
+                      footer.height = Math.round(
+                          ($window.innerHeight - headerHeight - handleHeight - tabsHeight) * footer.maxHeight / 100
+                      );
+                  } else {
+                      footer.height = footer.maxHeight > 0 ? footer.maxHeight : $window.innerHeight - headerHeight - handleHeight - tabsHeight;
+                  }
+              }
+
               function computeHeights() {
-                  footer.height = footer.maxHeight > 0 ? footer.maxHeight : $window.innerHeight - headerHeight - handleHeight - tabsHeight;
+                  computeFooterHeight();
+
                   $element.css({'height': footer.height + 'px'});
 
                   if (footer.initialState == FooterState.MINIMIZED) {
@@ -68,8 +85,8 @@ angular.module('ionic-pullup', [])
 
               function recomputeAllHeights() {
                   computeDefaultHeights();
-                  footer.height = footer.maxHeight > 0 ? footer.maxHeight : $window.innerHeight - headerHeight - handleHeight - tabsHeight;
-                }
+                  computeFooterHeight();
+              }
 
               function expand() {
                   // recompute height right here to make sure we have the latest
