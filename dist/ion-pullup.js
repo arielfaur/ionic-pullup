@@ -31,12 +31,14 @@ angular.module('ionic-pullup', [])
                 };
 
               function init() {
-                  computeDefaultHeights();
+              	  $timeout(function(){
+                    computeDefaultHeights();
 
-                  $element.css({'transition': '300ms ease-in-out', 'padding': 0});
-                  if (tabs && hasBottomTabs) {
+                    $element.css({'transition': '300ms ease-in-out', 'padding': 0});
+                    if (tabs && hasBottomTabs) {
                       $element.css('bottom', tabs.offsetHeight + 'px');
-                  }
+                    }
+              	  })
               }
 
               function computeDefaultHeights() {
