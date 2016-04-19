@@ -241,7 +241,7 @@ angular.module('ionic-pullup', [])
               element.css({
                   display: 'block',
                   //background: background,
-                  'background-color' : 'inherit',
+                  background : 'inherit',
                   position: 'absolute',
                   top: 1-height + 'px',
                   left: (($window.innerWidth - width) / 2) + 'px',
