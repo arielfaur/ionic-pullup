@@ -15,7 +15,8 @@ angular.module('ionic-pullup', [])
               state: '=',
               onExpand: '&',
               onCollapse: '&',
-              onMinimize: '&'
+              onMinimize: '&',
+              allowMidRange: '='
           },
           controller: ['$scope', '$element', '$attrs', 'ionPullUpFooterState', 'ionPullUpFooterBehavior', function($scope, $element, $attrs, FooterState, FooterBehavior) {
               var
@@ -151,8 +152,23 @@ angular.module('ionic-pullup', [])
                           $element.css({'-webkit-transform': 'translate3d(0, ' + footer.posY + 'px, 0)', 'transform': 'translate3d(0, ' + footer.posY + 'px, 0)'});
                           break;
                       case 'dragend':
-                          $element.css({'transition': '300ms ease-in-out'});
-                          footer.lastPosY = footer.posY;
+                          console.log('$scope.allowMidRange',$scope.allowMidRange);
+                          if (!$scope.allowMidRange) {
+                              if (footer.lastPosY > footer.posY) {
+                                  expand();
+                                  $element.css({'transition': '300ms ease-in-out'});
+                                  $rootScope.$broadcast('ionPullUp:tap', footer.state);
+                              }
+                              else if (footer.lastPosY < footer.posY) {
+                                  collapse();
+                                  $element.css({'transition': '300ms ease-in-out'});
+                                  $rootScope.$broadcast('ionPullUp:tap', footer.state);
+                              }
+                          }
+                          else{
+                              $element.css({'transition': '300ms ease-in-out'});
+                              footer.lastPosY = footer.posY;
+                          }
                           break;
                   }
               };

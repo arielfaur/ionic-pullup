@@ -1,272 +1,331 @@
 angular.module('ionic-pullup', [])
-  .constant('ionPullUpFooterState', {
-      COLLAPSED: 'COLLAPSED',
-      MINIMIZED: 'MINIMIZED',
-      EXPANDED: 'EXPANDED'
-  })
-  .constant('ionPullUpFooterBehavior', {
-      HIDE: 'HIDE',
-      EXPAND: 'EXPAND'
-  })
-  .directive('ionPullUpFooter', ['$timeout', '$rootScope', '$window', '$ionicPlatform', function($timeout, $rootScope, $window, $ionicPlatform) {
-      return {
-          restrict: 'AE',
-          scope: {
-              state: '=',
-              onExpand: '&',
-              onCollapse: '&',
-              onMinimize: '&'
-          },
-          controller: ['$scope', '$element', '$attrs', 'ionPullUpFooterState', 'ionPullUpFooterBehavior', function($scope, $element, $attrs, FooterState, FooterBehavior) {
-              var
-                tabs, hasBottomTabs, header, tabsHeight, headerHeight, handleHeight = 0,
-                footer = {
-                    height: 0,
-                    posY: 0,
-                    lastPosY: 0,
-                    defaultHeight : $element[0].offsetHeight,
-                    maxHeight: parseInt($attrs.maxHeight, 10) || 0,
-                    initialState: $attrs.initialState ? $attrs.initialState.toUpperCase() : FooterState.COLLAPSED,
-                    defaultBehavior: $attrs.defaultBehavior ? $attrs.defaultBehavior.toUpperCase() : FooterBehavior.EXPAND
-                };
+    .constant('ionPullUpFooterState', {
+        COLLAPSED: 'COLLAPSED',
+        MINIMIZED: 'MINIMIZED',
+        EXPANDED: 'EXPANDED'
+    })
+    .constant('ionPullUpFooterBehavior', {
+        HIDE: 'HIDE',
+        EXPAND: 'EXPAND'
+    })
+    .directive('ionPullUpFooter', ['$timeout', '$rootScope', '$window', '$ionicPlatform', function ($timeout, $rootScope, $window, $ionicPlatform) {
+        return {
+            restrict: 'AE',
+            scope: {
+                state: '=?',
+                onExpand: '&',
+                onCollapse: '&',
+                onMinimize: '&',
+                allowMidRange: '='
+            },
+            controller: ['$scope', '$element', '$attrs', 'ionPullUpFooterState', 'ionPullUpFooterBehavior', function ($scope, $element, $attrs, FooterState, FooterBehavior) {
+                var
+                    tabs, hasBottomTabs, header, tabsHeight, headerHeight, handleHeight = 0,
+                    footer = {
+                        height: 0,
+                        posY: 0,
+                        lastPosY: 0,
+                        defaultHeight: $element[0].offsetHeight,
+                        maxHeight: parseInt($attrs.maxHeight, 10) || 0,
+                        initialState: $attrs.initialState ? $attrs.initialState.toUpperCase() : FooterState.COLLAPSED,
+                        defaultBehavior: $attrs.defaultBehavior ? $attrs.defaultBehavior.toUpperCase() : FooterBehavior.EXPAND
+                    };
 
-              function init() {
-              	  $timeout(function(){
-                    computeDefaultHeights();
+                this.$onInit = function () {
+                    $timeout(function () {
+                        computeDefaultHeights();
+                        $element.css({ 'transition': '300ms ease-in-out', 'padding': 0 });
+                        computeHeights();
+                        if (tabs && hasBottomTabs) {
+                            $element.css('bottom', tabs.offsetHeight + 'px');
+                        }
+                    });
 
-                    $element.css({'transition': '300ms ease-in-out', 'padding': 0});
-                    if (tabs && hasBottomTabs) {
-                      $element.css('bottom', tabs.offsetHeight + 'px');
-                    }
-              	  })
-              }
-
-              function computeDefaultHeights() {
-                  tabs = document.querySelector('.tabs');
-                  hasBottomTabs = document.querySelector('.tabs-bottom');
-                  header = document.querySelector('.bar-header');
-                  tabsHeight = tabs ? tabs.offsetHeight : 0;
-                  headerHeight = header ? header.offsetHeight : 0;
-              }
-
-              function computeHeights() {
-                  footer.height = footer.maxHeight > 0 ? footer.maxHeight : $window.innerHeight - headerHeight - handleHeight - tabsHeight;
-                  $element.css({'height': footer.height + 'px'});
-
-                  if (footer.initialState == FooterState.MINIMIZED) {
-		
-                      minimize();
-                  }  else {
-                      collapse();
-                  }
-              }
-
-              function updateUI() {
-                  $timeout(function() {
-                      computeHeights();
-                  }, 300);
-                  $element.css({'transition': 'none', 'padding': 0});
-              }
-
-              function recomputeAllHeights() {
-                  computeDefaultHeights();
-                  footer.height = footer.maxHeight > 0 ? footer.maxHeight : $window.innerHeight - headerHeight - handleHeight - tabsHeight;
                 }
 
-              function expand() {
-                  // recompute height right here to make sure we have the latest
-                  recomputeAllHeights();
-                  footer.lastPosY = 0;
-                  // adjust CSS values with new heights in case they changed
-                  $element.css({'height':footer.height + 'px',  '-webkit-transform': 'translate3d(0, 0, 0)', 'transform': 'translate3d(0, 0, 0)'});
-                  $element.css({'transition': '300ms ease-in-out', 'padding': 0});
-                  $scope.onExpand();
-                  $scope.state = FooterState.EXPANDED;
-              }
+                function computeDefaultHeights() {
+                    tabs = document.querySelector('.tabs');
+                    hasBottomTabs = document.querySelector('.tabs-bottom');
+                    header = document.querySelector('.bar-header');
+                    tabsHeight = tabs ? tabs.offsetHeight : 0;
+                    headerHeight = header ? header.offsetHeight : 0;
+                }
 
-              function collapse() {
-                  footer.lastPosY = (tabs && hasBottomTabs) ? footer.height - tabsHeight : footer.height - footer.defaultHeight;
-                  $element.css({'-webkit-transform': 'translate3d(0, ' + footer.lastPosY  + 'px, 0)', 'transform': 'translate3d(0, ' + footer.lastPosY  + 'px, 0)'});
-                  $scope.onCollapse();
-                  $scope.state = FooterState.COLLAPSED;
-              }
+                function computeHeights() {
+                    footer.height = footer.maxHeight > 0 ? footer.maxHeight : $window.innerHeight - headerHeight - handleHeight - tabsHeight;
+                    $element.css({ 'height': footer.height + 'px' });
 
-              function minimize() {
-                  footer.lastPosY = footer.height;
-                  $element.css({'-webkit-transform': 'translate3d(0, ' + footer.lastPosY  + 'px, 0)', 'transform': 'translate3d(0, ' + footer.lastPosY  + 'px, 0)'});
-                  $scope.onMinimize();
-                  $scope.state = FooterState.MINIMIZED;
-              }
+                    if (footer.initialState == FooterState.MINIMIZED) {
+
+                        minimize();
+                    } else {
+                        collapse();
+                    }
+                }
+
+                function updateUI() {
+                    $timeout(function () {
+                        computeHeights();
+                    }, 300);
+                    $element.css({ 'transition': 'none', 'padding': 0 });
+                }
+
+                function recomputeAllHeights() {
+                    computeDefaultHeights();
+                    footer.height = footer.maxHeight > 0 ? footer.maxHeight : $window.innerHeight - headerHeight - handleHeight - tabsHeight;
+                }
+
+                function expand() {
+                    // recompute height right here to make sure we have the latest
+                    recomputeAllHeights();
+                    footer.lastPosY = 0;
+                    // adjust CSS values with new heights in case they changed
+                    $element.css({ 'height': footer.height + 'px', '-webkit-transform': 'translate3d(0, 0, 0)', 'transform': 'translate3d(0, 0, 0)' });
+                    $element.css({ 'transition': '300ms ease-in-out', 'padding': 0 });
+                    $scope.onExpand();
+                    $scope.state = FooterState.EXPANDED;
+                }
+
+                function collapse() {
+                    footer.lastPosY = (tabs && hasBottomTabs) ? footer.height - tabsHeight : footer.height - footer.defaultHeight;
+                    $element.css({ '-webkit-transform': 'translate3d(0, ' + footer.lastPosY + 'px, 0)', 'transform': 'translate3d(0, ' + footer.lastPosY + 'px, 0)' });
+                    $scope.onCollapse();
+                    $scope.state = FooterState.COLLAPSED;
+                }
+
+                function minimize() {
+                    footer.lastPosY = footer.height;
+                    $element.css({ '-webkit-transform': 'translate3d(0, ' + footer.lastPosY + 'px, 0)', 'transform': 'translate3d(0, ' + footer.lastPosY + 'px, 0)' });
+                    $scope.onMinimize();
+                    $scope.state = FooterState.MINIMIZED;
+                }
 
 
-              this.setHandleHeight = function(height) {
-                  handleHeight = height;
-                  computeHeights();
-              };
+                this.setHandleHeight = function (height) {
+                    handleHeight = height;
+                    //computeHeights();
+                };
 
-              this.getHeight = function() {
-                  return $element[0].offsetHeight;
-              };
+                this.getHeight = function () {
+                    return $element[0].offsetHeight;
+                };
 
-              this.getBackground = function() {
-                return $window.getComputedStyle($element[0]).background;
-              };
+                this.getBackground = function () {
+                    return $window.getComputedStyle($element[0]).background;
+                };
 
-              this.onTap = function(e) {
-                  e.gesture.srcEvent.preventDefault();
-                  e.gesture.preventDefault();
+                this.getInitialState = function () {
+                    return footer.initialState;
+                };
 
-                  $timeout(function() {
-                    if ($scope.state == FooterState.COLLAPSED) {
-                        if (footer.defaultBehavior == FooterBehavior.HIDE) {
-                            $scope.state = FooterState.MINIMIZED;
+                this.getDefaultBehavior = function () {
+                    return footer.defaultBehavior;
+                };
+
+                this.onTap = function (e) {
+                    e.gesture.srcEvent.preventDefault();
+                    e.gesture.preventDefault();
+
+                    $timeout(function () {
+                        if ($scope.state == FooterState.COLLAPSED) {
+                            if (footer.defaultBehavior == FooterBehavior.HIDE) {
+                                $scope.state = FooterState.MINIMIZED;
+                            } else {
+                                $scope.state = FooterState.EXPANDED;
+                            }
                         } else {
-                            $scope.state = FooterState.EXPANDED;
+                            if ($scope.state == FooterState.MINIMIZED) {
+                                if (footer.defaultBehavior == FooterBehavior.HIDE)
+                                    $scope.state = FooterState.COLLAPSED;
+                                else
+                                    $scope.state = FooterState.EXPANDED;
+                            } else {
+                                // footer is expanded
+                                $scope.state = footer.initialState == FooterState.MINIMIZED ? FooterState.MINIMIZED : FooterState.COLLAPSED;
+                            }
+                        }
+                    });
+                };
+
+                this.onDrag = function (e) {
+                    e.gesture.srcEvent.preventDefault();
+                    e.gesture.preventDefault();
+
+                    switch (e.type) {
+                        case 'dragstart':
+                            $element.css('transition', 'none');
+                            break;
+                        case 'drag':
+                            footer.posY = Math.round(e.gesture.deltaY) + footer.lastPosY;
+                            if (footer.posY < 0 || footer.posY > footer.height) return;
+                            $element.css({ '-webkit-transform': 'translate3d(0, ' + footer.posY + 'px, 0)', 'transform': 'translate3d(0, ' + footer.posY + 'px, 0)' });
+                            break;
+                        case 'dragend':
+                            $element.css({ 'transition': '300ms ease-in-out' });
+                            if (!$scope.allowMidRange) {
+                                $timeout(function () {
+                                    if (footer.lastPosY > footer.posY) {
+                                        $scope.state = FooterState.EXPANDED;
+                                    }
+                                    else if (footer.lastPosY < footer.posY) {
+                                        $scope.state = (footer.initialState == FooterState.MINIMIZED) ? FooterState.MINIMIZED : FooterState.COLLAPSED;
+                                    }
+                                });
+                            }
+                            else {
+                                footer.lastPosY = footer.posY;
+                            }
+                            break;
+                    }
+                };
+
+                var deregisterWatch = $scope.$watch('state', function (newState, oldState) {
+                    if (oldState === undefined || newState == oldState) return;
+                    switch (newState) {
+                        case FooterState.COLLAPSED:
+                            collapse();
+                            break;
+                        case FooterState.EXPANDED:
+                            expand();
+                            break;
+                        case FooterState.MINIMIZED:
+                            minimize();
+                            break;
+                    }
+                    $rootScope.$broadcast('ionPullUp:tap', $scope.state, footer.defaultBehavior);
+                });
+
+                $scope.$on('$destroy', deregisterWatch);
+
+                $ionicPlatform.ready(function () {
+                    $window.addEventListener('orientationchange', updateUI);
+                    $ionicPlatform.on("resume", updateUI);
+                });
+
+            }],
+            compile: function (element, attrs) {
+                attrs.defaultHeight && element.css('height', parseInt(attrs.defaultHeight, 10) + 'px');
+                element.addClass('bar bar-footer');
+            }
+        }
+    }])
+    .directive('ionPullUpContent', [function () {
+        return {
+            restrict: 'AE',
+            require: '^ionPullUpFooter',
+            link: function (scope, element, attrs, controller) {
+                var
+                    footerHeight = controller.getHeight();
+                element.css({ 'display': 'block', 'margin-top': footerHeight + 'px', width: '100%' });
+                // add scrolling if needed
+                if (attrs.scroll && attrs.scroll.toUpperCase() == 'TRUE') {
+                    element.css({ 'overflow-y': 'scroll', 'overflow-x': 'hidden' });
+                }
+            }
+        }
+    }])
+    .directive('ionPullUpBar', [function () {
+        return {
+            restrict: 'AE',
+            require: '^ionPullUpFooter',
+            link: function (scope, element, attrs, controller) {
+                var
+                    footerHeight = controller.getHeight();
+                element.css({ 'display': 'flex', 'height': footerHeight + 'px', position: 'absolute', right: '0', left: '0' });
+
+            }
+        }
+    }])
+    .directive('ionPullUpTrigger', ['$ionicGesture', function ($ionicGesture) {
+        return {
+            restrict: 'AE',
+            require: '^ionPullUpFooter',
+            link: function (scope, element, attrs, controller) {
+                // add gesture
+                $ionicGesture.on('tap', controller.onTap, element);
+                $ionicGesture.on('drag dragstart dragend', controller.onDrag, element);
+            }
+        }
+    }])
+    .directive('ionPullUpHandle', ['ionPullUpFooterState', 'ionPullUpFooterBehavior', '$ionicGesture', '$ionicPlatform', '$timeout', '$window', function (FooterState, FooterBehavior, $ionicGesture, $ionicPlatform, $timeout, $window) {
+        return {
+            restrict: 'E',
+            require: {
+                FooterController: '^ionPullUpFooter'
+            },
+            bindToController: true,
+            controller: function ($scope, $element, $attrs) {
+                var height = parseInt($attrs.height, 10) || 25, width = parseInt($attrs.width, 10) || 100,
+                    iconExpand = $attrs.iconExpand,
+                    iconCollapse = $attrs.iconCollapse;
+
+                $element
+                    .css({
+                        display: 'block',
+                        'background-color': 'inherit',
+                        position: 'absolute',
+                        top: 1 - height + 'px',
+                        left: (($window.innerWidth - width) / 2) + 'px',
+                        height: height + 'px',
+                        width: width + 'px',
+                        'text-align': 'center'
+                    })
+                    .append('<i>');
+                
+                this.$onInit = function () {
+                    var controller = this.FooterController;
+
+                    // add gesture
+                    $ionicGesture.on('tap', controller.onTap, $element);
+                    $ionicGesture.on('drag dragstart dragend', controller.onDrag, $element);
+
+                    controller.setHandleHeight(height);
+
+                    var state = controller.getInitialState(),
+                        behavior = controller.getDefaultBehavior();
+                    
+                    toggleIcons(state, behavior);
+                }
+
+                $scope.$on('ionPullUp:tap', function (e, state, behavior) {
+                    toggleIcons(state, behavior);
+                });
+                
+                function toggleIcons(state, behavior) {
+                    if (!iconExpand || !iconCollapse) return;
+                    
+                    //remove any icons
+                    $element.find('i').removeClass([iconExpand, iconCollapse].join(' '));
+                    
+                    if (state == FooterState.COLLAPSED) {
+                        if (behavior == FooterBehavior.HIDE) {
+                            $element.find('i').addClass(iconCollapse);
+                        } else {
+                            $element.find('i').addClass(iconExpand);
                         }
                     } else {
-                        if ($scope.state == FooterState.MINIMIZED) {
-                            if (footer.defaultBehavior == FooterBehavior.HIDE)
-                              $scope.state = FooterState.COLLAPSED;
+                        if (state == FooterState.MINIMIZED) {
+                            if (behavior == FooterBehavior.HIDE)
+                                $element.find('i').addClass(iconExpand);
                             else
-                              $scope.state = FooterState.EXPANDED;
+                                $element.find('i').addClass(iconExpand);
                         } else {
                             // footer is expanded
-                            $scope.state = footer.initialState == FooterState.MINIMIZED ? FooterState.MINIMIZED : FooterState.COLLAPSED; 
+                            $element.find('i').addClass(iconCollapse);
                         }
-                    }
+                    }    
+                }
+
+                function updateUI() {
+                    $timeout(function () {
+                        $element.css('left', (($window.innerWidth - width) / 2) + 'px');
+                    }, 300);
+                }
+
+                $ionicPlatform.ready(function () {
+                    $window.addEventListener('orientationchange', updateUI);
+                    $ionicPlatform.on("resume", updateUI);
                 });
-              };
-
-              this.onDrag = function(e) {
-                  e.gesture.srcEvent.preventDefault();
-                  e.gesture.preventDefault();
-
-                  switch (e.type) {
-                      case 'dragstart':
-                          $element.css('transition', 'none');
-                          break;
-                      case 'drag':
-                          footer.posY = Math.round(e.gesture.deltaY) + footer.lastPosY;
-                          if (footer.posY < 0 || footer.posY > footer.height) return;
-                          $element.css({'-webkit-transform': 'translate3d(0, ' + footer.posY + 'px, 0)', 'transform': 'translate3d(0, ' + footer.posY + 'px, 0)'});
-                          break;
-                      case 'dragend':
-                          $element.css({'transition': '300ms ease-in-out'});
-                          footer.lastPosY = footer.posY;
-                          break;
-                  }
-              };
-
-              var deregisterWatch = $scope.$watch('state', function(newState, oldState) {
-                  if (newState == oldState) return;
-                  switch (newState) {
-                    case FooterState.COLLAPSED: 
-                      collapse();
-                      break;
-                    case FooterState.EXPANDED:
-                      expand();
-                      break;
-                    case FooterState.MINIMIZED:
-                      minimize();
-                      break;    
-                  }
-                  $rootScope.$broadcast('ionPullUp:tap', $scope.state);
-              });
-
-              $scope.$on('$destroy', deregisterWatch);
-
-              init();
-
-              $ionicPlatform.ready(function() {
-                  $window.addEventListener('orientationchange', updateUI);
-                  $ionicPlatform.on("resume", updateUI);
-              });
-
-          }],
-          compile: function(element, attrs) {
-              attrs.defaultHeight && element.css('height', parseInt(attrs.defaultHeight, 10) + 'px');
-              element.addClass('bar bar-footer');
-          }
-      }
-  }])
-  .directive('ionPullUpContent', [function() {
-      return {
-          restrict: 'AE',
-          require: '^ionPullUpFooter',
-          link: function (scope, element, attrs, controller) {
-              var
-                footerHeight = controller.getHeight();
-              element.css({'display': 'block', 'margin-top': footerHeight + 'px', width: '100%'});
-              // add scrolling if needed
-              if (attrs.scroll && attrs.scroll.toUpperCase() == 'TRUE') {
-                  element.css({'overflow-y': 'scroll', 'overflow-x': 'hidden'});
-              }
-          }
-      }
-  }])
-  .directive('ionPullUpBar', [function() {
-      return {
-          restrict: 'AE',
-          require: '^ionPullUpFooter',
-          link: function (scope, element, attrs, controller) {
-              var
-                footerHeight = controller.getHeight();
-              element.css({'display': 'flex', 'height': footerHeight + 'px', position: 'absolute', right: '0', left: '0'});
-
-          }
-      }
-  }])
-  .directive('ionPullUpTrigger', ['$ionicGesture', function($ionicGesture) {
-      return {
-          restrict: 'AE',
-          require: '^ionPullUpFooter',
-          link: function (scope, element, attrs, controller) {
-              // add gesture
-              $ionicGesture.on('tap', controller.onTap, element);
-              $ionicGesture.on('drag dragstart dragend', controller.onDrag, element);
-          }
-      }
-  }])
-  .directive('ionPullUpHandle', ['$ionicGesture', '$ionicPlatform', '$timeout', '$window',  function($ionicGesture, $ionicPlatform, $timeout, $window) {
-      return {
-          restrict: 'AE',
-          require: '^ionPullUpFooter',
-          link: function (scope, element, attrs, controller) {
-              var height = parseInt(attrs.height,10) || 25, width = parseInt(attrs.width, 10) || 100,
-                //background =  controller.getBackground(),
-                toggleClasses = attrs.toggle;
-
-              controller.setHandleHeight(height);
-
-              element.css({
-                  display: 'block',
-                  //background: background,
-                  'background-color' : 'inherit',
-                  position: 'absolute',
-                  top: 1-height + 'px',
-                  left: (($window.innerWidth - width) / 2) + 'px',
-                  height: height + 'px',
-                  width: width + 'px',
-                  'text-align': 'center'
-                  });
-
-              // add gesture
-              $ionicGesture.on('tap', controller.onTap, element);
-              $ionicGesture.on('drag dragstart dragend', controller.onDrag, element);
-
-              scope.$on('ionPullUp:tap', function() {
-                  element.find('i').toggleClass(toggleClasses);
-              });
-
-              function updateUI() {
-		      $timeout ( function() {
-                      	element.css('left', (($window.innerWidth - width) / 2) + 'px');},300);
-              }
-
-              $ionicPlatform.ready(function() {
-                  $window.addEventListener('orientationchange', updateUI);
-                  $ionicPlatform.on("resume", updateUI);
-              });
-          }
-      }
-  }]);
+            }
+        }
+    }]);
