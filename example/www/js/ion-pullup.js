@@ -8,7 +8,7 @@ angular.module('ionic-pullup', [])
         HIDE: 'HIDE',
         EXPAND: 'EXPAND'
     })
-    .directive('ionPullUpFooter', ['$timeout', '$rootScope', '$window', '$ionicPlatform', function ($timeout, $rootScope, $window, $ionicPlatform) {
+    .directive('ionPullUpFooter', [function () {
         return {
             restrict: 'AE',
             scope: {
@@ -18,7 +18,7 @@ angular.module('ionic-pullup', [])
                 onMinimize: '&',
                 allowMidRange: '='
             },
-            controller: ['$scope', '$element', '$attrs', 'ionPullUpFooterState', 'ionPullUpFooterBehavior', function ($scope, $element, $attrs, FooterState, FooterBehavior) {
+            controller: ['$scope', '$element', '$attrs', '$timeout', '$rootScope', '$window', '$ionicPlatform', 'ionPullUpFooterState', 'ionPullUpFooterBehavior', function ($scope, $element, $attrs, $timeout, $rootScope, $window, $ionicPlatform, FooterState, FooterBehavior) {
                 var
                     tabs, hasBottomTabs, header, tabsHeight, headerHeight, handleHeight = 0,
                     footer = {
@@ -32,6 +32,9 @@ angular.module('ionic-pullup', [])
                     };
 
                 this.$onInit = function () {
+                    $attrs.defaultHeight && $element.css('height', parseInt($attrs.defaultHeight, 10) + 'px');
+                    $element.addClass('bar bar-footer');
+
                     $timeout(function () {
                         computeDefaultHeights();
                         $element.css({ 'transition': '300ms ease-in-out', 'padding': 0 });
@@ -202,40 +205,37 @@ angular.module('ionic-pullup', [])
                     $ionicPlatform.on("resume", updateUI);
                 });
 
-            }],
-            compile: function (element, attrs) {
-                attrs.defaultHeight && element.css('height', parseInt(attrs.defaultHeight, 10) + 'px');
-                element.addClass('bar bar-footer');
-            }
+            }]
         }
     }])
-    .directive('ionPullUpContent', [function () {
-        return {
-            restrict: 'AE',
-            require: '^ionPullUpFooter',
-            link: function (scope, element, attrs, controller) {
-                var
+    .component('ionPullUpContent', {
+        require: {
+            FooterController: '^ionPullUpFooter'
+        },
+        controller: ['$element', '$attrs', function ($element, $attrs) {
+            this.$onInit = function () {
+                var controller = this.FooterController,
                     footerHeight = controller.getHeight();
-                element.css({ 'display': 'block', 'margin-top': footerHeight + 'px', width: '100%' });
+                $element.css({ 'display': 'block', 'margin-top': footerHeight + 'px', width: '100%' });
                 // add scrolling if needed
-                if (attrs.scroll && attrs.scroll.toUpperCase() == 'TRUE') {
-                    element.css({ 'overflow-y': 'scroll', 'overflow-x': 'hidden' });
+                if ($attrs.scroll && $attrs.scroll.toUpperCase() == 'TRUE') {
+                    $element.css({ 'overflow-y': 'scroll', 'overflow-x': 'hidden' });
                 }
             }
-        }
-    }])
-    .directive('ionPullUpBar', [function () {
-        return {
-            restrict: 'AE',
-            require: '^ionPullUpFooter',
-            link: function (scope, element, attrs, controller) {
-                var
+        }]
+    })
+    .component('ionPullUpBar', {
+        require: {
+            FooterController: '^ionPullUpFooter'
+        },
+        controller: ['$element', function ($element) {
+            this.$onInit = function () {
+                var controller = this.FooterController,
                     footerHeight = controller.getHeight();
-                element.css({ 'display': 'flex', 'height': footerHeight + 'px', position: 'absolute', right: '0', left: '0' });
-
+                $element.css({ 'display': 'flex', 'height': footerHeight + 'px', position: 'absolute', right: '0', left: '0' });
             }
-        }
-    }])
+        }]
+    })
     .directive('ionPullUpTrigger', ['$ionicGesture', function ($ionicGesture) {
         return {
             restrict: 'AE',
@@ -247,85 +247,81 @@ angular.module('ionic-pullup', [])
             }
         }
     }])
-    .directive('ionPullUpHandle', ['ionPullUpFooterState', 'ionPullUpFooterBehavior', '$ionicGesture', '$ionicPlatform', '$timeout', '$window', function (FooterState, FooterBehavior, $ionicGesture, $ionicPlatform, $timeout, $window) {
-        return {
-            restrict: 'E',
-            require: {
-                FooterController: '^ionPullUpFooter'
-            },
-            bindToController: true,
-            controller: function ($scope, $element, $attrs) {
-                var height = parseInt($attrs.height, 10) || 25, width = parseInt($attrs.width, 10) || 100,
-                    iconExpand = $attrs.iconExpand,
-                    iconCollapse = $attrs.iconCollapse;
+    .component('ionPullUpHandle', {
+        require: {
+            FooterController: '^ionPullUpFooter'
+        },
+        controller: ['$scope', '$element', '$attrs', 'ionPullUpFooterState', 'ionPullUpFooterBehavior', '$ionicGesture', '$ionicPlatform', '$timeout', '$window', function ($scope, $element, $attrs, FooterState, FooterBehavior, $ionicGesture, $ionicPlatform, $timeout, $window) {
+            var height = parseInt($attrs.height, 10) || 25, width = parseInt($attrs.width, 10) || 100,
+                iconExpand = $attrs.iconExpand,
+                iconCollapse = $attrs.iconCollapse;
 
-                $element
-                    .css({
-                        display: 'block',
-                        'background-color': 'inherit',
-                        position: 'absolute',
-                        top: 1 - height + 'px',
-                        left: (($window.innerWidth - width) / 2) + 'px',
-                        height: height + 'px',
-                        width: width + 'px',
-                        'text-align': 'center'
-                    })
-                    .append('<i>');
-                
-                this.$onInit = function () {
-                    var controller = this.FooterController;
+            $element
+                .css({
+                    display: 'block',
+                    'background-color': 'inherit',
+                    position: 'absolute',
+                    top: 1 - height + 'px',
+                    left: (($window.innerWidth - width) / 2) + 'px',
+                    height: height + 'px',
+                    width: width + 'px',
+                    'text-align': 'center'
+                })
+                .append('<i>');
 
-                    // add gesture
-                    $ionicGesture.on('tap', controller.onTap, $element);
-                    $ionicGesture.on('drag dragstart dragend', controller.onDrag, $element);
+            this.$onInit = function () {
+                var controller = this.FooterController;
 
-                    controller.setHandleHeight(height);
+                // add gesture
+                $ionicGesture.on('tap', controller.onTap, $element);
+                $ionicGesture.on('drag dragstart dragend', controller.onDrag, $element);
 
-                    var state = controller.getInitialState(),
-                        behavior = controller.getDefaultBehavior();
-                    
-                    toggleIcons(state, behavior);
-                }
+                controller.setHandleHeight(height);
 
-                $scope.$on('ionPullUp:tap', function (e, state, behavior) {
-                    toggleIcons(state, behavior);
-                });
-                
-                function toggleIcons(state, behavior) {
-                    if (!iconExpand || !iconCollapse) return;
-                    
-                    //remove any icons
-                    $element.find('i').removeClass([iconExpand, iconCollapse].join(' '));
-                    
-                    if (state == FooterState.COLLAPSED) {
-                        if (behavior == FooterBehavior.HIDE) {
-                            $element.find('i').addClass(iconCollapse);
-                        } else {
-                            $element.find('i').addClass(iconExpand);
-                        }
-                    } else {
-                        if (state == FooterState.MINIMIZED) {
-                            if (behavior == FooterBehavior.HIDE)
-                                $element.find('i').addClass(iconExpand);
-                            else
-                                $element.find('i').addClass(iconExpand);
-                        } else {
-                            // footer is expanded
-                            $element.find('i').addClass(iconCollapse);
-                        }
-                    }    
-                }
+                var state = controller.getInitialState(),
+                    behavior = controller.getDefaultBehavior();
 
-                function updateUI() {
-                    $timeout(function () {
-                        $element.css('left', (($window.innerWidth - width) / 2) + 'px');
-                    }, 300);
-                }
-
-                $ionicPlatform.ready(function () {
-                    $window.addEventListener('orientationchange', updateUI);
-                    $ionicPlatform.on("resume", updateUI);
-                });
+                toggleIcons(state, behavior);
             }
-        }
-    }]);
+
+            $scope.$on('ionPullUp:tap', function (e, state, behavior) {
+                toggleIcons(state, behavior);
+            });
+
+            function toggleIcons(state, behavior) {
+                if (!iconExpand || !iconCollapse) return;
+
+                //remove any icons
+                $element.find('i').removeClass([iconExpand, iconCollapse].join(' '));
+
+                if (state == FooterState.COLLAPSED) {
+                    if (behavior == FooterBehavior.HIDE) {
+                        $element.find('i').addClass(iconCollapse);
+                    } else {
+                        $element.find('i').addClass(iconExpand);
+                    }
+                } else {
+                    if (state == FooterState.MINIMIZED) {
+                        if (behavior == FooterBehavior.HIDE)
+                            $element.find('i').addClass(iconExpand);
+                        else
+                            $element.find('i').addClass(iconExpand);
+                    } else {
+                        // footer is expanded
+                        $element.find('i').addClass(iconCollapse);
+                    }
+                }
+            }
+
+            function updateUI() {
+                $timeout(function () {
+                    $element.css('left', (($window.innerWidth - width) / 2) + 'px');
+                }, 300);
+            }
+
+            $ionicPlatform.ready(function () {
+                $window.addEventListener('orientationchange', updateUI);
+                $ionicPlatform.on("resume", updateUI);
+            });
+        }]
+    });
