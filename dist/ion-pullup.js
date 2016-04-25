@@ -56,12 +56,11 @@ angular.module('ionic-pullup', [])
                     $timeout(function () {
                         computeDefaultHeights();
                         $element.css({ 'transition': '300ms ease-in-out', 'padding': 0 });
-                        computeHeights();
                         if (tabs && hasBottomTabs) {
                             $element.css('bottom', tabs.offsetHeight + 'px');
                         }
                     });
-
+                    updateUI();
                 }
 
                 function computeDefaultHeights() {
@@ -108,7 +107,7 @@ angular.module('ionic-pullup', [])
                 }
 
                 function collapse() {
-                    footer.lastPosY = (tabs && hasBottomTabs) ? footer.height - tabsHeight : footer.height - footer.defaultHeight;
+                    footer.lastPosY = tabs ? footer.height - tabsHeight : footer.height - footer.defaultHeight;
                     $element.css({ '-webkit-transform': 'translate3d(0, ' + footer.lastPosY + 'px, 0)', 'transform': 'translate3d(0, ' + footer.lastPosY + 'px, 0)' });
                     $scope.onCollapse();
                     $scope.state = FooterState.COLLAPSED;
@@ -300,6 +299,8 @@ angular.module('ionic-pullup', [])
                     behavior = controller.getDefaultBehavior();
 
                 toggleIcons(state, behavior);
+                
+                updateUI();
             }
 
             $scope.$on('ionPullUp:tap', function (e, state, behavior) {
