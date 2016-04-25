@@ -2,9 +2,17 @@
 
 ## This release requires Ionic 1.3 and Angular 1.5
 
-Added ```allow-mid-range``` parameter prevents footer from stopping halfway when dragging (defaults to false)
-Fixes #17 where footer position was wrong when used in multiple views with different template structures (tabs, headers)
-Minor UI fixes and improvements
+- Added ```allow-mid-range``` parameter prevents footer from stopping halfway when dragging (defaults to false)
+- Fixes #17 where footer position was wrong when used in multiple views with different template structures (tabs, headers)
+- Minor UI fixes and improvements
+
+### Breaking changes
+- Removed ```toggle``` attribute from ```ion-pull-up-handle``` directive in favor of two new attributes that allow for better control of icons: ```icon-expand``` and ```icon-collapse```. Also, there is not need to specify a default icon as a child element as the directive will add it to the DOM.
+
+````
+<ion-pull-up-handle icon-expand="ion-chevron-up" icon-collapse="ion-chevron-down" style="border-radius: 25px 25px 0 0">
+</ion-pull-up-handle>
+````
 
 Thanks: @bianchimro, @nikolaz111, @jsanta
 
