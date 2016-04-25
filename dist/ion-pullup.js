@@ -50,24 +50,22 @@ angular.module('ionic-pullup', [])
                     };
 
                 this.$onInit = function () {
-                    $attrs.defaultHeight && $element.css('height', parseInt($attrs.defaultHeight, 10) + 'px');
-                    $element.addClass('bar bar-footer');
-
                     $timeout(function () {
                         computeDefaultHeights();
                         $element.css({ 'transition': '300ms ease-in-out', 'padding': 0 });
                         if (tabs && hasBottomTabs) {
-                            $element.css('bottom', tabs.offsetHeight + 'px');
+                            $element.css('bottom', tabsHeight + 'px');
                         }
                     });
                     updateUI();
                 }
 
                 function computeDefaultHeights() {
-                    tabs = document.querySelector('.tabs');
-                    hasBottomTabs = document.querySelector('.tabs-bottom');
-                    header = document.querySelector('.bar-header');
-                    tabsHeight = tabs ? tabs.offsetHeight : 0;
+                    var el = $element[0];
+                    tabs = el.closest('ion-tabs');
+                    hasBottomTabs = tabs && tabs.classList.contains('tabs-bottom');
+                    header = document.querySelector('ion-nav-bar .nav-bar-block[nav-bar=entering] > .bar-header');
+                    tabsHeight = tabs ? tabs.querySelector('.tabs').offsetHeight : 0;
                     headerHeight = header ? header.offsetHeight : 0;
                 }
 
@@ -90,17 +88,10 @@ angular.module('ionic-pullup', [])
                     $element.css({ 'transition': 'none', 'padding': 0 });
                 }
 
-                function recomputeAllHeights() {
-                    computeDefaultHeights();
-                    footer.height = footer.maxHeight > 0 ? footer.maxHeight : $window.innerHeight - headerHeight - handleHeight - tabsHeight;
-                }
-
                 function expand() {
-                    // recompute height right here to make sure we have the latest
-                    recomputeAllHeights();
                     footer.lastPosY = 0;
                     // adjust CSS values with new heights in case they changed
-                    $element.css({ 'height': footer.height + 'px', '-webkit-transform': 'translate3d(0, 0, 0)', 'transform': 'translate3d(0, 0, 0)' });
+                    $element.css({ '-webkit-transform': 'translate3d(0, 0, 0)', 'transform': 'translate3d(0, 0, 0)' });
                     $element.css({ 'transition': '300ms ease-in-out', 'padding': 0 });
                     $scope.onExpand();
                     $scope.state = FooterState.EXPANDED;
@@ -123,7 +114,6 @@ angular.module('ionic-pullup', [])
 
                 this.setHandleHeight = function (height) {
                     handleHeight = height;
-                    //computeHeights();
                 };
 
                 this.getHeight = function () {
@@ -222,7 +212,11 @@ angular.module('ionic-pullup', [])
                     $ionicPlatform.on("resume", updateUI);
                 });
 
-            }]
+            }],
+            compile: function(element, attrs) {
+              attrs.defaultHeight && element.css('height', parseInt(attrs.defaultHeight, 10) + 'px');
+              element.addClass('bar bar-footer');
+            }
         }
     }])
     .component('ionPullUpContent', {
