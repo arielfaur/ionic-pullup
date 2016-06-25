@@ -93,7 +93,7 @@ inline styles. The pull-up handle will inherit the background color of the main 
 <p>Directive attributes:</p>
 
 <ul>
-<li><del><code>minimize</code>: creates a footer that can be minimized rather than expanded</del></li>
+<li><code>state</code>: triggers a footer action (expand, collapse, minimize)</li>
 <li><code>default-height</code>: footer height (defaults to Ionic's footer height)</li>
 <li><code>max-height</code>: specifies the maximum height to expand to (default covers the content area)</li>
 <li><code>initial-state</code>: sets the initial footer state to <code>collapsed</code> (defaults to Ionic's footer) or <code>minimized</code></li>
@@ -104,14 +104,34 @@ inline styles. The pull-up handle will inherit the background color of the main 
         <li><code>hide</code> will create a footer that toggles between default footer state and a minimized state</li>
     </ul>
 </li>
+<li><code>allow-mid-range</code>: enables or disables drag & drop behavior (defaults to false)</li>
 <li><code>on-expand</code>: callback for expand event</li>
 <li><code>on-collapse</code>: callback for collapse event</li>
 <li><code>on-minimize</code>: callback for minimize event</li>
 </ul>
 
-<pre><code>&lt;ion-pull-up-footer class="bar-energized" on-expand="footerExpand()" on-collapse="footerCollapse()"&gt;
+<pre><code>&lt;ion-pull-up-footer class="bar-energized" on-expand="footerExpand()" on-collapse="footerCollapse()" state="footerState"&gt;
 ...
 &lt;/ion-pull-up-footer&gt;
+</code></pre>
+
+<h4>Control footer with the API</h4>
+Inject <code>ionPullUpFooterState</code> in your controller to have access to the footer state constants.
+Then bind a controller variable to the state as shown below:
+
+<pre><code>
+.controller('MyCtrl', ['ionPullUpFooterState', function(ionPullUpFooterState) {
+    this.onFooterExpand = function() {
+      console.log('Footer expanded');
+    };
+    this.onFooterCollapse = function() {
+      console.log('Footer collapsed');
+    };
+
+    this.expand = function() {
+      <strong>this.footerState = ionPullUpFooterState.EXPANDED;</strong>  
+    };
+}])
 </code></pre>
 
 <h3>
@@ -119,8 +139,8 @@ inline styles. The pull-up handle will inherit the background color of the main 
 <p>To show other elements in the bar besides a title, group them with a  <code>ion-pull-up-bar</code> directive. </p>
 <pre><code>
 &lt;ion-pull-up-bar&gt;
-&lt;h1 class="title" ion-pull-up-trigger&gt;Tap here&lt;/h1&gt;
-&lt;button class="button icon ion-gear-a"&gt;&lt;/button&gt;
+  &lt;h1 class="title" ion-pull-up-trigger&gt;Tap here&lt;/h1&gt;
+  &lt;button class="button icon ion-gear-a"&gt;&lt;/button&gt;
 &lt;/ion-pull-up-bar&gt;
 </code></pre>
 
@@ -138,13 +158,13 @@ inline styles. The pull-up handle will inherit the background color of the main 
 <p>Directive attributes:</p>
 
 <ul>
-<li>height: handle height</li>
-<li>width: handle width</li>
-<li>toggle: CSS classes to toggle when switching states; requires child <code>&lt;i&gt;</code> element</li>
+<li><code>height</code>: handle height</li>
+<li><code>width</code>: handle width</li>
+<li><code>icon-expand</code>: Ionicon class to display when footer is collapsed</li>
+<li><code>icon-collapse</code>: Ionicon class to display when footer is expanded</li>
 </ul>
 
-<pre><code>&lt;ion-pull-up-handle width="100" height="25" toggle="ion-chevron-up ion-chevron-down" style="border-radius: 25px 25px 0 0"&gt;
-    &lt;i class="icon ion-chevron-up"&gt;&lt;/i&gt;
+<pre><code>&lt;ion-pull-up-handle width="100" height="25" icon-expand="ion-chevron-up" icon-collapse="ion-chevron-down" style="border-radius: 25px 25px 0 0"&gt;
 &lt;/ion-pull-up-handle&gt;
 </code></pre>
 
