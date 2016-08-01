@@ -1,5 +1,5 @@
 /*
-ionic-pullup v1.1.0
+ionic-pullup v1.1.2
  
 Copyright 2016 Ariel Faur (https://github.com/arielfaur)
 

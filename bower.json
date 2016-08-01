@@ -2,7 +2,7 @@
   "name": "ionic-pullup",
   "description": "Ionic pull up footer",
   "homepage": "https://github.com/arielfaur",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "license": "Apache-2.0",
   "private": false,
   "devDependencies": {
