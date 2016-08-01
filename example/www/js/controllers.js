@@ -11,6 +11,14 @@ angular.module('starter.controllers', [])
       $scope.expand = function() {
         $scope.footerState = ionPullUpFooterState.EXPANDED;  
       };
+      
+      $scope.disableTap = function() {
+        $scope.enable = false;
+      }
+      $scope.enableTap = function() {
+        $scope.enable = true;
+      }
+      $scope.enable = true;
   })
 
 .controller('ChatsCtrl', function($scope, Chats) {

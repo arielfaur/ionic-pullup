@@ -1,7 +1,8 @@
 /*
-ionic-pullup v1.1.0
+ionic-pullup v1.1.1
  
 Copyright 2016 Ariel Faur (https://github.com/arielfaur)
+Copyright 2016 Claudio Bisconti (https://github.com/cbspire)
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -37,8 +38,9 @@ angular.module('ionic-pullup', [])
                 allowMidRange: '='
             },
             controller: ['$scope', '$element', '$attrs', '$timeout', '$rootScope', '$window', '$ionicPlatform', 'ionPullUpFooterState', 'ionPullUpFooterBehavior', function ($scope, $element, $attrs, $timeout, $rootScope, $window, $ionicPlatform, FooterState, FooterBehavior) {
-                var
-                    tabs, hasBottomTabs, header, tabsHeight, headerHeight, handleHeight = 0,
+                var tabs, hasBottomTabs, header, tabsHeight, headerHeight, handleHeight = 0, 
+                noTap = false, 
+                noDrag = false, 
                     footer = {
                         height: 0,
                         posY: 0,
@@ -48,6 +50,13 @@ angular.module('ionic-pullup', [])
                         initialState: $attrs.initialState ? $attrs.initialState.toUpperCase() : FooterState.COLLAPSED,
                         defaultBehavior: $attrs.defaultBehavior ? $attrs.defaultBehavior.toUpperCase() : FooterBehavior.EXPAND
                     };
+                    
+                $attrs.$observe('disableTap', function(disable) {
+                    noTap = (disable === "true");
+                });
+                $attrs.$observe('disableDrag', function(disable) {
+                    noDrag = (disable === "true");
+                });
 
                 this.$onInit = function () {
                     $timeout(function () {
@@ -133,6 +142,9 @@ angular.module('ionic-pullup', [])
                 };
 
                 this.onTap = function (e) {
+                    if (noTap)
+                        return;
+                    
                     e.gesture.srcEvent.preventDefault();
                     e.gesture.preventDefault();
 
@@ -158,6 +170,9 @@ angular.module('ionic-pullup', [])
                 };
 
                 this.onDrag = function (e) {
+                    if (noDrag)
+                        return;
+                    
                     e.gesture.srcEvent.preventDefault();
                     e.gesture.preventDefault();
 
