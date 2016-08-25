@@ -1,4 +1,4 @@
-# v1.1.0
+# v1.1.3
 
 ## This release requires Ionic 1.3 and Angular 1.5
 
@@ -14,10 +14,10 @@
 </ion-pull-up-handle>
 ````
 
-Thanks: @bianchimro, @nikolaz111, @jsanta
+Thanks: @bianchimro, @nikolaz111, @jsanta, @cbspire
 
 # v1.0.4
-Added ```state``` parameter to dynamically set the footer state. ```state``` accepts an expression with the expected footer state. 
+Added ```state``` parameter to dynamically set the footer state. ```state``` accepts an expression with the expected footer state.
 
 # v1.0.3
 Fixes issue #1 where component height was wrong after changing device orientation
