@@ -5,9 +5,8 @@
   height: $height;
   background: $background;
   border-radius: $radius $radius 0 0;
-  margin: -$height auto 0; // set the top margin to the negative height 
+  margin: 0 auto; 
 }
-
 
 ion-footer[ion-pullup] { 
   background : color($colors, primary, base);  
