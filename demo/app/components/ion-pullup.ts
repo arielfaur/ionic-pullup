@@ -219,7 +219,7 @@ export class IonPullUpDirective implements OnChanges {
         break;
       case 'panend':
         this.renderer.setElementStyle(this.el.nativeElement, 'transition', '300ms ease-in-out');
-        if (this.allowMidRange) {
+        if (!this.allowMidRange) {
           if (this._footerMeta.lastPosY > this._footerMeta.posY) {
               this.state = IonPullUpFooterState.Expanded;
           }
