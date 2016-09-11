@@ -1,3 +1,18 @@
+
+@mixin footer-tab($width, $height, $radius, $background: color($colors, primary, base)) {
+  position: relative;
+  width: $width;
+  height: $height;
+  background: $background;
+  border-radius: $radius $radius 0 0;
+  margin: -$height auto 0; // set the top margin to the negative height 
+}
+
+
 ion-footer[ion-pullup] { 
   background : color($colors, primary, base);  
+
+  .footer-tab {
+    @include footer-tab(120px, 20px, 20px, rgba(color($colors, primary, base), .8) )
+  }
 }

@@ -1,4 +1,4 @@
-import {Component, Directive, DoCheck, SimpleChange, OnChanges, EventEmitter, ElementRef, Renderer, Output, Input, Injectable, Inject, Optional, Pipe, PipeTransform} from '@angular/core';
+import {Attribute, Component, Directive, DoCheck, SimpleChange, OnChanges, EventEmitter, ElementRef, Renderer, Output, Input, Injectable, Inject, Optional, Pipe, PipeTransform} from '@angular/core';
 import {Gesture} from 'ionic-angular/gestures/gesture';
 
 interface FooterMetadata {
@@ -15,6 +15,16 @@ interface ViewMetadata {
   hasBottomTabs?: boolean;  
   header?: Element;
   headerHeight?: number;
+}
+
+interface FooterTab {
+  x?: number;
+  y?: number;
+  upperLeftRadius?: number;
+  upperRightRadius?: number;
+  backgroundColor?: string;
+  color?: string;
+  content?: string;
 }
 
 export enum IonPullUpFooterState {
@@ -36,8 +46,9 @@ export class IonPullUpDirective implements OnChanges {
   @Input() state: IonPullUpFooterState;
   @Input() initialState: IonPullUpFooterState;
   @Input() defaultBehavior: IonPullUpFooterBehavior;
-  @Input() allowMidRange: boolean;
+  //@Input() allowMidRange: boolean;
   @Input() maxHeight: number;
+  
   @Output() onExpand = new EventEmitter<any>();
   @Output() onCollapse = new EventEmitter<any>();
   @Output() onMinimize = new EventEmitter<any>();
@@ -48,8 +59,10 @@ export class IonPullUpDirective implements OnChanges {
   protected _tapGesture: Gesture;
   
   protected _oldState: IonPullUpFooterState;
+
+  protected _tabElement: HTMLElement;
   
-  constructor(private el: ElementRef, private renderer: Renderer) {
+  constructor(@Attribute('tab') tab: boolean, private el: ElementRef, private renderer: Renderer) {
     this._footerMeta = {
       height: 0,
       posY:  0,
@@ -58,6 +71,12 @@ export class IonPullUpDirective implements OnChanges {
     }
     this._currentViewMeta = {};  
     
+    // add a tab ?
+    if (tab) {
+      this._tabElement = renderer.createElement(el.nativeElement, 'div');
+      renderer.setElementClass(this._tabElement, 'footer-tab', true);
+    }
+
     // sets initial state
     this.initialState = this.initialState || IonPullUpFooterState.Collapsed;
     this.defaultBehavior = this.defaultBehavior || IonPullUpFooterBehavior.Expand;
@@ -212,16 +231,14 @@ export class IonPullUpDirective implements OnChanges {
         break;
       case 'panend':
         this.renderer.setElementStyle(this.el.nativeElement, 'transition', '300ms ease-in-out');
-        if (!this.allowMidRange) {
+        
           if (this._footerMeta.lastPosY > this._footerMeta.posY) {
               this.state = IonPullUpFooterState.Expanded;
           }
           else if (this._footerMeta.lastPosY < this._footerMeta.posY) {
               this.state = (this.initialState == IonPullUpFooterState.Minimized) ? IonPullUpFooterState.Minimized : IonPullUpFooterState.Collapsed;
           }  
-        } else {
-          this._footerMeta.lastPosY = this._footerMeta.posY;  
-        }
+
         break;
     }
   }
