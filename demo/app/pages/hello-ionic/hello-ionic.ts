@@ -9,4 +9,12 @@ export class HelloIonicPage {
   constructor() {
 
   }
+
+  footerExpanded() {
+    console.log('Footer expanded!');
+  }
+
+  footerCollapsed() {
+    console.log('Footer collapsed!');
+  }
 }
