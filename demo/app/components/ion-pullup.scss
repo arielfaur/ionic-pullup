@@ -14,4 +14,12 @@ ion-footer[ion-pullup] {
   .footer-tab {
     @include footer-tab(120px, 20px, 20px, rgba(color($colors, primary, base), .8) )
   }
+
+  ion-content {
+    position:absolute;
+
+    scroll-content {
+      margin-top: 60px;
+    }
+  }
 }
