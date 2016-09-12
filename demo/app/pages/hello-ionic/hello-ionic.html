@@ -19,12 +19,12 @@
     Follow along on the tutorial section of the Ionic docs!
   </p>
   <p>
-    <button primary menuToggle>Toggle Menu</button>
+    <button primary menuToggle>Toggle Menu</button><button primary (click)="toggleFooter()">Toggle Menu</button>
   </p>
 
 </ion-content>
 
-<ion-footer ion-pullup tab (onExpand)="footerExpanded()" (onCollapse)="footerCollapsed()">
+<ion-footer ion-pullup tab (onExpand)="footerExpanded()" (onCollapse)="footerCollapsed()" [(state)]="footerState">
   <ion-toolbar primary>
     <ion-title>Footer</ion-title>
   </ion-toolbar>
