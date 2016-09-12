@@ -1,5 +1,6 @@
-import {Attribute, Component, Directive, DoCheck, SimpleChange, OnChanges, EventEmitter, ElementRef, Renderer, Output, Input, Injectable, Inject, Optional, Pipe, PipeTransform} from '@angular/core';
+import {Attribute, Component, Directive, DoCheck, SimpleChange, OnChanges, EventEmitter, ElementRef, Renderer, ContentChild, Output, Input, Injectable, Inject, Optional, Pipe, PipeTransform} from '@angular/core';
 import {Gesture} from 'ionic-angular/gestures/gesture';
+import {Toolbar} from 'ionic-angular/components/toolbar/toolbar';
 
 interface FooterMetadata {
   height: number;
@@ -54,10 +55,10 @@ export class IonPullUpDirective  {
   @Output() onCollapse = new EventEmitter<any>();
   @Output() onMinimize = new EventEmitter<any>();
 
+  @ContentChild(Toolbar) contentChild;
+
   protected _footerMeta: FooterMetadata;
   protected _currentViewMeta: ViewMetadata;
-  protected _dragGesture: Gesture;
-  protected _tapGesture: Gesture;
   
   protected _oldState: IonPullUpFooterState;
 
@@ -81,17 +82,7 @@ export class IonPullUpDirective  {
   ngOnInit() {
     console.log('Initializing footer...');
 
-    this._tapGesture = new Gesture(this.el.nativeElement);
-    this._tapGesture.listen();
-    this._tapGesture.on('tap', e => {
-      this.onTap(e);
-    });
-
-    this._dragGesture = new Gesture(this.el.nativeElement);
-    this._dragGesture.listen();
-    this._dragGesture.on('pan panstart panend', e => {
-      this.onDrag(e);
-    });
+    
 
     window.addEventListener("orientationchange", () => {
         this.updateUI();
@@ -110,13 +101,33 @@ export class IonPullUpDirective  {
       this.renderer.setElementStyle(this._tabElement, 'margin-top', -this._currentViewMeta.headerHeight-this._footerMeta.tabHeight + 'px');
     }
     
-    if (this._currentViewMeta.tabs && this._currentViewMeta.hasBottomTabs) {
+    /*if (this._currentViewMeta.tabs && this._currentViewMeta.hasBottomTabs) {
       this.renderer.setElementStyle(this.el.nativeElement, 'bottom', this._currentViewMeta.tabsHeight + 'px');
-    }
+    }*/
     
     this.updateUI();
     
   }
+
+   ngAfterContentInit() {
+      let barGesture = new Gesture(this.contentChild.elementRef.nativeElement);
+      barGesture.listen();
+      barGesture.on('tap', e => {
+        this.onTap(e);
+      });
+      barGesture.on('pan panstart panend', e => {
+        this.onDrag(e);
+      });
+
+      let tabGesture = new Gesture(this._tabElement);
+      tabGesture.listen();
+      tabGesture.on('tap', e => {
+        this.onTap(e);
+      });
+      tabGesture.on('pan panstart panend', e => {
+        this.onDrag(e);
+      });
+   }
 
   
   public get height() : number {
@@ -124,7 +135,7 @@ export class IonPullUpDirective  {
   }
   
   public get expandedHeight() : number {
-    return window.innerHeight - this._currentViewMeta.headerHeight - this._footerMeta.tabHeight - this._currentViewMeta.tabsHeight; 
+    return window.innerHeight - this._currentViewMeta.headerHeight - this._footerMeta.tabHeight; // - this._currentViewMeta.tabsHeight; 
   }
   
   public get background() : string {
@@ -132,9 +143,9 @@ export class IonPullUpDirective  {
   }
   
   computeDefaults() {
-    this._currentViewMeta.tabs = this.el.nativeElement.closest('ion-tabs');
-    this._currentViewMeta.hasBottomTabs = this._currentViewMeta.tabs && this._currentViewMeta.tabs.classList.contains('tabs-bottom');
-    this._currentViewMeta.tabsHeight = this._currentViewMeta.tabs ? (<HTMLElement> this._currentViewMeta.tabs.querySelector('ion-tabbar-section')).offsetHeight : 0;
+    //this._currentViewMeta.tabs = this.el.nativeElement.closest('ion-tabs');
+    //this._currentViewMeta.hasBottomTabs = this._currentViewMeta.tabs && this._currentViewMeta.tabs.classList.contains('tabs-bottom');
+    //this._currentViewMeta.tabsHeight = this._currentViewMeta.tabs ? (<HTMLElement> this._currentViewMeta.tabs.querySelector('ion-tabbar-section')).offsetHeight : 0;
     this._currentViewMeta.header = document.querySelector('ion-navbar.toolbar');
     this._currentViewMeta.headerHeight = this._currentViewMeta.header ? (<HTMLElement>this._currentViewMeta.header).offsetHeight : 0;
   }
