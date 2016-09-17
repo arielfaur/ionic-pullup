@@ -8,11 +8,18 @@
   margin: 0 auto; 
 }
 
-ion-footer[ion-pullup] { 
+@mixin footer-tab-shadow($shadowColor) {
+    box-shadow: 0px -2px 2px $shadowColor;
+}
+
+ion-pullup { 
   background : color($colors, primary, base);  
 
   .footer-tab {
-    @include footer-tab(120px, 20px, 20px, rgba(color($colors, primary, base), .8) )
+    z-index: 1000;
+
+    @include footer-tab(120px, 16px, 20px, (color($colors, primary, base)));
+    @include footer-tab-shadow(#666);
   }
 
   ion-content {
@@ -20,6 +27,16 @@ ion-footer[ion-pullup] {
 
     scroll-content {
       margin-top: 60px;
+    }
+  }
+
+  ion-toolbar {
+    @include footer-tab-shadow(#666);
+    
+    .toolbar-background {
+      .ios & {
+        border-top: none;
+      }
     }
   }
 }
