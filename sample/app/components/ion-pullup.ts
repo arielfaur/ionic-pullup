@@ -1,6 +1,6 @@
-import {Attribute, Component, Directive, DoCheck, SimpleChange, OnChanges, EventEmitter, ElementRef, Renderer, ContentChild, Output, Input, Injectable, Inject, Optional, Pipe, PipeTransform} from '@angular/core';
+import {Attribute, Component, Directive, DoCheck, SimpleChange, OnChanges, EventEmitter, ElementRef, Renderer, ViewChild, ContentChild, Output, Input, Injectable, Inject, Optional, Pipe, PipeTransform} from '@angular/core';
 import {Gesture} from 'ionic-angular/gestures/gesture';
-import {Toolbar} from 'ionic-angular/components/toolbar/toolbar';
+import {Toolbar, Footer} from 'ionic-angular/components/toolbar/toolbar';
 
 interface FooterMetadata {
   height: number;
@@ -39,11 +39,15 @@ export enum IonPullUpFooterBehavior {
   Expand
 }
 
-@Directive({
-    selector: '[ion-pullup]',
-    providers: []
+@Component({
+    selector: 'ion-pullup',
+    template: `
+    <ion-footer #footer>
+      <ng-content></ng-content>
+    </ion-footer>
+    `
 })
-export class IonPullUpDirective  { 
+export class IonPullUpComponent  { 
   @Input() state: IonPullUpFooterState;
   @Input() initialState: IonPullUpFooterState;
   @Input() defaultBehavior: IonPullUpFooterBehavior;
@@ -55,7 +59,8 @@ export class IonPullUpDirective  {
   @Output() onCollapse = new EventEmitter<any>();
   @Output() onMinimize = new EventEmitter<any>();
 
-  @ContentChild(Toolbar) contentChild;
+  @ContentChild(Toolbar) childToolbar;
+  @ViewChild('footer') childFooter;
 
   protected _footerMeta: FooterMetadata;
   protected _currentViewMeta: ViewMetadata;
@@ -63,7 +68,7 @@ export class IonPullUpDirective  {
   protected _oldState: IonPullUpFooterState;
 
   protected _tabElement: HTMLElement;
-  
+
   constructor(private el: ElementRef, private renderer: Renderer) {
     this._footerMeta = {
       height: 0,
@@ -82,35 +87,39 @@ export class IonPullUpDirective  {
   ngOnInit() {
     console.log('Initializing footer...');
 
-    
-
     window.addEventListener("orientationchange", () => {
         this.updateUI();
     });
-
-    this._footerMeta.defaultHeight =  this.el.nativeElement.offsetHeight;
-    this.state = IonPullUpFooterState.Collapsed;
-    
-    this.computeDefaults();
-
-        // add a tab ?
-    if (this.tab!==undefined) {
-      this._tabElement = this.renderer.createElement(this.el.nativeElement, 'div');
-      this.renderer.setElementClass(this._tabElement, 'footer-tab', true);
-      this._footerMeta.tabHeight = (<HTMLElement>this._tabElement).offsetHeight;
-      this.renderer.setElementStyle(this._tabElement, 'margin-top', -this._currentViewMeta.headerHeight-this._footerMeta.tabHeight + 'px');
-    }
-    
-    /*if (this._currentViewMeta.tabs && this._currentViewMeta.hasBottomTabs) {
-      this.renderer.setElementStyle(this.el.nativeElement, 'bottom', this._currentViewMeta.tabsHeight + 'px');
-    }*/
-    
-    this.updateUI();
-    
   }
 
    ngAfterContentInit() {
-      let barGesture = new Gesture(this.contentChild.elementRef.nativeElement);
+      
+    
+      this.computeDefaults();
+
+        // add a tab ?
+      if (this.tab!==undefined) {
+        this._tabElement = this.renderer.createElement(this.childFooter.nativeElement, 'div');
+        this.renderer.setElementClass(this._tabElement, 'footer-tab', true);
+        this._footerMeta.tabHeight = (<HTMLElement>this._tabElement).offsetHeight;
+        this.renderer.setElementStyle(this._tabElement, 'margin-top', -this._currentViewMeta.headerHeight-this._footerMeta.tabHeight + 'px');
+
+        let tabGesture = new Gesture(this._tabElement);
+        tabGesture.listen();
+        tabGesture.on('tap', e => {
+          this.onTap(e);
+        });
+        tabGesture.on('pan panstart panend', e => {
+          this.onDrag(e);
+        });
+      }
+      
+      /*if (this._currentViewMeta.tabs && this._currentViewMeta.hasBottomTabs) {
+        this.renderer.setElementStyle(this.el.nativeElement, 'bottom', this._currentViewMeta.tabsHeight + 'px');
+      }*/
+  
+
+      let barGesture = new Gesture(this.childToolbar.elementRef.nativeElement);
       barGesture.listen();
       barGesture.on('tap', e => {
         this.onTap(e);
@@ -119,30 +128,18 @@ export class IonPullUpDirective  {
         this.onDrag(e);
       });
 
-      let tabGesture = new Gesture(this._tabElement);
-      tabGesture.listen();
-      tabGesture.on('tap', e => {
-        this.onTap(e);
-      });
-      tabGesture.on('pan panstart panend', e => {
-        this.onDrag(e);
-      });
+      this.state = IonPullUpFooterState.Collapsed;
+
+      this.updateUI();
+
    }
 
-  
-  public get height() : number {
-    return this.el.nativeElement.offsetHeight;
-  }
-  
   public get expandedHeight() : number {
     return window.innerHeight - this._currentViewMeta.headerHeight - this._footerMeta.tabHeight; // - this._currentViewMeta.tabsHeight; 
   }
   
-  public get background() : string {
-    return window.getComputedStyle(this.el.nativeElement).background;
-  }
-  
   computeDefaults() {
+    this._footerMeta.defaultHeight =  this.childFooter.nativeElement.offsetHeight;
     //this._currentViewMeta.tabs = this.el.nativeElement.closest('ion-tabs');
     //this._currentViewMeta.hasBottomTabs = this._currentViewMeta.tabs && this._currentViewMeta.tabs.classList.contains('tabs-bottom');
     //this._currentViewMeta.tabsHeight = this._currentViewMeta.tabs ? (<HTMLElement> this._currentViewMeta.tabs.querySelector('ion-tabbar-section')).offsetHeight : 0;
@@ -160,7 +157,7 @@ export class IonPullUpDirective  {
       this.collapse() 
     }
     */
-    this.renderer.setElementStyle(this.el.nativeElement, 'height', this._footerMeta.height + 'px');
+    this.renderer.setElementStyle(this.childFooter.nativeElement, 'height', this._footerMeta.height + 'px');
     this.collapse(); 
   }
   
@@ -168,30 +165,30 @@ export class IonPullUpDirective  {
     setTimeout(() => {  
       this.computeHeights();
     }, 300);
-    this.renderer.setElementStyle(this.el.nativeElement, 'transition', 'none');  // avoids flickering when changing orientation
+    this.renderer.setElementStyle(this.childFooter.nativeElement, 'transition', 'none');  // avoids flickering when changing orientation
   }
   
   expand() {
     this._footerMeta.lastPosY = 0;
-    this.renderer.setElementStyle(this.el.nativeElement, '-webkit-transform', 'translate3d(0, 0, 0)');
-    this.renderer.setElementStyle(this.el.nativeElement, 'transform', 'translate3d(0, 0, 0)');
-    this.renderer.setElementStyle(this.el.nativeElement, 'transition', '300ms ease-in-out');
+    this.renderer.setElementStyle(this.childFooter.nativeElement, '-webkit-transform', 'translate3d(0, 0, 0)');
+    this.renderer.setElementStyle(this.childFooter.nativeElement, 'transform', 'translate3d(0, 0, 0)');
+    this.renderer.setElementStyle(this.childFooter.nativeElement, 'transition', '300ms ease-in-out');
     
     this.onExpand.emit(null);
   }
   
   collapse() {
     this._footerMeta.lastPosY = this._footerMeta.height - this._footerMeta.defaultHeight;
-    this.renderer.setElementStyle(this.el.nativeElement, '-webkit-transform', 'translate3d(0, ' + this._footerMeta.lastPosY + 'px, 0)');
-    this.renderer.setElementStyle(this.el.nativeElement, 'transform', 'translate3d(0, ' + this._footerMeta.lastPosY + 'px, 0)');
+    this.renderer.setElementStyle(this.childFooter.nativeElement, '-webkit-transform', 'translate3d(0, ' + this._footerMeta.lastPosY + 'px, 0)');
+    this.renderer.setElementStyle(this.childFooter.nativeElement, 'transform', 'translate3d(0, ' + this._footerMeta.lastPosY + 'px, 0)');
     
     this.onCollapse.emit(null);
   }
   
   minimize() {
     this._footerMeta.lastPosY = this._footerMeta.height;
-    this.renderer.setElementStyle(this.el.nativeElement, '-webkit-transform', 'translate3d(0, ' + this._footerMeta.lastPosY + 'px, 0)');
-    this.renderer.setElementStyle(this.el.nativeElement, 'transform', 'translate3d(0, ' + this._footerMeta.lastPosY + 'px, 0)');
+    this.renderer.setElementStyle(this.childFooter.nativeElement, '-webkit-transform', 'translate3d(0, ' + this._footerMeta.lastPosY + 'px, 0)');
+    this.renderer.setElementStyle(this.childFooter.nativeElement, 'transform', 'translate3d(0, ' + this._footerMeta.lastPosY + 'px, 0)');
     
     this.onMinimize.emit(null);
   }
@@ -224,16 +221,16 @@ export class IonPullUpDirective  {
     
     switch(e.type) {
       case 'panstart':
-        this.renderer.setElementStyle(this.el.nativeElement, 'transition', 'none');
+        this.renderer.setElementStyle(this.childFooter.nativeElement, 'transition', 'none');
         break;
       case 'pan':
         this._footerMeta.posY = Math.round(e.deltaY) + this._footerMeta.lastPosY;
         if (this._footerMeta.posY < 0 || this._footerMeta.posY > this._footerMeta.height) return;
-        this.renderer.setElementStyle(this.el.nativeElement, '-webkit-transform', 'translate3d(0, ' + this._footerMeta.posY + 'px, 0)');
-        this.renderer.setElementStyle(this.el.nativeElement, 'transform', 'translate3d(0, ' + this._footerMeta.posY + 'px, 0)');
+        this.renderer.setElementStyle(this.childFooter.nativeElement, '-webkit-transform', 'translate3d(0, ' + this._footerMeta.posY + 'px, 0)');
+        this.renderer.setElementStyle(this.childFooter.nativeElement, 'transform', 'translate3d(0, ' + this._footerMeta.posY + 'px, 0)');
         break;
       case 'panend':
-        this.renderer.setElementStyle(this.el.nativeElement, 'transition', '300ms ease-in-out');
+        this.renderer.setElementStyle(this.childFooter.nativeElement, 'transition', '300ms ease-in-out');
         
           if (this._footerMeta.lastPosY > this._footerMeta.posY) {
               this.state = IonPullUpFooterState.Expanded;

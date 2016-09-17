@@ -1,9 +1,9 @@
 import {Component} from '@angular/core';
-import {IonPullUpDirective, IonPullUpFooterState} from '../../components/ion-pullup';
+import {IonPullUpComponent, IonPullUpFooterState} from '../../components/ion-pullup';
 
 @Component({
   templateUrl: 'build/pages/hello-ionic/hello-ionic.html',
-  directives: [IonPullUpDirective]
+  directives: [IonPullUpComponent]
 })
 export class HelloIonicPage {
   footerState: IonPullUpFooterState;
