@@ -92,32 +92,12 @@ export class IonPullUpComponent  {
     });
   }
 
-   ngAfterContentInit() {
-      
-    
+   ngAfterContentInit() {    
       this.computeDefaults();
 
-        // add a tab ?
-      if (this.tab!==undefined) {
-        this._tabElement = this.renderer.createElement(this.childFooter.nativeElement, 'div');
-        this.renderer.setElementClass(this._tabElement, 'footer-tab', true);
-        this._footerMeta.tabHeight = (<HTMLElement>this._tabElement).offsetHeight;
-        this.renderer.setElementStyle(this._tabElement, 'margin-top', -this._currentViewMeta.headerHeight-this._footerMeta.tabHeight + 'px');
-
-        let tabGesture = new Gesture(this._tabElement);
-        tabGesture.listen();
-        tabGesture.on('tap', e => {
-          this.onTap(e);
-        });
-        tabGesture.on('pan panstart panend', e => {
-          this.onDrag(e);
-        });
-      }
-      
       /*if (this._currentViewMeta.tabs && this._currentViewMeta.hasBottomTabs) {
         this.renderer.setElementStyle(this.el.nativeElement, 'bottom', this._currentViewMeta.tabsHeight + 'px');
       }*/
-  
 
       let barGesture = new Gesture(this.childToolbar.elementRef.nativeElement);
       barGesture.listen();

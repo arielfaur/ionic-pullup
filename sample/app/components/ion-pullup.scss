@@ -1,3 +1,12 @@
+@import 'node_modules/ionic-angular/components/toolbar/toolbar.ios';
+@import 'node_modules/ionic-angular/components/toolbar/toolbar.md';
+
+$tabWidth:            120px;
+$tabHeight:           16px;
+$tabRadius:           20px;
+$footerBackground:    color($colors, primary, base);
+$footerShadow:        #666;
+$toolbarHeight:       5.6rem;
 
 @mixin footer-tab($width, $height, $radius, $background: color($colors, primary, base)) {
   position: relative;
@@ -15,28 +24,45 @@
 ion-pullup { 
   background : color($colors, primary, base);  
 
-  .footer-tab {
-    z-index: 1000;
-
-    @include footer-tab(120px, 16px, 20px, (color($colors, primary, base)));
-    @include footer-tab-shadow(#666);
-  }
-
-  ion-content {
-    position:absolute;
-
-    scroll-content {
-      margin-top: 60px;
+  ion-footer {
+    &::before {
+      content: none;
     }
-  }
 
-  ion-toolbar {
-    @include footer-tab-shadow(#666);
-    
-    .toolbar-background {
+    ion-pullup-tab {
+      z-index: 1000;
+      display: flex;
+
+      @include footer-tab($tabWidth, $tabHeight, $tabRadius, $footerBackground);
+      @include footer-tab-shadow($footerShadow);
+    }
+
+    ion-content {
+      position:absolute;
+      margin-top: calc(#{$toolbarHeight} + #{$tabHeight});
+
+      // this rule does not work - toolbar height is always 5.6rem 
+      /*
       .ios & {
-        border-top: none;
+        margin-top: calc(#{$toolbar-ios-height} + #{$tabHeight});
+      }
+      .md & {
+        margin-top: calc(#{$toolbar-md-height} + #{$tabHeight});
+      }
+      */
+      scroll-content {
+        margin-bottom: calc(#{$toolbarHeight} + #{$tabHeight});
       }
     }
-  }
+
+    ion-toolbar {
+      @include footer-tab-shadow($footerShadow);
+      
+      .toolbar-background {
+        .ios & {
+          border-top: none;
+        }
+      }
+    }
+  } 
 }
