@@ -24,7 +24,8 @@
 
 </ion-content>
 
-<ion-pullup tab (onExpand)="footerExpanded()" (onCollapse)="footerCollapsed()" [(state)]="footerState">
+<ion-pullup #pullup (onExpand)="footerExpanded()" (onCollapse)="footerCollapsed()" [(state)]="footerState">
+  <ion-pullup-tab [footer]="pullup"></ion-pullup-tab>
   <ion-toolbar primary>
     <ion-title>Footer</ion-title>
   </ion-toolbar>
