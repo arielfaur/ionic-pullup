@@ -1,13 +1,28 @@
-import {Attribute, ChangeDetectionStrategy, Component, Directive, DoCheck, SimpleChange, OnChanges, EventEmitter, ElementRef, Renderer, ViewChild, ContentChild, Output, Input, Injectable, Inject, Optional, Pipe, PipeTransform} from '@angular/core';
-import {Gesture} from 'ionic-angular/gestures/gesture';
-import {Toolbar, Footer} from 'ionic-angular/components/toolbar/toolbar';
+/*
+ionic-pullup v2 for Ionic/Angular 2
+ 
+Copyright 2016 Ariel Faur (https://github.com/arielfaur)
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+    http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
+import { Attribute, ChangeDetectionStrategy, Component, Directive, DoCheck, SimpleChange, OnChanges, EventEmitter, ElementRef, Renderer, ViewChild, ContentChild, Output, Input, Injectable, Inject, Optional } from '@angular/core';
+import { Gesture } from 'ionic-angular/gestures/gesture';
+import { Toolbar, Footer } from 'ionic-angular/components/toolbar/toolbar';
+import { Platform } from 'ionic-angular';
 
 interface FooterMetadata {
   height: number;
   posY: number;
   lastPosY: number;
   defaultHeight?: number;
-  tabHeight: number;
 }
 
 interface ViewMetadata {
@@ -67,12 +82,11 @@ export class IonPullUpComponent  {
   protected _currentViewMeta: ViewMetadata;  
   protected _oldState: IonPullUpFooterState;
 
-  constructor(private el: ElementRef, private renderer: Renderer) {
+  constructor(private platform: Platform, private el: ElementRef, private renderer: Renderer) {
     this._footerMeta = {
       height: 0,
       posY:  0,
-      lastPosY: 0,
-      tabHeight: 0
+      lastPosY: 0
     }
     this._currentViewMeta = {};  
     
@@ -86,8 +100,16 @@ export class IonPullUpComponent  {
     console.log('Initializing footer...');
 
     window.addEventListener("orientationchange", () => {
-        this.updateUI();
+      console.info('Changed orientation => updating');
+      this.updateUI();
     });
+    this.platform.resume.subscribe(() => {
+      console.info('Resumed from background => updating');
+      this.updateUI();
+    });
+    /*window.addEventListener("resume", () => {
+        this.updateUI();
+    });*/
   }
 
    ngAfterContentInit() {    
@@ -114,7 +136,7 @@ export class IonPullUpComponent  {
    }
 
   public get expandedHeight() : number {
-    return window.innerHeight - this._currentViewMeta.headerHeight - this._footerMeta.tabHeight; // - this._currentViewMeta.tabsHeight; 
+    return window.innerHeight - this._currentViewMeta.headerHeight; // - this._currentViewMeta.tabsHeight; 
   }
   
   computeDefaults() {
