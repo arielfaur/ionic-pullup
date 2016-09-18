@@ -52,11 +52,9 @@ export class IonPullUpComponent  {
   @Input() state: IonPullUpFooterState;
   @Output() stateChange: EventEmitter<IonPullUpFooterState> = new EventEmitter<IonPullUpFooterState>();
 
-  @Input() initialState: IonPullUpFooterState;
-  @Input() defaultBehavior: IonPullUpFooterBehavior;
-  //@Input() allowMidRange: boolean;
+  @Input() initialState: IonPullUpFooterState;          // TODO implemment
+  @Input() defaultBehavior: IonPullUpFooterBehavior;    // TODO implemment
   @Input() maxHeight: number;
-  @Input() tab: boolean;
 
   @Output() onExpand = new EventEmitter<any>();
   @Output() onCollapse = new EventEmitter<any>();
@@ -66,11 +64,8 @@ export class IonPullUpComponent  {
   @ViewChild('footer') childFooter;
 
   protected _footerMeta: FooterMetadata;
-  protected _currentViewMeta: ViewMetadata;
-  
+  protected _currentViewMeta: ViewMetadata;  
   protected _oldState: IonPullUpFooterState;
-
-  protected _tabElement: HTMLElement;
 
   constructor(private el: ElementRef, private renderer: Renderer) {
     this._footerMeta = {
@@ -98,6 +93,7 @@ export class IonPullUpComponent  {
    ngAfterContentInit() {    
       this.computeDefaults();
 
+      // TODO: test with tabs template (if it is a valid use case at all)
       /*if (this._currentViewMeta.tabs && this._currentViewMeta.hasBottomTabs) {
         this.renderer.setElementStyle(this.el.nativeElement, 'bottom', this._currentViewMeta.tabsHeight + 'px');
       }*/
@@ -113,7 +109,7 @@ export class IonPullUpComponent  {
 
       this.state = IonPullUpFooterState.Collapsed;
 
-      this.updateUI(true);  // TODO: this causes the footer to collapse twice on launch
+      this.updateUI(true);  // need to indicate whether it's first run to avoid emitting events twice due to change detection
 
    }
 
@@ -123,9 +119,12 @@ export class IonPullUpComponent  {
   
   computeDefaults() {
     this._footerMeta.defaultHeight =  this.childFooter.nativeElement.offsetHeight;
+    
+    // TODO: still need to test with tabs template (not convinced it is a valid use case...)
     //this._currentViewMeta.tabs = this.el.nativeElement.closest('ion-tabs');
     //this._currentViewMeta.hasBottomTabs = this._currentViewMeta.tabs && this._currentViewMeta.tabs.classList.contains('tabs-bottom');
     //this._currentViewMeta.tabsHeight = this._currentViewMeta.tabs ? (<HTMLElement> this._currentViewMeta.tabs.querySelector('ion-tabbar-section')).offsetHeight : 0;
+    
     this._currentViewMeta.header = document.querySelector('ion-navbar.toolbar');
     this._currentViewMeta.headerHeight = this._currentViewMeta.header ? (<HTMLElement>this._currentViewMeta.header).offsetHeight : 0;
   }
@@ -135,6 +134,7 @@ export class IonPullUpComponent  {
 
     this.renderer.setElementStyle(this.childFooter.nativeElement, 'height', this._footerMeta.height + 'px');
     
+    // TODO: implement minimize mode
     //this.renderer.setElementStyle(this.el.nativeElement, 'min-height', this._footerMeta.height + 'px'); 
     //if (this.initialState == IonPullUpFooterState.Minimized) {
     //  this.minimize()  
