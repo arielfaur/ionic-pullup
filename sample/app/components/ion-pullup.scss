@@ -1,14 +1,10 @@
-//@import 'node_modules/ionic-angular/components/toolbar/toolbar.ios';
-//@import 'node_modules/ionic-angular/components/toolbar/toolbar.md';
 
 $tabWidth:            120px;                            // tab width
-$tabHeight:           16px;                             // tab height, set to 0px if there is no tab
+$tabHeight:           22px;                             // tab height, set to 0px if there is no tab
 $tabRadius:           20px;                             // tab radius
 $tabBackground:       color($colors, primary, base);    // tab background color
 $tabIconColor:      white;                            // icon color within tab
 $tabShadow:         #666;                             // shadow color
-
-$toolbarHeight:       5.6rem;                           // default toolbar height - DON'T CHANGE
 
 @mixin pullup-tab($width, $height, $radius, $background: color($colors, primary, base), $foreground: color($colors, primary, contrast)) {
   position: relative;
@@ -43,19 +39,22 @@ ion-pullup {
 
     ion-content {
       position:absolute;
-      margin-top: calc(#{$toolbarHeight} + #{$tabHeight});
-
-      // this rule does not work - toolbar height is always 5.6rem 
-      /*
+      
       .ios & {
+        @import 'node_modules/ionic-angular/components/toolbar/toolbar.ios';
         margin-top: calc(#{$toolbar-ios-height} + #{$tabHeight});
+
+        scroll-content {
+          margin-bottom: calc(#{$toolbar-ios-height} + #{$tabHeight});
+        }
       }
       .md & {
+        @import 'node_modules/ionic-angular/components/toolbar/toolbar.md';
         margin-top: calc(#{$toolbar-md-height} + #{$tabHeight});
-      }
-      */
-      scroll-content {
-        margin-bottom: calc(#{$toolbarHeight} + #{$tabHeight});
+
+        scroll-content {
+          margin-bottom: calc(#{$toolbar-md-height} + #{$tabHeight});
+        }
       }
     }
 
