@@ -1,4 +1,4 @@
-import {Attribute, Component, Directive, DoCheck, SimpleChange, OnChanges, EventEmitter, ElementRef, Renderer, ViewChild, ContentChild, Output, Input, Injectable, Inject, Optional, Pipe, PipeTransform} from '@angular/core';
+import {Attribute, ChangeDetectionStrategy, Component, Directive, DoCheck, SimpleChange, OnChanges, EventEmitter, ElementRef, Renderer, ViewChild, ContentChild, Output, Input, Injectable, Inject, Optional, Pipe, PipeTransform} from '@angular/core';
 import {Gesture} from 'ionic-angular/gestures/gesture';
 import {Toolbar, Footer} from 'ionic-angular/components/toolbar/toolbar';
 
@@ -29,9 +29,9 @@ interface FooterTab {
 }
 
 export enum IonPullUpFooterState {
-  Collapsed,
-  Minimized,
-  Expanded
+  Collapsed = 0,  
+  Expanded = 1,
+  Minimized = 2
 }
 
 export enum IonPullUpFooterBehavior {
@@ -41,6 +41,7 @@ export enum IonPullUpFooterBehavior {
 
 @Component({
     selector: 'ion-pullup',
+    changeDetection: ChangeDetectionStrategy.OnPush,
     template: `
     <ion-footer #footer>
       <ng-content></ng-content>
@@ -49,6 +50,8 @@ export enum IonPullUpFooterBehavior {
 })
 export class IonPullUpComponent  { 
   @Input() state: IonPullUpFooterState;
+  @Output() stateChange: EventEmitter<IonPullUpFooterState> = new EventEmitter<IonPullUpFooterState>();
+
   @Input() initialState: IonPullUpFooterState;
   @Input() defaultBehavior: IonPullUpFooterBehavior;
   //@Input() allowMidRange: boolean;
@@ -110,7 +113,7 @@ export class IonPullUpComponent  {
 
       this.state = IonPullUpFooterState.Collapsed;
 
-      this.updateUI();
+      this.updateUI(true);  // TODO: this causes the footer to collapse twice on launch
 
    }
 
@@ -127,23 +130,22 @@ export class IonPullUpComponent  {
     this._currentViewMeta.headerHeight = this._currentViewMeta.header ? (<HTMLElement>this._currentViewMeta.header).offsetHeight : 0;
   }
   
-  computeHeights() {
+  computeHeights(isInit: boolean = false) {
     this._footerMeta.height = this.maxHeight > 0 ? this.maxHeight : this.expandedHeight; 
-    /*
-    this.renderer.setElementStyle(this.el.nativeElement, 'min-height', this._footerMeta.height + 'px'); 
-    if (this.initialState == IonPullUpFooterState.Minimized) {
-      this.minimize()  
-    } else {
-      this.collapse() 
-    }
-    */
+
     this.renderer.setElementStyle(this.childFooter.nativeElement, 'height', this._footerMeta.height + 'px');
-    this.collapse(); 
+    
+    //this.renderer.setElementStyle(this.el.nativeElement, 'min-height', this._footerMeta.height + 'px'); 
+    //if (this.initialState == IonPullUpFooterState.Minimized) {
+    //  this.minimize()  
+    //} else {
+      this.collapse(isInit); 
+    //} 
   }
   
-  updateUI() {
+  updateUI(isInit: boolean = false) {
     setTimeout(() => {  
-      this.computeHeights();
+      this.computeHeights(isInit);
     }, 300);
     this.renderer.setElementStyle(this.childFooter.nativeElement, 'transition', 'none');  // avoids flickering when changing orientation
   }
@@ -157,12 +159,12 @@ export class IonPullUpComponent  {
     this.onExpand.emit(null);
   }
   
-  collapse() {
+  collapse(isInit: boolean = false) {
     this._footerMeta.lastPosY = this._footerMeta.height - this._footerMeta.defaultHeight;
     this.renderer.setElementStyle(this.childFooter.nativeElement, '-webkit-transform', 'translate3d(0, ' + this._footerMeta.lastPosY + 'px, 0)');
     this.renderer.setElementStyle(this.childFooter.nativeElement, 'transform', 'translate3d(0, ' + this._footerMeta.lastPosY + 'px, 0)');
     
-    this.onCollapse.emit(null);
+    if (!isInit) this.onCollapse.emit(null);
   }
   
   minimize() {
@@ -237,6 +239,11 @@ export class IonPullUpComponent  {
           break;
       }
       this._oldState = this.state;
+
+      // TODO: fix hack due to BUG (https://github.com/angular/angular/issues/6005)
+      window.setTimeout(() => {
+        this.stateChange.emit(this.state);
+      })
     }  
   }
    
