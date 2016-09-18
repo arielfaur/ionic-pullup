@@ -1,13 +1,14 @@
 @import 'node_modules/ionic-angular/components/toolbar/toolbar.ios';
 @import 'node_modules/ionic-angular/components/toolbar/toolbar.md';
 
-$tabWidth:            120px;
-$tabHeight:           16px;
-$tabRadius:           20px;
-$footerBackground:    color($colors, primary, base);
-$footerIconColor:     white;
-$footerShadow:        #666;
-$toolbarHeight:       5.6rem;
+$tabWidth:            120px;                            // tab width
+$tabHeight:           16px;                             // tab height, set to 0px if there is no tab
+$tabRadius:           20px;                             // tab radius
+$tabBackground:       color($colors, primary, base);    // tab background color
+$tabIconColor:      white;                            // icon color within tab
+$tabShadow:         #666;                             // shadow color
+
+$toolbarHeight:       5.6rem;                           // default toolbar height - DON'T CHANGE
 
 @mixin pullup-tab($width, $height, $radius, $background: color($colors, primary, base), $foreground: color($colors, primary, contrast)) {
   position: relative;
@@ -36,8 +37,8 @@ ion-pullup {
       display: flex;
       justify-content: center;
 
-      @include pullup-tab($tabWidth, $tabHeight, $tabRadius, $footerBackground, $footerIconColor);
-      @include pullup-tab-shadow($footerShadow);
+      @include pullup-tab($tabWidth, $tabHeight, $tabRadius, $tabBackground, $tabIconColor);
+      @include pullup-tab-shadow($tabShadow);
     }
 
     ion-content {
@@ -59,7 +60,7 @@ ion-pullup {
     }
 
     ion-toolbar {
-      @include pullup-tab-shadow($footerShadow);
+      @include pullup-tab-shadow($tabShadow);
       
       .toolbar-background {
         .ios & {
