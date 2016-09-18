@@ -25,7 +25,9 @@
 </ion-content>
 
 <ion-pullup #pullup (onExpand)="footerExpanded()" (onCollapse)="footerCollapsed()" [(state)]="footerState">
-  <ion-pullup-tab [footer]="pullup"></ion-pullup-tab>
+  <ion-pullup-tab [footer]="pullup">
+    <ion-icon name="arrow-up" *ngIf="footerState == 0"></ion-icon><ion-icon name="arrow-down" *ngIf="footerState == 1"></ion-icon>
+  </ion-pullup-tab>
   <ion-toolbar primary>
     <ion-title>Footer</ion-title>
   </ion-toolbar>
