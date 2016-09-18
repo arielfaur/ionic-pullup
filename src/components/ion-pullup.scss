@@ -1,25 +1,71 @@
+@import 'node_modules/ionic-angular/components/toolbar/toolbar.ios';
+@import 'node_modules/ionic-angular/components/toolbar/toolbar.md';
 
-@mixin footer-tab($width, $height, $radius, $background: color($colors, primary, base)) {
+$tabWidth:            120px;
+$tabHeight:           16px;
+$tabRadius:           20px;
+$footerBackground:    color($colors, primary, base);
+$footerIconColor:     white;
+$footerShadow:        #666;
+$toolbarHeight:       5.6rem;
+
+@mixin pullup-tab($width, $height, $radius, $background: color($colors, primary, base), $foreground: color($colors, primary, contrast)) {
   position: relative;
   width: $width;
   height: $height;
   background: $background;
+  color: $foreground;
   border-radius: $radius $radius 0 0;
   margin: 0 auto; 
 }
 
-ion-footer[ion-pullup] { 
+@mixin pullup-tab-shadow($shadowColor) {
+    box-shadow: 0px -2px 2px $shadowColor;
+}
+
+ion-pullup { 
   background : color($colors, primary, base);  
 
-  .footer-tab {
-    @include footer-tab(120px, 20px, 20px, rgba(color($colors, primary, base), .8) )
-  }
-
-  ion-content {
-    position:absolute;
-
-    scroll-content {
-      margin-top: 60px;
+  ion-footer {
+    &::before {
+      content: none;
     }
-  }
+
+    ion-pullup-tab {
+      z-index: 1000;
+      display: flex;
+      justify-content: center;
+
+      @include pullup-tab($tabWidth, $tabHeight, $tabRadius, $footerBackground, $footerIconColor);
+      @include pullup-tab-shadow($footerShadow);
+    }
+
+    ion-content {
+      position:absolute;
+      margin-top: calc(#{$toolbarHeight} + #{$tabHeight});
+
+      // this rule does not work - toolbar height is always 5.6rem 
+      /*
+      .ios & {
+        margin-top: calc(#{$toolbar-ios-height} + #{$tabHeight});
+      }
+      .md & {
+        margin-top: calc(#{$toolbar-md-height} + #{$tabHeight});
+      }
+      */
+      scroll-content {
+        margin-bottom: calc(#{$toolbarHeight} + #{$tabHeight});
+      }
+    }
+
+    ion-toolbar {
+      @include pullup-tab-shadow($footerShadow);
+      
+      .toolbar-background {
+        .ios & {
+          border-top: none;
+        }
+      }
+    }
+  } 
 }
