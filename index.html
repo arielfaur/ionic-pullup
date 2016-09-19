@@ -98,7 +98,7 @@ export class HomePage {
 }
 </code></pre>
 
-  <p>Then bind <code>footerState</code> variable in page template to <code>ion-pullup</code> <code>state</code> property for two-way data binding. 
+  <p>Then bind <code>footerState</code> variable in page template to <code>ion-pullup</code> <code>state</code> property in order to set up two-way data binding. 
   We can also susbscribe to expand and collapse events to be notified.</p>
 
   <pre><code>
@@ -112,7 +112,8 @@ export class HomePage {
 
         <p>
         Create a <code>ion-pullup</code> directive and optionally add a child <code>ion-pullup-tab</code> component to have a handle added. The handle can be fully customized using SASS mixins (see <code>ion-pullup.scss</code> file).</p>
-
+        <p>To have icons displayed inside the tab simply use standard Angular 2 code to hide or show content based on the <code>footerState</code> variable defined above.</p>
+        
         <iframe src="https://embed.plnkr.co/JPsrCGpWXTxrDywJ44cl/?show=home.html" frameborder="0" width="100%" height="736"></iframe>
 
         <h2>
