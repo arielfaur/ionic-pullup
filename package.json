@@ -1,4 +1,7 @@
 {
+  "name": "ionic-pullup",
+  "description": "ionic-pullup for Angular 2 and Ionic 2",
+  "version": "2.1.0",
   "dependencies": {
     "@angular/common": "2.1.1",
     "@angular/compiler": "2.1.1",
@@ -18,9 +21,7 @@
   },
   "devDependencies": {
     "@ionic/app-scripts": "0.0.44",
+    "@types/core-js": "^0.9.35",
     "typescript": "2.0.6"
-  },
-  "name": "ionic-pullup",
-  "description": "ionic-pullup for Angular 2 and Ionic 2",
-  "version": "2.1.0"
+  }
 }
