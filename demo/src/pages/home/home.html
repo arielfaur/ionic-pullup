@@ -1,25 +1,32 @@
 <ion-header>
   <ion-navbar>
-    <ion-title>Home</ion-title>
+    <ion-title>
+      Ionic Blank
+    </ion-title>
   </ion-navbar>
 </ion-header>
 
-<ion-content padding>
-  <h2>Welcome to Ionic!</h2>
+<ion-content padding class="getting-started">
+
+  <h3>Welcome to your first Ionic app!</h3>
+
   <p>
-    This starter project comes with simple tabs-based layout for apps
-    that are going to primarily use a Tabbed UI.
+    This starter project is our way of helping you get a functional app running in record time.
   </p>
   <p>
-    Take a look at the <code>src/pages/</code> directory to add or change tabs,
-    update any existing page or create new pages.
+    Follow along on the tutorial section of the Ionic docs!
   </p>
+  <p>
+    <button primary menuToggle>Toggle Menu</button><button primary (click)="toggleFooter()">Toggle Footer</button>
+  </p>
+
 </ion-content>
+
 <ion-pullup #pullup (onExpand)="footerExpanded()" (onCollapse)="footerCollapsed()" [(state)]="footerState">
   <ion-pullup-tab [footer]="pullup">
     <ion-icon name="arrow-up" *ngIf="footerState == 0"></ion-icon><ion-icon name="arrow-down" *ngIf="footerState == 1"></ion-icon>
   </ion-pullup-tab>
-  <ion-toolbar color="primary">
+  <ion-toolbar primary>
     <ion-title>Footer</ion-title>
   </ion-toolbar>
   <ion-content>
