@@ -1,10 +1,9 @@
-
-$tabWidth:            120px;                            // tab width
-$tabHeight:           22px;                             // tab height, set to 0px if there is no tab
-$tabRadius:           20px;                             // tab radius
-$tabBackground:       color($colors, primary, base);    // tab background color
-$tabIconColor:      white;                            // icon color within tab
-$tabShadow:         #666;                             // shadow color
+$tabWidth: 120px !default; // tab width
+$tabHeight: 22px !default; // tab height, set to 0px if there is no tab
+$tabRadius: 20px !default; // tab radius
+$tabBackground: color($colors, primary, base) !default; // tab background color
+$tabIconColor: white !default; // icon color within tab
+$tabShadow: #666 !default; // shadow color
 
 @mixin pullup-tab($width, $height, $radius, $background: color($colors, primary, base), $foreground: color($colors, primary, contrast)) {
   position: relative;
@@ -21,7 +20,7 @@ $tabShadow:         #666;                             // shadow color
 }
 
 ion-pullup {
-  background : color($colors, primary, base);
+  background: color($colors, primary, base);
 
   ion-footer {
     &::before {
@@ -38,22 +37,37 @@ ion-pullup {
     }
 
     ion-content {
-      position:absolute;
+      position: absolute;
 
       .ios & {
         @import 'node_modules/ionic-angular/components/toolbar/toolbar.ios';
-        margin-top: calc(#{$toolbar-ios-height} + #{$tabHeight});
 
-        .scroll-content {
-          margin-bottom: calc(#{$toolbar-ios-height} + #{$tabHeight});
+        @if $tabHeight != 0 {
+          margin-top: calc(#{$toolbar-ios-height} + #{$tabHeight});
+          .scroll-content {
+            margin-bottom: calc(#{$toolbar-ios-height} + #{$tabHeight});
+          }
+        } @else {
+          margin-top: $toolbar-ios-height;
+          .scroll-content {
+            margin-bottom: $toolbar-ios-height;
+          }
         }
+
       }
       .md & {
         @import 'node_modules/ionic-angular/components/toolbar/toolbar.md';
-        margin-top: calc(#{$toolbar-md-height} + #{$tabHeight});
 
-        .scroll-content {
-          margin-bottom: calc(#{$toolbar-md-height} + #{$tabHeight});
+        @if $tabHeight != 0 {
+          margin-top: calc(#{$toolbar-md-height} + #{$tabHeight});
+          .scroll-content {
+            margin-bottom: calc(#{$toolbar-md-height} + #{$tabHeight});
+          }
+        } @else {
+          margin-top: $toolbar-md-height;
+          .scroll-content {
+            margin-bottom: $toolbar-md-height;
+          }
         }
       }
     }
