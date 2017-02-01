@@ -36,7 +36,7 @@ export var IonPullUpFooterBehavior;
     IonPullUpFooterBehavior[IonPullUpFooterBehavior["Hide"] = 0] = "Hide";
     IonPullUpFooterBehavior[IonPullUpFooterBehavior["Expand"] = 1] = "Expand";
 })(IonPullUpFooterBehavior || (IonPullUpFooterBehavior = {}));
-var IonPullUpComponent = (function () {
+export var IonPullUpComponent = (function () {
     function IonPullUpComponent(platform, el, renderer) {
         this.platform = platform;
         this.el = el;
@@ -206,54 +206,56 @@ var IonPullUpComponent = (function () {
             });
         }
     };
+    __decorate([
+        Input(), 
+        __metadata('design:type', Number)
+    ], IonPullUpComponent.prototype, "state", void 0);
+    __decorate([
+        Output(), 
+        __metadata('design:type', EventEmitter)
+    ], IonPullUpComponent.prototype, "stateChange", void 0);
+    __decorate([
+        Input(), 
+        __metadata('design:type', Number)
+    ], IonPullUpComponent.prototype, "initialState", void 0);
+    __decorate([
+        // TODO implemment
+        Input(), 
+        __metadata('design:type', Number)
+    ], IonPullUpComponent.prototype, "defaultBehavior", void 0);
+    __decorate([
+        // TODO implemment
+        Input(), 
+        __metadata('design:type', Number)
+    ], IonPullUpComponent.prototype, "maxHeight", void 0);
+    __decorate([
+        Output(), 
+        __metadata('design:type', Object)
+    ], IonPullUpComponent.prototype, "onExpand", void 0);
+    __decorate([
+        Output(), 
+        __metadata('design:type', Object)
+    ], IonPullUpComponent.prototype, "onCollapse", void 0);
+    __decorate([
+        Output(), 
+        __metadata('design:type', Object)
+    ], IonPullUpComponent.prototype, "onMinimize", void 0);
+    __decorate([
+        ContentChild(Toolbar), 
+        __metadata('design:type', Object)
+    ], IonPullUpComponent.prototype, "childToolbar", void 0);
+    __decorate([
+        ViewChild('footer'), 
+        __metadata('design:type', Object)
+    ], IonPullUpComponent.prototype, "childFooter", void 0);
+    IonPullUpComponent = __decorate([
+        Component({
+            selector: 'ion-pullup',
+            changeDetection: ChangeDetectionStrategy.OnPush,
+            template: "\n    <ion-footer #footer>\n      <ng-content></ng-content>\n    </ion-footer>\n    "
+        }), 
+        __metadata('design:paramtypes', [Platform, ElementRef, Renderer])
+    ], IonPullUpComponent);
     return IonPullUpComponent;
 }());
-__decorate([
-    Input(),
-    __metadata("design:type", Number)
-], IonPullUpComponent.prototype, "state", void 0);
-__decorate([
-    Output(),
-    __metadata("design:type", EventEmitter)
-], IonPullUpComponent.prototype, "stateChange", void 0);
-__decorate([
-    Input(),
-    __metadata("design:type", Number)
-], IonPullUpComponent.prototype, "initialState", void 0);
-__decorate([
-    Input(),
-    __metadata("design:type", Number)
-], IonPullUpComponent.prototype, "defaultBehavior", void 0);
-__decorate([
-    Input(),
-    __metadata("design:type", Number)
-], IonPullUpComponent.prototype, "maxHeight", void 0);
-__decorate([
-    Output(),
-    __metadata("design:type", Object)
-], IonPullUpComponent.prototype, "onExpand", void 0);
-__decorate([
-    Output(),
-    __metadata("design:type", Object)
-], IonPullUpComponent.prototype, "onCollapse", void 0);
-__decorate([
-    Output(),
-    __metadata("design:type", Object)
-], IonPullUpComponent.prototype, "onMinimize", void 0);
-__decorate([
-    ContentChild(Toolbar),
-    __metadata("design:type", Object)
-], IonPullUpComponent.prototype, "childToolbar", void 0);
-__decorate([
-    ViewChild('footer'),
-    __metadata("design:type", Object)
-], IonPullUpComponent.prototype, "childFooter", void 0);
-IonPullUpComponent = __decorate([
-    Component({
-        selector: 'ion-pullup',
-        changeDetection: ChangeDetectionStrategy.OnPush,
-        template: "\n    <ion-footer #footer>\n      <ng-content></ng-content>\n    </ion-footer>\n    "
-    }),
-    __metadata("design:paramtypes", [Platform, ElementRef, Renderer])
-], IonPullUpComponent);
-export { IonPullUpComponent };
+//# sourceMappingURL=ion-pullup.js.map

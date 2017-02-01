@@ -24,7 +24,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 import { Component, ElementRef, Renderer, Input } from '@angular/core';
 import { Gesture } from 'ionic-angular/gestures/gesture';
 import { IonPullUpComponent, IonPullUpFooterState } from './ion-pullup';
-var IonPullUpTabComponent = (function () {
+export var IonPullUpTabComponent = (function () {
     function IonPullUpTabComponent(el, renderer) {
         this.el = el;
         this.renderer = renderer;
@@ -54,18 +54,17 @@ var IonPullUpTabComponent = (function () {
             _this.footer && _this.footer.onDrag(e);
         });
     };
+    __decorate([
+        Input(), 
+        __metadata('design:type', IonPullUpComponent)
+    ], IonPullUpTabComponent.prototype, "footer", void 0);
+    IonPullUpTabComponent = __decorate([
+        Component({
+            selector: 'ion-pullup-tab',
+            template: '<ng-content></ng-content>'
+        }), 
+        __metadata('design:paramtypes', [ElementRef, Renderer])
+    ], IonPullUpTabComponent);
     return IonPullUpTabComponent;
 }());
-__decorate([
-    Input(),
-    __metadata("design:type", IonPullUpComponent)
-], IonPullUpTabComponent.prototype, "footer", void 0);
-IonPullUpTabComponent = __decorate([
-    Component({
-        selector: 'ion-pullup-tab',
-        template: '<ng-content></ng-content>'
-    }),
-    __metadata("design:paramtypes", [ElementRef, Renderer])
-], IonPullUpTabComponent);
-export { IonPullUpTabComponent };
 //# sourceMappingURL=ion-pullup-tab.js.map
