@@ -1,13 +1,12 @@
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA }           from '@angular/core';
 import { CommonModule }       from '@angular/common';
-import { FormsModule }        from '@angular/forms';
 import { IonicModule } from 'ionic-angular';
 
 import {IonPullUpComponent} from './ion-pullup';
 import {IonPullUpTabComponent} from './ion-pullup-tab';
 
 @NgModule({
-  imports:      [ CommonModule, FormsModule, IonicModule  ],
+  imports:      [ CommonModule, IonicModule ],
   declarations: [ 
     IonPullUpComponent,
     IonPullUpTabComponent
@@ -21,5 +20,3 @@ import {IonPullUpTabComponent} from './ion-pullup-tab';
 })
 export class IonPullupModule { }
 
-export * from './ion-pullup';
-export * from './ion-pullup-tab';

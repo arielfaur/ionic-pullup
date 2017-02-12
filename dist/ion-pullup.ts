@@ -13,9 +13,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { Attribute, ChangeDetectionStrategy, Component, Directive, DoCheck, SimpleChange, OnChanges, EventEmitter, ElementRef, Renderer, ViewChild, ContentChild, Output, Input, Injectable, Inject, Optional } from '@angular/core';
-import { Gesture } from 'ionic-angular/gestures/gesture';
-import { Toolbar, Footer } from 'ionic-angular/components/toolbar/toolbar';
+import { ChangeDetectionStrategy, Component, EventEmitter, ElementRef, Renderer, ViewChild, Output, Input } from '@angular/core';
 import { Platform } from 'ionic-angular';
 
 interface FooterMetadata {
@@ -75,7 +73,6 @@ export class IonPullUpComponent  {
   @Output() onCollapse = new EventEmitter<any>();
   @Output() onMinimize = new EventEmitter<any>();
 
-  @ContentChild(Toolbar) childToolbar;
   @ViewChild('footer') childFooter;
 
   protected _footerMeta: FooterMetadata;
@@ -111,15 +108,6 @@ export class IonPullUpComponent  {
 
    ngAfterContentInit() {    
       this.computeDefaults();
-
-      let barGesture = new Gesture(this.childToolbar.getNativeElement());
-      barGesture.listen();
-      barGesture.on('tap', e => {
-        this.onTap(e);
-      });
-      barGesture.on('pan panstart panend', e => {
-        this.onDrag(e);
-      });
 
       this.state = IonPullUpFooterState.Collapsed;
 

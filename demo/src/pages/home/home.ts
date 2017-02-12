@@ -2,8 +2,7 @@ import { Component } from '@angular/core';
 
 import { NavController } from 'ionic-angular';
 
-import {IonPullUpComponent, IonPullUpFooterState} from '../../app/ionic-pullup/ion-pullup';
-import {IonPullUpTabComponent} from '../../app/ionic-pullup/ion-pullup-tab';
+import { IonPullUpFooterState} from 'ionic-pullup/dist';
 
 @Component({
   selector: 'page-home',
