@@ -16,14 +16,14 @@ limitations under the License.
 import { ChangeDetectionStrategy, Component, EventEmitter, ElementRef, Renderer, ViewChild, Output, Input } from '@angular/core';
 import { Platform } from 'ionic-angular';
 
-interface FooterMetadata {
+export interface FooterMetadata {
   height: number;
   posY: number;
   lastPosY: number;
   defaultHeight?: number;
 }
 
-interface ViewMetadata {
+export interface ViewMetadata {
   tabs?: Element;
   tabsHeight?: number;
   hasBottomTabs?: boolean;  
@@ -31,7 +31,7 @@ interface ViewMetadata {
   headerHeight?: number;
 }
 
-interface FooterTab {
+export interface FooterTab {
   x?: number;
   y?: number;
   upperLeftRadius?: number;
