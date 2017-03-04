@@ -58,44 +58,10 @@
 
         <p><code>npm install ionic-pullup</code></p>
 
-        <p>Add <code>ionic-pullup</code> module to tsconfig.json under <code>files</code> </p>
-        
-        <pre><code>
-        {
-          "compilerOptions": {
-            "allowSyntheticDefaultImports": true,
-            "declaration": false,
-            "emitDecoratorMetadata": true,
-            "experimentalDecorators": true,
-            "lib": [
-              "dom",
-              "es2015"
-            ],
-            "module": "es2015",
-            "moduleResolution": "node",
-            "sourceMap": true,
-            "target": "es5"
-          },
-          "files": [
-            "node_modules/ionic-pullup/dist/index.ts"
-          ],
-          "include": [
-            "src/**/*.ts"
-          ],
-          "exclude": [
-            "node_modules"
-          ],
-          "compileOnSave": false,
-          "atom": {
-            "rewriteTsconfig": false
-          }
-        }
-        </code></pre>
-
         <p>Import <code>IonPullupModule</code> into your app's app.module.ts file</p>
 
         <pre><code>
-         import { IonPullupModule } from 'ionic-pullup/dist';
+         import { IonPullupModule } from 'ionic-pullup';
 
           @NgModule({
             declarations: [
@@ -131,7 +97,7 @@
           <p>We can bind a footer state variable. This allows us to manage the footer by triggering state changes. 
 
         <pre><code>
-        import { IonPullUpFooterState } from 'ionic-pullup/dist';
+        import { IonPullUpFooterState } from 'ionic-pullup';
         
         @Component({
           selector: 'page-about',
