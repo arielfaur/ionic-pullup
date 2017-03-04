@@ -1,7 +1,7 @@
 {
   "name": "ionic-pullup",
   "description": "ionic-pullup for Angular 2 and Ionic 2",
-  "version": "2.2.1",
+  "version": "2.2.2",
   "main": "./dist/index.js",
   "typings": "./dist/index.d.ts",
   "scripts": {
