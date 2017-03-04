@@ -6,7 +6,7 @@ import { ContactPage } from '../pages/contact/contact';
 import { HomePage } from '../pages/home/home';
 import { TabsPage } from '../pages/tabs/tabs';
 
-import {IonPullupModule} from 'ionic-pullup/dist';
+import {IonPullupModule} from 'ionic-pullup';
 
 @NgModule({
   declarations: [

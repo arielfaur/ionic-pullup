@@ -1,5 +1,45 @@
 {
   "name": "ionic-pullup",
   "description": "ionic-pullup for Angular 2 and Ionic 2",
-  "version": "2.2.0"
+  "version": "2.2.0",
+  "main": "./dist/index.js",
+  "typings": "./dist/index.d.ts",
+  "scripts": {
+    "prepublish": "tsc -p ./",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@angular/common": "2.2.1",
+    "@angular/compiler": "2.2.1",
+    "@angular/compiler-cli": "2.2.1",
+    "@angular/core": "2.2.1",
+    "@angular/forms": "2.2.1",
+    "@angular/http": "2.2.1",
+    "@angular/platform-browser": "2.2.1",
+    "@angular/platform-browser-dynamic": "2.2.1",
+    "@angular/platform-server": "2.2.1",
+    "ionic-angular": "2.1.0",
+    "rxjs": "5.0.0-beta.12",
+    "zone.js": "0.6.26"
+  },
+  "devDependencies": {
+    "typescript": "2.0.9"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/arielfaur/ionic-pullup.git"
+  },
+  "keywords": [
+    "ionic",
+    "angular",
+    "audio",
+    "player",
+    "typescript"
+  ],
+  "author": "Ariel Faur",
+  "license": "Apache",
+  "bugs": {
+    "url": "https://github.com/arielfaur/ionic-pullup/issues"
+  },
+  "homepage": "http://arielfaur.github.io/ionic-pullup"
 }

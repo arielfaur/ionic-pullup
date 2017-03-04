@@ -1,26 +1,34 @@
 {
   "compilerOptions": {
     "allowSyntheticDefaultImports": true,
-    "declaration": false,
+    "declaration": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
+    "sourceMap": true,
     "lib": [
       "dom",
       "es2015"
     ],
     "module": "es2015",
     "moduleResolution": "node",
-    "sourceMap": true,
-    "target": "es5"
+    "target": "es5",
+    "outDir": "./dist"
   },
-  "include": [
-    "src/**/*.ts"
-  ],
   "exclude": [
     "node_modules"
   ],
   "compileOnSave": false,
   "atom": {
     "rewriteTsconfig": false
+  },
+  "files": [
+    "dist/index.ts",
+    "dist/ion-pullup.module.ts",
+    "dist/ion-pullup.ts",
+    "dist/ion-pullup-tab.ts"
+  ],
+  "angularCompilerOptions": {
+    "strictMetadataEmit": true,
+    "skipTemplateCodegen": true
   }
 }
