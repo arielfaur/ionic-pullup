@@ -1,4 +1,4 @@
-# v1.1.3
+# v1.1.4
 
 ## This release requires Ionic 1.3 and Angular 1.5
 

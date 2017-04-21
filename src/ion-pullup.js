@@ -1,6 +1,6 @@
 /*
-ionic-pullup v1.1.2
- 
+ionic-pullup v1.1.4
+
 Copyright 2016 Ariel Faur (https://github.com/arielfaur)
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -37,9 +37,10 @@ angular.module('ionic-pullup', [])
                 allowMidRange: '='
             },
             controller: ['$scope', '$element', '$attrs', '$timeout', '$rootScope', '$window', '$ionicPlatform', 'ionPullUpFooterState', 'ionPullUpFooterBehavior', function ($scope, $element, $attrs, $timeout, $rootScope, $window, $ionicPlatform, FooterState, FooterBehavior) {
-                var tabs, hasBottomTabs, header, tabsHeight, headerHeight, handleHeight = 0, 
-                noTap = false, 
-                noDrag = false, 
+                var tabs, hasBottomTabs, header, tabsHeight, headerHeight, handleHeight = 0,
+                noTap = false,
+                noDrag = false,
+                  noMinimized = false,
                     footer = {
                         height: 0,
                         posY: 0,
@@ -49,13 +50,16 @@ angular.module('ionic-pullup', [])
                         initialState: $attrs.initialState ? $attrs.initialState.toUpperCase() : FooterState.COLLAPSED,
                         defaultBehavior: $attrs.defaultBehavior ? $attrs.defaultBehavior.toUpperCase() : FooterBehavior.EXPAND
                     };
-                    
+
                 $attrs.$observe('disableTap', function(disable) {
                     noTap = (disable === "true");
                 });
                 $attrs.$observe('disableDrag', function(disable) {
                     noDrag = (disable === "true");
                 });
+              $attrs.$observe('disableMinimizedState', function(disable) {
+                noMinimized = (disable === "true");
+              });
 
                 this.$onInit = function () {
                     $timeout(function () {
@@ -142,7 +146,7 @@ angular.module('ionic-pullup', [])
                 this.onTap = function (e) {
                     if (noTap)
                         return;
-                    
+
                     e.gesture.srcEvent.preventDefault();
                     e.gesture.preventDefault();
 
@@ -170,7 +174,7 @@ angular.module('ionic-pullup', [])
                 this.onDrag = function (e) {
                     if (noDrag)
                         return;
-                    
+
                     e.gesture.srcEvent.preventDefault();
                     e.gesture.preventDefault();
 
@@ -178,8 +182,12 @@ angular.module('ionic-pullup', [])
                         case 'dragstart':
                             $element.css('transition', 'none');
                             break;
-                        case 'drag':
-                            footer.posY = Math.round(e.gesture.deltaY) + footer.lastPosY;
+                      case 'drag':
+                            var delta = Math.round(e.gesture.deltaY);
+                            footer.posY = + delta + footer.lastPosY;
+                            if (noMinimized && $scope.state === FooterState.COLLAPSED && delta > 0) {
+                              return;
+                            }
                             if (footer.posY < 0 || footer.posY > footer.height) return;
                             $element.css({ '-webkit-transform': 'translate3d(0, ' + footer.posY + 'px, 0)', 'transform': 'translate3d(0, ' + footer.posY + 'px, 0)' });
                             break;
@@ -306,7 +314,7 @@ angular.module('ionic-pullup', [])
                     behavior = controller.getDefaultBehavior();
 
                 toggleIcons(state, behavior);
-                
+
                 updateUI();
             }
 
