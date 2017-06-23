@@ -1,33 +1,28 @@
 {
   "name": "ionic-pullup",
   "description": "ionic-pullup for Angular 4 and Ionic 3",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "main": "./dist/index.js",
   "typings": "./dist/index.d.ts",
   "scripts": {
-    "prepublish": "tsc -p ./",
+    "build": "node_modules/.bin/ngc && copyfiles -u 1 ./src/*.scss ./dist",
+    "release": "npm run build && npm publish",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "dependencies": {
-    "@angular/common": "4.0.0",
-    "@angular/compiler": "4.0.0",
-    "@angular/compiler-cli": "4.0.0",
-    "@angular/core": "4.0.0",
-    "@angular/forms": "4.0.0",
-    "@angular/http": "4.0.0",
-    "@angular/platform-browser": "4.0.0",
-    "@angular/platform-browser-dynamic": "4.0.0",
-    "@ionic-native/core": "3.4.2",
-    "@ionic-native/splash-screen": "3.4.2",
-    "@ionic-native/status-bar": "3.4.2",
-    "@ionic/storage": "2.0.1",
-    "ionic-angular": "3.0.1",
-    "rxjs": "5.1.1",
-    "sw-toolbox": "3.4.0",
-    "zone.js": "^0.8.4"
-  },
   "devDependencies": {
-    "typescript": "~2.2.1"
+    "@angular/common": "4.1.2",
+    "@angular/compiler": "4.1.2",
+    "@angular/compiler-cli": "4.1.2",
+    "@angular/core": "4.1.2",
+    "@angular/forms": "4.1.2",
+    "@angular/http": "4.1.2",
+    "@angular/platform-browser": "4.1.2",
+    "@angular/platform-browser-dynamic": "4.1.2",
+    "ionic-angular": "3.3.0",
+    "rxjs": "5.1.1",
+    "zone.js": "0.8.11",
+    "typescript": "2.3.3",
+    "copyfiles": "^1.2.0"
   },
   "repository": {
     "type": "git",
