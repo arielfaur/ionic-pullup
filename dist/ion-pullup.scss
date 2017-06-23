@@ -1,0 +1,61 @@
+$tabWidth:            120px;                            // tab width
+$tabHeight:           22px;                             // tab height, set to 0px if there is no tab
+$tabRadius:           20px;                             // tab radius
+$tabBackground:       color($colors, primary, base);    // tab background color
+$tabIconColor:      white;                            // icon color within tab
+$tabShadow:         #666;                             // shadow color
+
+@mixin pullup-tab($width, $height, $radius, $background: color($colors, primary, base), $foreground: color($colors, primary, contrast)) {
+  position: relative;
+  width: $width;
+  height: $height;
+  background: $background;
+  color: $foreground;
+  border-radius: $radius $radius 0 0;
+  margin: 0 auto; 
+}
+
+@mixin pullup-tab-shadow($shadowColor) {
+    box-shadow: 0px -2px 2px $shadowColor;
+}
+
+ion-pullup { 
+  background : color($colors, primary, base);  
+
+  .footer {
+    &::before {
+      content: none;
+    }
+
+    ion-pullup-tab {
+      z-index: 1000;
+      display: flex;
+      justify-content: center;
+
+      @include pullup-tab($tabWidth, $tabHeight, $tabRadius, $tabBackground, $tabIconColor);
+      @include pullup-tab-shadow($tabShadow);
+    }
+
+    ion-content {
+      
+      &.content-ios  {
+        @import 'node_modules/ionic-angular/components/toolbar/toolbar.ios';
+
+        .scroll-content {
+          bottom: calc(#{$toolbar-ios-height} + #{$tabHeight}) !important;
+        }
+      }
+      &.content-md  {
+        @import 'node_modules/ionic-angular/components/toolbar/toolbar.md';
+
+        .scroll-content {
+          bottom: calc(#{$toolbar-md-height} + #{$tabHeight}) !important;
+        }
+      }
+    }
+
+    ion-toolbar {
+      @include pullup-tab-shadow($tabShadow);
+    }
+  } 
+}
