@@ -22,10 +22,10 @@
     "rewriteTsconfig": false
   },
   "files": [
-    "dist/index.ts",
-    "dist/ion-pullup.module.ts",
-    "dist/ion-pullup.ts",
-    "dist/ion-pullup-tab.ts"
+    "src/index.ts",
+    "src/ion-pullup.module.ts",
+    "src/ion-pullup.ts",
+    "src/ion-pullup-tab.ts"
   ],
   "angularCompilerOptions": {
     "strictMetadataEmit": true,
