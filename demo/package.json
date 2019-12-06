@@ -37,22 +37,9 @@
     "ionic-plugin-keyboard": "~2.2.1"
   },
   "devDependencies": {
-    "@ionic/app-scripts": "^2.1.4",
+    "@ionic/app-scripts": "^3.2.4",
     "ionic": "3.9.2",
     "typescript": "2.3.4"
   },
-  "description": "demo: An Ionic project",
-  "cordova": {
-    "plugins": {
-      "cordova-plugin-console": {},
-      "cordova-plugin-device": {},
-      "cordova-plugin-splashscreen": {},
-      "cordova-plugin-statusbar": {},
-      "cordova-plugin-whitelist": {},
-      "ionic-plugin-keyboard": {}
-    },
-    "platforms": [
-      "android"
-    ]
-  }
+  "description": "demo: An Ionic project"
 }
