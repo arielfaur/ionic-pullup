@@ -14,7 +14,7 @@ limitations under the License.
 */
 
 import { ChangeDetectionStrategy, Component, EventEmitter, ElementRef, Renderer, ViewChild, Output, Input } from '@angular/core';
-import { Platform } from 'ionic-angular';
+import { Platform } from '@ionic/angular';
 
 export interface FooterMetadata {
   height: number;
@@ -73,7 +73,7 @@ export class IonPullUpComponent  {
   @Output() onCollapse = new EventEmitter<any>();
   @Output() onMinimize = new EventEmitter<any>();
 
-  @ViewChild('footer') childFooter;
+  @ViewChild('footer', { static: false  }) childFooter;
 
   protected _footerMeta: FooterMetadata;
   protected _currentViewMeta: ViewMetadata;  
