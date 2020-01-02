@@ -1,7 +1,7 @@
 $tabWidth: 120px; // tab width
-$tabHeight: 22px; // tab height, set to 0px if there is no tab
-$tabRadius: 20px; // tab radius
-$tabBackground: -var(--ion-color-primary); // tab background color
+$tabHeight: 10px; // tab height, set to 0px if there is no tab
+$tabRadius: 10px; // tab radius
+$tabBackground: var(--ion-color-primary); // tab background color
 $tabIconColor: white; // icon color within tab
 $tabShadow: #666; // shadow color
 // $toolbar-md-height: 60px;
@@ -10,8 +10,8 @@ $tabShadow: #666; // shadow color
   $width,
   $height,
   $radius,
-  $background: -var(--ion-color-primary),
-  $foreground: -var(--ion-color-primary-contrast)
+  $background: var(--ion-color-primary),
+  $foreground: var(--ion-color-primary-contrast)
 ) {
   position: relative;
   width: $width;

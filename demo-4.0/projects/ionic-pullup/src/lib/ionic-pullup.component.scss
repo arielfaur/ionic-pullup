@@ -1,21 +1,10 @@
 @import "variables.scss";
+.footer {
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+    position: fixed;    // or absolute
+    // bottom: 50px;
+}
 
-// :host {
-//     background: -var(--ion-color-secondary);
-// }
 
-// .footer {
-//   &::before {
-//     content: none;
-//   }
-
-//   ion-content {
-   
-//         bottom: calc(#{$toolbar-md-height} + #{$tabHeight}) !important;
-
-//   }
-
-//   ion-toolbar {
-//     @include pullup-tab-shadow($tabShadow);
-//   }
-// }

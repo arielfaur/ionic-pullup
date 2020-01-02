@@ -1,6 +1,6 @@
 /*
 ionic-pullup v2 for Ionic/Angular 2
- 
+
 Copyright 2016 Ariel Faur (https://github.com/arielfaur)
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { ChangeDetectionStrategy, Component, EventEmitter, ElementRef, Renderer2, ViewChild, Output, Input, OnInit, AfterContentInit, DoCheck, OnChanges, SimpleChanges } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, ElementRef, Renderer2, ViewChild, Output, Input, OnInit, AfterContentInit, OnChanges, SimpleChanges } from '@angular/core';
 import { Platform } from '@ionic/angular';
 
 export interface FooterMetadata {
@@ -82,7 +82,7 @@ export class IonicPullupComponent implements OnInit, AfterContentInit, OnChanges
       height: 0,
       posY: 0,
       lastPosY: 0
-    }
+    };
     this.currentViewMeta = {};
 
     // sets initial state
@@ -114,24 +114,19 @@ export class IonicPullupComponent implements OnInit, AfterContentInit, OnChanges
   }
 
   public get expandedHeight(): number {
-    return window.innerHeight - this.currentViewMeta.headerHeight;
+    return window.innerHeight - this.currentViewMeta.headerHeight - this.currentViewMeta.tabsHeight;
   }
 
   computeDefaults() {
 
     setTimeout(() => {
       this.footerMeta.defaultHeight = this.childFooter.nativeElement.offsetHeight;
-
-      this.currentViewMeta.tabs = document.querySelector('ion-tab-bar'); //this.el.nativeElement.closest('ion-tabs');
+      this.currentViewMeta.tabs = document.querySelector('ion-tab-bar');
       this.currentViewMeta.tabsHeight = this.currentViewMeta.tabs ? (this.currentViewMeta.tabs as HTMLElement).offsetHeight : 0;
       console.log(this.currentViewMeta.tabsHeight ? 'ionic-pullup => Tabs detected' : 'ionic.pullup => View has no tabs');
-      // this._currentViewMeta.hasBottomTabs = this._currentViewMeta.tabs && this._currentViewMeta.tabs.classList.contains('tabs-bottom');
-
 
       this.currentViewMeta.header = document.querySelector('ion-toolbar');
       this.currentViewMeta.headerHeight = this.currentViewMeta.header.clientHeight;
-      //this.currentViewMeta.header ? (this.currentViewMeta.header as HTMLElement).offsetHeight : 0;
-
     }, 300);
   }
 
@@ -141,12 +136,12 @@ export class IonicPullupComponent implements OnInit, AfterContentInit, OnChanges
     this.renderer.setStyle(this.childFooter.nativeElement, 'height', this.footerMeta.height + 'px');
 
     // TODO: implement minimize mode
-    // this.renderer.setStyle(this.el.nativeElement, 'min-height', this._footerMeta.height + 'px'); 
+    // this.renderer.setStyle(this.el.nativeElement, 'min-height', this._footerMeta.height + 'px');
     // if (this.initialState == IonPullUpFooterState.Minimized) {
-    //  this.minimize()  
+    //  this.minimize()
     // } else {
     this.collapse(isInit);
-    // } 
+    // }
   }
 
   updateUI(isInit: boolean = false) {
@@ -172,7 +167,7 @@ export class IonicPullupComponent implements OnInit, AfterContentInit, OnChanges
     console.log('Collapse', this.childFooter);
 
     if (!this.childFooter) { return; }
-    this.footerMeta.lastPosY = this.footerMeta.height - this.footerMeta.defaultHeight - this.currentViewMeta.tabsHeight;
+    this.footerMeta.lastPosY = this.footerMeta.height - this.footerMeta.defaultHeight;
     this.renderer.setStyle(this.childFooter.nativeElement, '-webkit-transform', 'translate3d(0, ' + this.footerMeta.lastPosY + 'px, 0)');
     this.renderer.setStyle(this.childFooter.nativeElement, 'transform', 'translate3d(0, ' + this.footerMeta.lastPosY + 'px, 0)');
 
@@ -194,16 +189,14 @@ export class IonicPullupComponent implements OnInit, AfterContentInit, OnChanges
     if (this.state === IonPullUpFooterState.Collapsed) {
       if (this.defaultBehavior === IonPullUpFooterBehavior.Hide) {
         this.state = IonPullUpFooterState.Minimized;
-      }
-      else {
+      } else {
         this.state = IonPullUpFooterState.Expanded;
       }
     } else {
-      if (this.state == IonPullUpFooterState.Minimized) {
+      if (this.state === IonPullUpFooterState.Minimized) {
         if (this.defaultBehavior === IonPullUpFooterBehavior.Hide) {
           this.state = IonPullUpFooterState.Collapsed;
-        }
-        else {
+        } else {
           this.state = IonPullUpFooterState.Expanded;
         }
       } else {
@@ -232,8 +225,7 @@ export class IonicPullupComponent implements OnInit, AfterContentInit, OnChanges
 
         if (this.footerMeta.lastPosY > this.footerMeta.posY) {
           this.state = IonPullUpFooterState.Expanded;
-        }
-        else if (this.footerMeta.lastPosY < this.footerMeta.posY) {
+        } else if (this.footerMeta.lastPosY < this.footerMeta.posY) {
           this.state = (this.initialState === IonPullUpFooterState.Minimized) ? IonPullUpFooterState.Minimized : IonPullUpFooterState.Collapsed;
         }
 
