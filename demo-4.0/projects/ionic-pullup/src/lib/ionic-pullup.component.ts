@@ -131,9 +131,10 @@ export class IonicPullupComponent implements OnInit, AfterContentInit, OnChanges
   }
 
   computeHeights(isInit: boolean = false) {
-    this.footerMeta.height = this.maxHeight > 0 ? this.maxHeight : this.expandedHeight;
+    this.footerMeta.height = this.maxHeight > 0 ? this.maxHeight : this.expandedHeight - this.currentViewMeta.tabsHeight;
 
     this.renderer.setStyle(this.childFooter.nativeElement, 'height', this.footerMeta.height + 'px');
+    this.renderer.setStyle(this.childFooter.nativeElement, 'bottom',  '50px');
 
     // TODO: implement minimize mode
     // this.renderer.setStyle(this.el.nativeElement, 'min-height', this._footerMeta.height + 'px');
@@ -167,7 +168,7 @@ export class IonicPullupComponent implements OnInit, AfterContentInit, OnChanges
     console.log('Collapse', this.childFooter);
 
     if (!this.childFooter) { return; }
-    this.footerMeta.lastPosY = this.footerMeta.height - this.footerMeta.defaultHeight;
+    this.footerMeta.lastPosY = this.footerMeta.height - this.footerMeta.defaultHeight + this.currentViewMeta.tabsHeight;
     this.renderer.setStyle(this.childFooter.nativeElement, '-webkit-transform', 'translate3d(0, ' + this.footerMeta.lastPosY + 'px, 0)');
     this.renderer.setStyle(this.childFooter.nativeElement, 'transform', 'translate3d(0, ' + this.footerMeta.lastPosY + 'px, 0)');
 
