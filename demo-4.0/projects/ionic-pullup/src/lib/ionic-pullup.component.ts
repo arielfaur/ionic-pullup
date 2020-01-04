@@ -13,8 +13,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { ChangeDetectionStrategy, Component, EventEmitter, ElementRef, Renderer2, ViewChild, Output, Input, OnInit, AfterContentInit, OnChanges, SimpleChanges } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, ElementRef, Renderer2, ViewChild, Output, Input, OnInit, AfterContentInit, OnChanges, SimpleChanges, ContentChildren, QueryList, Inject } from '@angular/core';
 import { Platform } from '@ionic/angular';
+import { HAMMER_GESTURE_CONFIG, HammerGestureConfig } from '@angular/platform-browser';
 
 export interface FooterMetadata {
   height: number;
@@ -72,12 +73,13 @@ export class IonicPullupComponent implements OnInit, AfterContentInit, OnChanges
   @Output() minimized = new EventEmitter<any>();
 
   @ViewChild('footer', { static: true }) childFooter;
+  @ContentChildren('dragFooter') dragElements !: QueryList<any>;
 
   protected footerMeta: FooterMetadata;
   protected currentViewMeta: ViewMetadata;
   protected oldState: IonPullUpFooterState;
 
-  constructor(private platform: Platform, private el: ElementRef, private renderer: Renderer2) {
+  constructor(private platform: Platform, private el: ElementRef, private renderer: Renderer2, @Inject(HAMMER_GESTURE_CONFIG) private hammerConfig:  HammerGestureConfig) {
     this.footerMeta = {
       height: 0,
       posY: 0,
@@ -110,7 +112,8 @@ export class IonicPullupComponent implements OnInit, AfterContentInit, OnChanges
     this.state = IonPullUpFooterState.Collapsed;
 
     this.updateUI(true);  // need to indicate whether it's first run to avoid emitting events twice due to change detection
-
+  
+    console.log('Drag elements', this.dragElements);
   }
 
   public get expandedHeight(): number {
@@ -134,15 +137,9 @@ export class IonicPullupComponent implements OnInit, AfterContentInit, OnChanges
     this.footerMeta.height = this.maxHeight > 0 ? this.maxHeight : this.expandedHeight - this.currentViewMeta.tabsHeight;
 
     this.renderer.setStyle(this.childFooter.nativeElement, 'height', this.footerMeta.height + 'px');
-    this.renderer.setStyle(this.childFooter.nativeElement, 'bottom',  '50px');
+    this.renderer.setStyle(this.childFooter.nativeElement, 'bottom', this.currentViewMeta.tabsHeight + 'px');
 
-    // TODO: implement minimize mode
-    // this.renderer.setStyle(this.el.nativeElement, 'min-height', this._footerMeta.height + 'px');
-    // if (this.initialState == IonPullUpFooterState.Minimized) {
-    //  this.minimize()
-    // } else {
     this.collapse(isInit);
-    // }
   }
 
   updateUI(isInit: boolean = false) {
@@ -208,13 +205,12 @@ export class IonicPullupComponent implements OnInit, AfterContentInit, OnChanges
   }
 
 
-  onDrag(e: any) {
-    e.preventDefault();
+  onPan(e: HammerInput) {
+    this.renderer.setStyle(this.childFooter.nativeElement, 'transition', 'none');
+
+    // e.preventDefault();
 
     switch (e.type) {
-      case 'panstart':
-        this.renderer.setStyle(this.childFooter.nativeElement, 'transition', 'none');
-        break;
       case 'pan':
         this.footerMeta.posY = Math.round(e.deltaY) + this.footerMeta.lastPosY;
         if (this.footerMeta.posY < 0 || this.footerMeta.posY > this.footerMeta.height) { return; }
@@ -223,12 +219,14 @@ export class IonicPullupComponent implements OnInit, AfterContentInit, OnChanges
         break;
       case 'panend':
         this.renderer.setStyle(this.childFooter.nativeElement, 'transition', '300ms ease-in-out');
+        this.footerMeta.lastPosY = this.footerMeta.posY;
 
-        if (this.footerMeta.lastPosY > this.footerMeta.posY) {
-          this.state = IonPullUpFooterState.Expanded;
-        } else if (this.footerMeta.lastPosY < this.footerMeta.posY) {
-          this.state = (this.initialState === IonPullUpFooterState.Minimized) ? IonPullUpFooterState.Minimized : IonPullUpFooterState.Collapsed;
-        }
+        // TODO auto dock
+        // if (this.footerMeta.lastPosY > this.footerMeta.posY) {
+        //   this.state = IonPullUpFooterState.Expanded;
+        // } else if (this.footerMeta.lastPosY < this.footerMeta.posY) {
+        //   this.state = (this.initialState === IonPullUpFooterState.Minimized) ? IonPullUpFooterState.Minimized : IonPullUpFooterState.Collapsed;
+        // }
 
         break;
     }
