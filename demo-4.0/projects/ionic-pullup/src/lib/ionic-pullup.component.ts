@@ -79,7 +79,11 @@ export class IonicPullupComponent implements OnInit, AfterContentInit, OnChanges
   protected currentViewMeta: ViewMetadata;
   protected oldState: IonPullUpFooterState;
 
-  constructor(private platform: Platform, private el: ElementRef, private renderer: Renderer2, @Inject(HAMMER_GESTURE_CONFIG) private hammerConfig:  HammerGestureConfig) {
+  constructor(
+    private platform: Platform,
+    private el: ElementRef,
+    private renderer: Renderer2,
+    @Inject(HAMMER_GESTURE_CONFIG) private hammerConfig: HammerGestureConfig) {
     this.footerMeta = {
       height: 0,
       posY: 0,
@@ -112,7 +116,7 @@ export class IonicPullupComponent implements OnInit, AfterContentInit, OnChanges
     this.state = IonPullUpFooterState.Collapsed;
 
     this.updateUI(true);  // need to indicate whether it's first run to avoid emitting events twice due to change detection
-  
+
     console.log('Drag elements', this.dragElements);
   }
 
@@ -134,7 +138,7 @@ export class IonicPullupComponent implements OnInit, AfterContentInit, OnChanges
   }
 
   computeHeights(isInit: boolean = false) {
-    this.footerMeta.height = this.maxHeight > 0 ? this.maxHeight : this.expandedHeight - this.currentViewMeta.tabsHeight;
+    this.footerMeta.height = this.maxHeight > 0 ? this.maxHeight : this.expandedHeight;
 
     this.renderer.setStyle(this.childFooter.nativeElement, 'height', this.footerMeta.height + 'px');
     this.renderer.setStyle(this.childFooter.nativeElement, 'bottom', this.currentViewMeta.tabsHeight + 'px');
@@ -165,7 +169,7 @@ export class IonicPullupComponent implements OnInit, AfterContentInit, OnChanges
     console.log('Collapse', this.childFooter);
 
     if (!this.childFooter) { return; }
-    this.footerMeta.lastPosY = this.footerMeta.height - this.footerMeta.defaultHeight + this.currentViewMeta.tabsHeight;
+    this.footerMeta.lastPosY = this.footerMeta.height - this.footerMeta.defaultHeight;
     this.renderer.setStyle(this.childFooter.nativeElement, '-webkit-transform', 'translate3d(0, ' + this.footerMeta.lastPosY + 'px, 0)');
     this.renderer.setStyle(this.childFooter.nativeElement, 'transform', 'translate3d(0, ' + this.footerMeta.lastPosY + 'px, 0)');
 
@@ -208,12 +212,21 @@ export class IonicPullupComponent implements OnInit, AfterContentInit, OnChanges
   onPan(e: HammerInput) {
     this.renderer.setStyle(this.childFooter.nativeElement, 'transition', 'none');
 
-    // e.preventDefault();
+    e.preventDefault();
 
     switch (e.type) {
       case 'pan':
-        this.footerMeta.posY = Math.round(e.deltaY) + this.footerMeta.lastPosY;
-        if (this.footerMeta.posY < 0 || this.footerMeta.posY > this.footerMeta.height) { return; }
+        this.footerMeta.posY = e.deltaY + this.footerMeta.lastPosY;
+
+        // check for min and max boundaries overflow with sliding gesture
+        if (this.footerMeta.posY < 0) {
+          this.footerMeta.posY = 0;
+          return;
+        } else if (this.footerMeta.posY > (this.footerMeta.height - this.footerMeta.defaultHeight)) {
+          this.footerMeta.posY = this.footerMeta.height - this.footerMeta.defaultHeight;
+          // return;
+        }
+
         this.renderer.setStyle(this.childFooter.nativeElement, '-webkit-transform', 'translate3d(0, ' + this.footerMeta.posY + 'px, 0)');
         this.renderer.setStyle(this.childFooter.nativeElement, 'transform', 'translate3d(0, ' + this.footerMeta.posY + 'px, 0)');
         break;
@@ -222,10 +235,8 @@ export class IonicPullupComponent implements OnInit, AfterContentInit, OnChanges
         this.footerMeta.lastPosY = this.footerMeta.posY;
 
         // TODO auto dock
-        // if (this.footerMeta.lastPosY > this.footerMeta.posY) {
-        //   this.state = IonPullUpFooterState.Expanded;
-        // } else if (this.footerMeta.lastPosY < this.footerMeta.posY) {
-        //   this.state = (this.initialState === IonPullUpFooterState.Minimized) ? IonPullUpFooterState.Minimized : IonPullUpFooterState.Collapsed;
+        // if (this.footerMeta.lastPosY > this.footerMeta.height - this.footerMeta.defaultHeight) {
+        //   this.state =  IonPullUpFooterState.Collapsed;
         // }
 
         break;
