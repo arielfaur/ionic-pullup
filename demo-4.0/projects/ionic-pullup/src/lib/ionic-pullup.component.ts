@@ -1,7 +1,7 @@
 /*
-ionic-pullup v2 for Ionic/Angular 2
+ionic-pullup v4 for Ionic 4 and Angular 8
 
-Copyright 2016 Ariel Faur (https://github.com/arielfaur)
+Copyright 2020 Ariel Faur (https://github.com/arielfaur)
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
