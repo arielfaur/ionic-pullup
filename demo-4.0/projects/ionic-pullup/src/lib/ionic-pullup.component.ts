@@ -22,6 +22,9 @@ export interface FooterMetadata {
   posY: number;
   lastPosY: number;
   toolbarDefaultHeight?: number;
+  toolbarDefaultExpandedPosition?: number;
+  toolbarUpperBoundary?: number;
+  ionContentRef?: any;
 }
 
 export interface ViewMetadata {
@@ -74,7 +77,7 @@ export class IonicPullupComponent implements OnInit, AfterContentInit, OnChanges
   @Output() minimized = new EventEmitter<any>();
 
   @ViewChild('footer', { static: true }) childFooter;
-  @ContentChildren('dragFooter') dragElements !: QueryList<any>;
+  // @ContentChildren('dragFooter') dragElements !: QueryList<any>;
 
   protected footerMeta: FooterMetadata;
   protected currentViewMeta: ViewMetadata;
@@ -116,9 +119,7 @@ export class IonicPullupComponent implements OnInit, AfterContentInit, OnChanges
 
     this.state = IonPullUpFooterState.Collapsed;
 
-    this.updateUI(true);  // need to indicate whether it's first run to avoid emitting events twice due to change detection
-
-    console.log('Drag elements', this.dragElements);
+    this.updateUI();
   }
 
   public get expandedHeight(): number {
@@ -135,33 +136,39 @@ export class IonicPullupComponent implements OnInit, AfterContentInit, OnChanges
 
       this.currentViewMeta.header = document.querySelector('ion-toolbar');
       this.currentViewMeta.headerHeight = this.currentViewMeta.header.clientHeight;
+
+      this.footerMeta.ionContentRef = this.childFooter.nativeElement.querySelector('ion-content');
     }, 300);
   }
 
-  computeHeights(isInit: boolean = false) {
+  computeHeights() {
     this.footerMeta.height = this.maxHeight > 0 ? this.maxHeight : this.expandedHeight;
+    this.footerMeta.toolbarDefaultExpandedPosition = -this.footerMeta.height + this.footerMeta.toolbarDefaultHeight;
+    this.footerMeta.toolbarUpperBoundary = this.footerMeta.height - this.currentViewMeta.headerHeight;
 
     this.renderer.setStyle(this.childFooter.nativeElement, 'height', this.footerMeta.height + 'px');
     this.renderer.setStyle(this.childFooter.nativeElement, 'top', window.innerHeight  - this.footerMeta.toolbarDefaultHeight -  this.currentViewMeta.tabsHeight + 'px');
 
     // TODO check if this is needed for native platform iOS/Android
     // this.renderer.setStyle(this.childFooter.nativeElement, 'bottom', this.currentViewMeta.tabsHeight + 'px');
-
-    //this.collapse(isInit);
   }
 
   updateUI(isInit: boolean = false) {
     if (!this.childFooter) { return; }
 
     setTimeout(() => {
-      this.computeHeights(isInit);
+      this.computeHeights();
     }, 300);
     this.renderer.setStyle(this.childFooter.nativeElement, 'transition', 'none');  // avoids flickering when changing orientation
   }
 
   expand() {
     console.log('Expand', this.childFooter);
-    this.footerMeta.lastPosY = -this.footerMeta.height + this.footerMeta.toolbarDefaultHeight;
+    this.footerMeta.lastPosY = this.footerMeta.toolbarDefaultExpandedPosition;
+
+    // reset ionContent scaling
+    this.renderer.setStyle(this.footerMeta.ionContentRef, 'max-height', '100%');
+
     this.renderer.setStyle(this.childFooter.nativeElement, '-webkit-transform', `translate3d(0, ${this.footerMeta.lastPosY}px, 0)`);
     this.renderer.setStyle(this.childFooter.nativeElement, 'transform', `translate3d(0, ${this.footerMeta.lastPosY}px, 0)`);
     this.renderer.setStyle(this.childFooter.nativeElement, 'transition', '300ms ease-in-out');
@@ -174,6 +181,10 @@ export class IonicPullupComponent implements OnInit, AfterContentInit, OnChanges
 
     if (!this.childFooter) { return; }
     this.footerMeta.lastPosY = 0;
+
+    // reset ionContent scaling
+    this.renderer.setStyle(this.footerMeta.ionContentRef, 'max-height', '100%');
+
     this.renderer.setStyle(this.childFooter.nativeElement, '-webkit-transform', `translate3d(0, ${this.footerMeta.lastPosY}px, 0)`);
     this.renderer.setStyle(this.childFooter.nativeElement, 'transform', `translate3d(0, ${this.footerMeta.lastPosY}px, 0)`);
 
@@ -228,10 +239,14 @@ export class IonicPullupComponent implements OnInit, AfterContentInit, OnChanges
         // check for min and max boundaries overflow with sliding gesture
         if (this.footerMeta.posY > 0) {
           this.footerMeta.posY = 0;
-          return;
-        } else if (Math.abs(this.footerMeta.posY) > (this.footerMeta.height - this.footerMeta.toolbarDefaultHeight)) {
-          this.footerMeta.posY = -this.footerMeta.height + this.footerMeta.toolbarDefaultHeight;
+          // return;
+        } else if (Math.abs(this.footerMeta.posY) > this.footerMeta.toolbarUpperBoundary) {
+          this.footerMeta.posY = this.footerMeta.toolbarDefaultExpandedPosition;
         }
+
+        // ionContent scaling - FIX scrolling bug
+        const scaleFactor = Math.abs(this.footerMeta.posY) / this.footerMeta.toolbarUpperBoundary;
+        this.renderer.setStyle(this.footerMeta.ionContentRef, 'max-height', `${scaleFactor * 100}%`);
 
         this.renderer.setStyle(this.childFooter.nativeElement, '-webkit-transform', 'translate3d(0, ' + this.footerMeta.posY + 'px, 0)');
         this.renderer.setStyle(this.childFooter.nativeElement, 'transform', 'translate3d(0, ' + this.footerMeta.posY + 'px, 0)');
@@ -272,29 +287,6 @@ export class IonicPullupComponent implements OnInit, AfterContentInit, OnChanges
       this.stateChange.emit(this.state);
     });
   }
-
-  // ngDoCheck() {
-  //   if (!Object.is(this.state, this.oldState)) {
-  //     switch (this.state) {
-  //       case IonPullUpFooterState.Collapsed:
-  //         this.collapse();
-  //         break;
-  //       case IonPullUpFooterState.Expanded:
-  //         this.expand();
-  //         break;
-  //       case IonPullUpFooterState.Minimized:
-  //         this.minimize();
-  //         break;
-  //     }
-  //     this.oldState = this.state;
-
-  //     // TODO: fix hack due to BUG (https://github.com/angular/angular/issues/6005)
-  //     window.setTimeout(() => {
-  //       this.stateChange.emit(this.state);
-  //     });
-  //   }
-  // }
-
 
 }
 
