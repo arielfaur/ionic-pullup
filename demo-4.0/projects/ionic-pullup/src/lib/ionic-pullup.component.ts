@@ -77,7 +77,7 @@ export class IonicPullupComponent implements OnInit, AfterContentInit, OnChanges
   @Output() minimized = new EventEmitter<any>();
 
   @ViewChild('footer', { static: true }) childFooter;
-  // @ContentChildren('dragFooter') dragElements !: QueryList<any>;
+  @ContentChildren('ionDragFooter') dragElements !: QueryList<any>;
 
   protected footerMeta: FooterMetadata;
   protected currentViewMeta: ViewMetadata;
@@ -138,6 +138,13 @@ export class IonicPullupComponent implements OnInit, AfterContentInit, OnChanges
       this.currentViewMeta.headerHeight = this.currentViewMeta.header.clientHeight;
 
       this.footerMeta.ionContentRef = this.childFooter.nativeElement.querySelector('ion-content');
+
+      this.dragElements.forEach(elem => {
+        const hammer = this.hammerConfig.buildHammer(elem.el);
+        hammer.on('pan panstart panend', (ev) => {
+          this.onPan(ev);
+        });
+      });
     }, 300);
   }
 
@@ -147,7 +154,7 @@ export class IonicPullupComponent implements OnInit, AfterContentInit, OnChanges
     this.footerMeta.toolbarUpperBoundary = this.footerMeta.height - this.currentViewMeta.headerHeight;
 
     this.renderer.setStyle(this.childFooter.nativeElement, 'height', this.footerMeta.height + 'px');
-    this.renderer.setStyle(this.childFooter.nativeElement, 'top', window.innerHeight  - this.footerMeta.toolbarDefaultHeight -  this.currentViewMeta.tabsHeight + 'px');
+    this.renderer.setStyle(this.childFooter.nativeElement, 'top', window.innerHeight - this.footerMeta.toolbarDefaultHeight - this.currentViewMeta.tabsHeight + 'px');
 
     // TODO check if this is needed for native platform iOS/Android
     // this.renderer.setStyle(this.childFooter.nativeElement, 'bottom', this.currentViewMeta.tabsHeight + 'px');
@@ -245,8 +252,10 @@ export class IonicPullupComponent implements OnInit, AfterContentInit, OnChanges
         }
 
         // ionContent scaling - FIX scrolling bug
-        const scaleFactor = Math.abs(this.footerMeta.posY) / this.footerMeta.toolbarUpperBoundary;
-        this.renderer.setStyle(this.footerMeta.ionContentRef, 'max-height', `${scaleFactor * 100}%`);
+        if (this.footerMeta.ionContentRef) {
+          const scaleFactor = Math.abs(this.footerMeta.posY) / this.footerMeta.toolbarUpperBoundary;
+          this.renderer.setStyle(this.footerMeta.ionContentRef, 'max-height', `${scaleFactor * 100}%`);
+        }
 
         this.renderer.setStyle(this.childFooter.nativeElement, '-webkit-transform', 'translate3d(0, ' + this.footerMeta.posY + 'px, 0)');
         this.renderer.setStyle(this.childFooter.nativeElement, 'transform', 'translate3d(0, ' + this.footerMeta.posY + 'px, 0)');
