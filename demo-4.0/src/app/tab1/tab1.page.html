@@ -41,8 +41,8 @@
 </ion-content>
 <lib-ionic-pullup (onExpand)="footerExpanded()" (onCollapse)="footerCollapsed()" [(state)]="footerState">
   <lib-ionic-pullup-tab class="tab" (click)="toggleFooter()" #dragFooter>
-    <ion-icon name="arrow-up" *ngIf="footerState == 0"></ion-icon>
-    <ion-icon name="arrow-down" *ngIf="footerState == 1"></ion-icon>
+    <!-- <ion-icon name="arrow-up" *ngIf="footerState == 0"></ion-icon>
+    <ion-icon name="arrow-down" *ngIf="footerState == 1"></ion-icon> -->
   </lib-ionic-pullup-tab>
   <ion-toolbar color="primary" (click)="toggleFooter()" #dragFooter>
     <ion-title>Footer</ion-title>
@@ -68,5 +68,6 @@
         </ion-label>
       </ion-item>
     </ion-list>
+    <div style="display: block; height: 72px"></div>
   </ion-content>
 </lib-ionic-pullup>
