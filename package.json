@@ -8,6 +8,7 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
+    "build-lib": "ng build ionic-pullup && copyfiles -u 4 ./projects/ionic-pullup/src/lib/*.scss ./dist/ionic-pullup",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"
