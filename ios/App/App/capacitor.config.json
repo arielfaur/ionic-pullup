@@ -1,0 +1,11 @@
+{
+  "appId": "com.arielfaur.ionic_pullup",
+  "appName": "demo-4.0",
+  "bundledWebRuntime": false,
+  "npmClient": "npm",
+  "webDir": "www",
+  "cordova": {},
+  "server": {
+    "url": "http://localhost:8100"
+  }
+}

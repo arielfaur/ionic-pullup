@@ -1,0 +1,17 @@
+@import "variables.scss";
+
+:host {
+
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+
+  @include pullup-tab(
+    $tabWidth,
+    $tabHeight,
+    $tabRadius,
+    $tabBackground,
+    $tabIconColor
+  );
+  // @include pullup-tab-shadow($tabShadow);
+}

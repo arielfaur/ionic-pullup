@@ -1,0 +1,73 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>
+      Tab One
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+    <ion-card class="welcome-card">
+      <img src="/assets/shapes.svg" alt="" />
+      <ion-card-header>
+        <ion-card-subtitle>Get Started</ion-card-subtitle>
+        <ion-card-title>Welcome to Ionic</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <p>Now that your app has been created, you'll want to start building out features and components. Check out some of the resources below for next steps.</p>
+      </ion-card-content>
+    </ion-card>
+    <ion-list lines="none">
+      <ion-list-header>
+        <ion-label>Resources</ion-label>
+      </ion-list-header>
+      <ion-item href="https://ionicframework.com/docs/">
+        <ion-icon slot="start" color="medium" name="book"></ion-icon>
+        <ion-label>Ionic Documentation</ion-label>
+      </ion-item>
+      <ion-item href="https://ionicframework.com/docs/building/scaffolding">
+        <ion-icon slot="start" color="medium" name="build"></ion-icon>
+        <ion-label>Scaffold Out Your App</ion-label>
+      </ion-item>
+      <ion-item href="https://ionicframework.com/docs/layout/structure">
+        <ion-icon slot="start" color="medium" name="grid"></ion-icon>
+        <ion-label>Change Your App Layout</ion-label>
+      </ion-item>
+      <ion-item href="https://ionicframework.com/docs/theming/basics">
+        <ion-icon slot="start" color="medium" name="color-fill"></ion-icon>
+        <ion-label>Theme Your App</ion-label>
+      </ion-item>
+    </ion-list>
+</ion-content>
+<lib-ionic-pullup (onExpand)="footerExpanded()" (onCollapse)="footerCollapsed()" [(state)]="footerState">
+  <lib-ionic-pullup-tab class="tab" (click)="toggleFooter()">
+    <!-- <ion-icon name="arrow-up" *ngIf="footerState == 0"></ion-icon>
+    <ion-icon name="arrow-down" *ngIf="footerState == 1"></ion-icon> -->
+  </lib-ionic-pullup-tab>
+  <ion-toolbar color="primary" (click)="toggleFooter()" #ionDragFooter>
+    <ion-title>Footer</ion-title>
+  </ion-toolbar>
+  <ion-content>
+    <ion-card>
+      <ion-card-header>
+        Header
+      </ion-card-header>
+      <ion-card-content>
+        The British use the term "header", but the American term "head-shot" the English simply refuse to adopt.
+      </ion-card-content>
+    </ion-card>
+    
+    <ion-list inset>
+
+      <ion-item *ngFor="let item of [].constructor(15); let i = index"> 
+        <ion-avatar slot="start">
+          <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAAAAACH5BAAAAAAALAAAAAABAAEAAAICTAEAOw==">
+        </ion-avatar>
+        <ion-label>
+          Item {{ i }}
+        </ion-label>
+      </ion-item>
+    </ion-list>
+    <div style="display: block; height: 72px"></div>
+  </ion-content>
+</lib-ionic-pullup>
