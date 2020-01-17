@@ -8,8 +8,9 @@
     "types": [ "hammerjs" ],
     "lib": [
       "dom",
-      "es2018"
-    ]
+      "es2018",
+    ],
+    "preserveSymlinks": true
   },
   "angularCompilerOptions": {
     "annotateForClosureCompiler": true,

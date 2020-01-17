@@ -70,12 +70,20 @@ export class IonicPullupComponent implements OnInit, AfterContentInit, OnChanges
 
   @Input() initialState: IonPullUpFooterState;          // TODO implemment
   @Input() defaultBehavior: IonPullUpFooterBehavior;    // TODO implemment
-  @Input() maxHeight: number;
+  
+
 
   /**
-   *  Top margin is useful if the component fails to detect Ionic toolbar component
+   *  Maximum expanded position - useful if there are top headers
+   *  If not provided by default computes available screen minus tabs and headers
    */
   @Input() toolbarTopMargin = 0;
+
+  /**
+   *  Minimum position - useful to keep a part of the footer always visible at the bottom
+   */
+  @Input() minBottomVisible = 0;
+
 
   @Output() expanded = new EventEmitter<any>();
   @Output() collapsed = new EventEmitter<any>();
@@ -101,7 +109,6 @@ export class IonicPullupComponent implements OnInit, AfterContentInit, OnChanges
     // sets initial state
     this.initialState = this.initialState || IonPullUpFooterState.Collapsed;
     this.defaultBehavior = this.defaultBehavior || IonPullUpFooterBehavior.Expand;
-    this.maxHeight = this.maxHeight || 0;
   }
 
   ngOnInit() {
@@ -146,12 +153,16 @@ export class IonicPullupComponent implements OnInit, AfterContentInit, OnChanges
   }
 
   computeHeights() {
-    this.footerMeta.height = this.maxHeight > 0 ? this.maxHeight : this.expandedHeight;
-    this.footerMeta.toolbarDefaultExpandedPosition = -this.footerMeta.height + this.footerMeta.toolbarDefaultHeight;
-    this.footerMeta.toolbarUpperBoundary = this.footerMeta.height - this.currentViewMeta.toolbarHeight;
-
+    this.footerMeta.height = this.expandedHeight;
+    this.footerMeta.toolbarDefaultExpandedPosition = -this.footerMeta.height + this.footerMeta.toolbarDefaultHeight + this.minBottomVisible;
+    this.footerMeta.toolbarUpperBoundary = this.footerMeta.height - this.footerMeta.toolbarDefaultHeight - this.minBottomVisible;
+    
     this.renderer.setStyle(this.childFooter.nativeElement, 'height', this.footerMeta.height + 'px');
-    this.renderer.setStyle(this.childFooter.nativeElement, 'top', window.innerHeight - this.footerMeta.toolbarDefaultHeight - this.currentViewMeta.tabsHeight + 'px');
+    this.renderer.setStyle(this.childFooter.nativeElement, 'top',
+      `${window.innerHeight - this.footerMeta.toolbarDefaultHeight - this.currentViewMeta.tabsHeight - this.minBottomVisible}px`
+    );
+
+    // this.renderer.setStyle(this.footerMeta.ionContentRef, 'max-height', `${this.minBottomVisible / this.footerMeta.height * 100}%`);
 
     // TODO check if this is needed for native platform iOS/Android
     // this.renderer.setStyle(this.childFooter.nativeElement, 'bottom', this.currentViewMeta.tabsHeight + 'px');
@@ -246,10 +257,10 @@ export class IonicPullupComponent implements OnInit, AfterContentInit, OnChanges
         }
 
         // ionContent scaling - FIX scrolling bug
-        if (this.footerMeta.ionContentRef) {
-          const scaleFactor = Math.abs(this.footerMeta.posY) / this.footerMeta.toolbarUpperBoundary;
-          this.renderer.setStyle(this.footerMeta.ionContentRef, 'max-height', `${scaleFactor * 100}%`);
-        }
+        // if (this.footerMeta.ionContentRef) {
+        //   const scaleFactor = Math.abs(this.footerMeta.posY) / this.footerMeta.toolbarUpperBoundary;
+        //   this.renderer.setStyle(this.footerMeta.ionContentRef, 'max-height', `${scaleFactor * 100}%`);
+        // }
 
         this.renderer.setStyle(this.childFooter.nativeElement, '-webkit-transform', 'translate3d(0, ' + this.footerMeta.posY + 'px, 0)');
         this.renderer.setStyle(this.childFooter.nativeElement, 'transform', 'translate3d(0, ' + this.footerMeta.posY + 'px, 0)');
@@ -292,21 +303,27 @@ export class IonicPullupComponent implements OnInit, AfterContentInit, OnChanges
    * Detect ionic components in page
    */
   private findIonicComponentsInPage() {
+    this.footerMeta.ionContentRef = this.childFooter.nativeElement.querySelector('ion-content');
+
     this.currentViewMeta.tabsRef = document.querySelector('ion-tab-bar');
     this.currentViewMeta.tabsHeight = this.currentViewMeta.tabsRef ? (this.currentViewMeta.tabsRef as HTMLElement).offsetHeight : 0;
     console.debug(this.currentViewMeta.tabsRef ? 'ionic-pullup => Tabs detected' : 'ionic.pullup => View has no tabs');
 
-    const outletRef = document.querySelector('ion-router-outlet');
-    if (outletRef) {
-      const headerRef = outletRef.querySelector('ion-header');
-      if (headerRef) {
-        this.currentViewMeta.toolbarRef = headerRef.querySelector('ion-toolbar');
-        this.currentViewMeta.toolbarHeight = this.currentViewMeta.toolbarRef.clientHeight;
-        console.debug(this.currentViewMeta.toolbarRef ? `ionic-pullup => Toolbar detected` : 'ionic.pullup => View has no tabs');
-        this.footerMeta.ionContentRef = this.childFooter.nativeElement.querySelector('ion-content');
+    if (!this.toolbarTopMargin) {
+      const outletRef = document.querySelector('ion-router-outlet');
+      if (outletRef) {
+        const headerRef = outletRef.querySelector('ion-header');
+        if (headerRef) {
+          this.currentViewMeta.toolbarRef = headerRef.querySelector('ion-toolbar');
+          this.currentViewMeta.toolbarHeight = this.currentViewMeta.toolbarRef.clientHeight;
+          console.debug(this.currentViewMeta.toolbarRef ? `ionic-pullup => Toolbar detected` : 'ionic.pullup => View has no tabs');
+        } else {
+          this.currentViewMeta.toolbarHeight = 0;
+        }
       }
+    } else {
+      this.currentViewMeta.toolbarHeight = this.toolbarTopMargin;
     }
-
   }
 
 }
