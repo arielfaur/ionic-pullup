@@ -12,10 +12,10 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-
-import { ChangeDetectionStrategy, Component, EventEmitter, ElementRef, Renderer2, ViewChild, Output, Input, OnInit, AfterContentInit, OnChanges, SimpleChanges, ContentChildren, QueryList, Inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Renderer2, ViewChild, Output, Input, OnInit, AfterContentInit, OnChanges, SimpleChanges, ContentChildren, QueryList, Inject } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { HAMMER_GESTURE_CONFIG, HammerGestureConfig } from '@angular/platform-browser';
+import 'hammerjs';
 
 export interface FooterMetadata {
   height: number;
@@ -28,11 +28,11 @@ export interface FooterMetadata {
 }
 
 export interface ViewMetadata {
-  tabs?: Element;
+  tabsRef?: Element;
   tabsHeight?: number;
   hasBottomTabs?: boolean;
-  header?: Element;
-  headerHeight?: number;
+  toolbarRef?: Element;
+  toolbarHeight?: number;
   bottomSpace?: number;
 }
 
@@ -72,6 +72,11 @@ export class IonicPullupComponent implements OnInit, AfterContentInit, OnChanges
   @Input() defaultBehavior: IonPullUpFooterBehavior;    // TODO implemment
   @Input() maxHeight: number;
 
+  /**
+   *  Top margin is useful if the component fails to detect Ionic toolbar component
+   */
+  @Input() toolbarTopMargin = 0;
+
   @Output() expanded = new EventEmitter<any>();
   @Output() collapsed = new EventEmitter<any>();
   @Output() minimized = new EventEmitter<any>();
@@ -81,11 +86,9 @@ export class IonicPullupComponent implements OnInit, AfterContentInit, OnChanges
 
   protected footerMeta: FooterMetadata;
   protected currentViewMeta: ViewMetadata;
-  protected oldState: IonPullUpFooterState;
 
   constructor(
     private platform: Platform,
-    private el: ElementRef,
     private renderer: Renderer2,
     @Inject(HAMMER_GESTURE_CONFIG) private hammerConfig: HammerGestureConfig) {
     this.footerMeta = {
@@ -123,21 +126,15 @@ export class IonicPullupComponent implements OnInit, AfterContentInit, OnChanges
   }
 
   public get expandedHeight(): number {
-    return window.innerHeight - this.currentViewMeta.headerHeight - this.currentViewMeta.tabsHeight;
+    return window.innerHeight - this.currentViewMeta.toolbarHeight - this.currentViewMeta.tabsHeight;
   }
 
   computeDefaults() {
 
     setTimeout(() => {
       this.footerMeta.toolbarDefaultHeight = this.childFooter.nativeElement.offsetHeight;
-      this.currentViewMeta.tabs = document.querySelector('ion-tab-bar');
-      this.currentViewMeta.tabsHeight = this.currentViewMeta.tabs ? (this.currentViewMeta.tabs as HTMLElement).offsetHeight : 0;
-      console.log(this.currentViewMeta.tabsHeight ? 'ionic-pullup => Tabs detected' : 'ionic.pullup => View has no tabs');
 
-      this.currentViewMeta.header = document.querySelector('ion-toolbar');
-      this.currentViewMeta.headerHeight = this.currentViewMeta.header.clientHeight;
-
-      this.footerMeta.ionContentRef = this.childFooter.nativeElement.querySelector('ion-content');
+      this.findIonicComponentsInPage();
 
       this.dragElements.forEach(elem => {
         const hammer = this.hammerConfig.buildHammer(elem.el);
@@ -151,7 +148,7 @@ export class IonicPullupComponent implements OnInit, AfterContentInit, OnChanges
   computeHeights() {
     this.footerMeta.height = this.maxHeight > 0 ? this.maxHeight : this.expandedHeight;
     this.footerMeta.toolbarDefaultExpandedPosition = -this.footerMeta.height + this.footerMeta.toolbarDefaultHeight;
-    this.footerMeta.toolbarUpperBoundary = this.footerMeta.height - this.currentViewMeta.headerHeight;
+    this.footerMeta.toolbarUpperBoundary = this.footerMeta.height - this.currentViewMeta.toolbarHeight;
 
     this.renderer.setStyle(this.childFooter.nativeElement, 'height', this.footerMeta.height + 'px');
     this.renderer.setStyle(this.childFooter.nativeElement, 'top', window.innerHeight - this.footerMeta.toolbarDefaultHeight - this.currentViewMeta.tabsHeight + 'px');
@@ -170,7 +167,6 @@ export class IonicPullupComponent implements OnInit, AfterContentInit, OnChanges
   }
 
   expand() {
-    console.log('Expand', this.childFooter);
     this.footerMeta.lastPosY = this.footerMeta.toolbarDefaultExpandedPosition;
 
     // reset ionContent scaling
@@ -184,8 +180,6 @@ export class IonicPullupComponent implements OnInit, AfterContentInit, OnChanges
   }
 
   collapse(isInit: boolean = false) {
-    console.log('Collapse', this.childFooter);
-
     if (!this.childFooter) { return; }
     this.footerMeta.lastPosY = 0;
 
@@ -274,8 +268,6 @@ export class IonicPullupComponent implements OnInit, AfterContentInit, OnChanges
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    console.log(changes);
-
     if (changes.state.isFirstChange() || changes.state.currentValue === changes.state.previousValue) { return; }
 
     switch (this.state) {
@@ -289,12 +281,32 @@ export class IonicPullupComponent implements OnInit, AfterContentInit, OnChanges
         this.minimize();
         break;
     }
-    // this.oldState = this.state;
 
     // TODO: fix hack due to BUG (https://github.com/angular/angular/issues/6005)
     window.setTimeout(() => {
       this.stateChange.emit(this.state);
     });
+  }
+
+  /**
+   * Detect ionic components in page
+   */
+  private findIonicComponentsInPage() {
+    this.currentViewMeta.tabsRef = document.querySelector('ion-tab-bar');
+    this.currentViewMeta.tabsHeight = this.currentViewMeta.tabsRef ? (this.currentViewMeta.tabsRef as HTMLElement).offsetHeight : 0;
+    console.debug(this.currentViewMeta.tabsRef ? 'ionic-pullup => Tabs detected' : 'ionic.pullup => View has no tabs');
+
+    const outletRef = document.querySelector('ion-router-outlet');
+    if (outletRef) {
+      const headerRef = outletRef.querySelector('ion-header');
+      if (headerRef) {
+        this.currentViewMeta.toolbarRef = headerRef.querySelector('ion-toolbar');
+        this.currentViewMeta.toolbarHeight = this.currentViewMeta.toolbarRef.clientHeight;
+        console.debug(this.currentViewMeta.toolbarRef ? `ionic-pullup => Toolbar detected` : 'ionic.pullup => View has no tabs');
+        this.footerMeta.ionContentRef = this.childFooter.nativeElement.querySelector('ion-content');
+      }
+    }
+
   }
 
 }
