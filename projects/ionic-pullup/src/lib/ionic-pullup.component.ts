@@ -194,11 +194,12 @@ export class IonicPullupComponent implements OnInit, AfterContentInit, OnChanges
     if (!this.childFooter) { return; }
     this.footerMeta.lastPosY = 0;
 
-    // reset ionContent scaling
-    this.updateIonContentHeight(this.minBottomVisible - this.footerMeta.lastPosY);
-
+ 
     this.renderer.setStyle(this.childFooter.nativeElement, '-webkit-transform', `translate3d(0, ${this.footerMeta.lastPosY}px, 0)`);
     this.renderer.setStyle(this.childFooter.nativeElement, 'transform', `translate3d(0, ${this.footerMeta.lastPosY}px, 0)`);
+
+    // reset ionContent scaling -> needs 300ms timeout to delay content resize
+    setTimeout(() => this.updateIonContentHeight(this.minBottomVisible - this.footerMeta.lastPosY), 300);
 
     if (!isInit) { this.collapsed.emit(null); }
   }
@@ -326,6 +327,10 @@ export class IonicPullupComponent implements OnInit, AfterContentInit, OnChanges
     }
   }
 
+  /**
+   * Update inner ion-content component height when footer is expanded, collapsed or dragged
+   * @param maxHeight maximum ionContent height to set
+   */
   private updateIonContentHeight(maxHeight?: number) {
     if (!this.footerMeta.ionContentRef) { return; }
 
