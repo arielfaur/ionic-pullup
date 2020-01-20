@@ -7,6 +7,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
+    "start-android": "ionic capacitor run android -l  --external",
     "build": "ng build",
     "build-lib": "ng build ionic-pullup && copyfiles -u 4 ./projects/ionic-pullup/src/lib/*.scss ./dist/ionic-pullup",
     "test": "ng test",
