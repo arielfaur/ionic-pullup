@@ -14,15 +14,15 @@
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
 
-  <title>Ionic-pullup for Ionic 2 and Angular 2</title>
+  <title>Ionic-pullup for Ionic 4 and Angular 8</title>
 </head>
 
 <body>
   <header>
     <div class="inner">
       <h1>Ionic-pullup</h1>
-      <h2>A pull-up footer component for Ionic 2 and Angular 2</h2>
-      <a href="https://github.com/arielfaur/ionic-pullup/tree/2.0" class="button"><small>View project on</small> GitHub</a>
+      <h2>A pull-up footer component for Ionic 4 and Angular 8</h2>
+      <a href="https://github.com/arielfaur/ionic-pullup" class="button"><small>View project on</small> GitHub</a>
     </div>
   </header>
 
@@ -49,45 +49,37 @@
         <h2>
           <a id="demo" class="anchor" href="#demo" aria-hidden="true"><span class="octicon octicon-link"></span></a>Demo</h2>
 
-        <iframe src="https://embed.plnkr.co/JPsrCGpWXTxrDywJ44cl/?show=preview" frameborder="0" width="414" height="736"></iframe>
+          <p>Tap or slide the bar to reveal more content!</p>
 
+          <h3>Sample 1</h3>
+        <iframe src="https://stackblitz.com/edit/ionic-4-angular-8-ionic-pullup-sample1?embed=1&hideExplorer=1&hideNavigation=1&view=preview" frameborder="0" width="411" height="731"></iframe>
+
+        <h3>Sample 2</h3>
+        <iframe src="https://stackblitz.com/edit/ionic-4-angular-8-ionic-pullup-sample2?ctl=1&embed=1&hideExplorer=1&hideNavigation=1&view=preview" frameborder="0" width="411" height="731"></iframe>
+
+        <h3>Sample 3</h3>
+        <iframe src="https://stackblitz.com/edit/ionic-4-angular-8-ionic-pullup-sample3?ctl=1&embed=1&hideExplorer=1&hideNavigation=1&view=preview" frameborder="0" width="411" height="731"></iframe>
 
         <h2>
           <a id="install-module" class="anchor" href="#install-module" aria-hidden="true"><span class="octicon octicon-link"></span></a>Install
           module</h2>
 
-        <p><code>npm install ionic-pullup</code></p>
+        <p><code>npm install ionic-pullup@latest hammerjs @types/hammerjs</code></p>
 
-        <p>Import <code>IonPullupModule</code> into your app's app.module.ts file</p>
+        <p>Import IonicPullupModule in page module</p>
 
         <pre><code>
-         import { IonPullupModule } from 'ionic-pullup';
+          import { IonicPullupModule } from 'ionic-pullup';
 
           @NgModule({
-            declarations: [
-              MyApp,
-              AboutPage,
-              ContactPage,
-              HomePage,
-              TabsPage
-            ],
-            imports: [
-              IonicModule.forRoot(MyApp),
-              IonPullupModule
-            ],
-            bootstrap: [IonicApp],
-            entryComponents: [
-              MyApp,
-              AboutPage,
-              ContactPage,
-              HomePage,
-              TabsPage
-            ],
-            providers: [{provide: ErrorHandler, useClass: IonicErrorHandler}],
-            schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
+          imports: [
+              IonicModule,
+              CommonModule,
+              ...
+              IonicPullupModule
+          ]
           })
-          export class AppModule {}       
-        
+          export class MyPageModule {}  
         </code></pre>
 
         <h2>
@@ -126,21 +118,31 @@
         }
         </code></pre>
 
-  <p>Then bind the <code>footerState</code> member variable to <code>ion-pullup</code> component <code>state</code> property in order to set up two-way data binding. 
+  <p>Then bind the <code>footerState</code> member variable to <code>lib-ionic-pullup</code> component <code>state</code> property in order to set up two-way data binding. 
   We can also susbscribe to expand and collapse events to be notified of any state changes.</p>
 
   <pre><code>
-  &lt;ion-pullup (onExpand)="footerExpanded()" (onCollapse)="footerCollapsed()" [(state)]="footerState"&gt;
-    &lt;ion-pullup-tab [footer]="pullup" (tap)="toggleFooter()"&gt;
-      &lt;ion-icon name="arrow-up" *ngIf="footerState == 0"&gt;&lt;/ion-icon&gt;&lt;ion-icon name="arrow-down" *ngIf="footerState == 1"&gt;&lt;/ion-icon&gt;
-    &lt;/ion-pullup-tab&gt;
-    &lt;ion-toolbar color="primary" (tap)="toggleFooter()"&gt;
-      &lt;ion-title&gt;Footer&lt;/ion-title&gt;
-    &lt;/ion-toolbar&gt;
+    &lt;ion-header&gt;
+      &lt;ion-toolbar&gt;
+          &lt;ion-title&gt;
+          Home
+          &lt;/ion-title&gt;
+      &lt;/ion-toolbar&gt;
+    &lt;/ion-header&gt;
+    
     &lt;ion-content&gt;
-    ... FOOTER CONTENT ...
+        ...home page content...
     &lt;/ion-content&gt;
-  &lt;/ion-pullup&gt;
+
+    &lt;lib-ionic-pullup (onExpand)=&quot;footerExpanded()&quot; (onCollapse)=&quot;footerCollapsed()&quot; [(state)]=&quot;footerState&quot; [toolbarTopMargin]=&quot;100&quot; [minBottomVisible]=&quot;200&quot;&gt;
+
+    &lt;ion-toolbar color=&quot;light&quot; (click)=&quot;toggleFooter()&quot; #ionDragFooter&gt;
+        &lt;ion-title&gt;Tap or drag&lt;/ion-title&gt;
+    &lt;/ion-toolbar&gt;
+    &lt;ion-content&gt;        
+        ...scrollable content within footer...
+    &lt;/ion-content&gt;
+    &lt;/lib-ionic-pullup&gt;
   </code></pre>  
         
   <h2>
