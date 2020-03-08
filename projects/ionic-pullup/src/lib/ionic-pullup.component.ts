@@ -117,10 +117,12 @@ export class IonicPullupComponent implements OnInit, AfterContentInit, OnChanges
     window.addEventListener('orientationchange', () => {
       console.log('ionic-pullup => Changed orientation => updating');
       this.updateUI();
+      this.collapse();
     });
     this.platform.resume.subscribe(() => {
       console.log('ionic-pullup => Resumed from background => updating');
       this.updateUI();
+      this.collapse();
     });
   }
 
