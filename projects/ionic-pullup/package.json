@@ -1,6 +1,6 @@
 {
   "name": "ionic-pullup",
-  "version": "4.0.0-beta.3",
+  "version": "4.0.0-beta.4",
   "devDependencies": {
     "@types/hammerjs": "^2.0.36"
   },
