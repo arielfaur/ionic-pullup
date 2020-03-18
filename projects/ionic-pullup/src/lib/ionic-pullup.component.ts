@@ -24,6 +24,7 @@ export interface FooterMetadata {
   toolbarDefaultHeight?: number;
   toolbarDefaultExpandedPosition?: number;
   toolbarUpperBoundary?: number;
+  toolbarLowerBoundary?: number;
   ionContentRef?: any;
 }
 
@@ -84,6 +85,10 @@ export class IonicPullupComponent implements OnInit, AfterContentInit, OnChanges
    */
   @Input() minBottomVisible = 0;
 
+  /**
+   * If true, footer can be docked at the bottom
+   */
+  @Input() dockable: boolean;
 
   @Output() expanded = new EventEmitter<any>();
   @Output() collapsed = new EventEmitter<any>();
@@ -124,6 +129,9 @@ export class IonicPullupComponent implements OnInit, AfterContentInit, OnChanges
       this.updateUI();
       this.collapse();
     });
+
+    // compute min boundary of toolbar depending on whether drawer is dockable
+    this.footerMeta.toolbarLowerBoundary = this.dockable ? this.minBottomVisible : 0;
   }
 
   ngAfterContentInit() {
@@ -251,13 +259,11 @@ export class IonicPullupComponent implements OnInit, AfterContentInit, OnChanges
       case 'pan':
         this.footerMeta.posY = e.deltaY + this.footerMeta.lastPosY;
 
-        // check for min and max boundaries overflow with sliding gesture
-        if (this.footerMeta.posY > 0) {
-          this.footerMeta.posY = 0;
-          // return;
-        } else if (Math.abs(this.footerMeta.posY) > this.footerMeta.toolbarUpperBoundary) {
-          this.footerMeta.posY = this.footerMeta.toolbarDefaultExpandedPosition;
-        }
+        // check for min and max boundaries of draggable toolbar
+        this.footerMeta.posY = this.footerMeta.posY > this.footerMeta.toolbarLowerBoundary ? this.footerMeta.toolbarLowerBoundary :
+          (Math.abs(this.footerMeta.posY) > this.footerMeta.toolbarUpperBoundary ?
+            this.footerMeta.toolbarDefaultExpandedPosition :
+            this.footerMeta.posY);
 
         // ionContent scaling - FIX scrolling bug
         this.updateIonContentHeight(this.minBottomVisible - this.footerMeta.posY);
