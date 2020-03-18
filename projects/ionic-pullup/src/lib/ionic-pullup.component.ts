@@ -117,15 +117,15 @@ export class IonicPullupComponent implements OnInit, AfterContentInit, OnChanges
   }
 
   ngOnInit() {
-    console.log('ionic-pullup => Initializing footer...');
+    // console.debug('ionic-pullup => Initializing footer...');
 
     window.addEventListener('orientationchange', () => {
-      console.log('ionic-pullup => Changed orientation => updating');
+      // console.debug('ionic-pullup => Changed orientation => updating');
       this.updateUI();
       this.collapse();
     });
     this.platform.resume.subscribe(() => {
-      console.log('ionic-pullup => Resumed from background => updating');
+      // console.debug('ionic-pullup => Resumed from background => updating');
       this.updateUI();
       this.collapse();
     });
@@ -316,7 +316,7 @@ export class IonicPullupComponent implements OnInit, AfterContentInit, OnChanges
 
     this.currentViewMeta.tabsRef = document.querySelector('ion-tab-bar');
     this.currentViewMeta.tabsHeight = this.currentViewMeta.tabsRef ? (this.currentViewMeta.tabsRef as HTMLElement).offsetHeight : 0;
-    console.debug(this.currentViewMeta.tabsRef ? 'ionic-pullup => Tabs detected' : 'ionic.pullup => View has no tabs');
+    // console.debug(this.currentViewMeta.tabsRef ? 'ionic-pullup => Tabs detected' : 'ionic.pullup => View has no tabs');
 
     if (!this.toolbarTopMargin) {
       const outletRef = document.querySelector('ion-router-outlet');
@@ -325,7 +325,7 @@ export class IonicPullupComponent implements OnInit, AfterContentInit, OnChanges
         if (headerRef) {
           this.currentViewMeta.toolbarRef = headerRef.querySelector('ion-toolbar');
           this.currentViewMeta.toolbarHeight = this.currentViewMeta.toolbarRef.clientHeight;
-          console.debug(this.currentViewMeta.toolbarRef ? `ionic-pullup => Toolbar detected` : 'ionic.pullup => View has no tabs');
+          // console.debug(this.currentViewMeta.toolbarRef ? `ionic-pullup => Toolbar detected` : 'ionic.pullup => View has no tabs');
         } else {
           this.currentViewMeta.toolbarHeight = 0;
         }
