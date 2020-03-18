@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { IonPullUpFooterState} from 'ionic-pullup';
+import { IonPullUpFooterState, DraggedOutputEvent } from 'ionic-pullup';
 
 @Component({
   selector: 'app-tab1',
@@ -29,7 +29,7 @@ export class Tab1Page implements OnInit {
 
   }
 
-  onDrag(value: number) {
+  onDrag(value: DraggedOutputEvent) {
     console.log('Dragged', value);
   }
 

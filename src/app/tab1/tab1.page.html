@@ -39,7 +39,7 @@
       </ion-item>
     </ion-list>
 </ion-content>
-<lib-ionic-pullup (onExpand)="footerExpanded()" (onCollapse)="footerCollapsed()" (dragged)="onDrag($event)" [(state)]="footerState" [toolbarTopMargin]="100" [minBottomVisible]="200">
+<lib-ionic-pullup (onExpand)="footerExpanded()" (onCollapse)="footerCollapsed()" (dragged)="onDrag($event)" [(state)]="footerState" [toolbarTopMargin]="100" [minBottomVisible]="200" [dockable]="true">
 
   <ion-toolbar color="light" (click)="toggleFooter()" #ionDragFooter>
     <ion-title>Footer</ion-title>

@@ -58,6 +58,11 @@ export enum IonPullUpFooterBehavior {
   Expand
 }
 
+export interface DraggedOutputEvent {
+  delta: number;
+  toolbarAbsolutePosition: DOMRect;
+}
+
 @Component({
   selector: 'lib-ionic-pullup',
   templateUrl: './ionic-pullup.component.html',
@@ -97,7 +102,7 @@ export class IonicPullupComponent implements OnInit, AfterContentInit, OnChanges
   /**
    * Outputs the amount of pixels the user has dragged positive or negative
    */
-  @Output() dragged = new EventEmitter<number>();
+  @Output() dragged = new EventEmitter<DraggedOutputEvent>();
 
   @ViewChild('footer', { static: true }) childFooter;
   @ContentChildren('ionDragFooter') dragElements !: QueryList<any>;
@@ -260,6 +265,8 @@ export class IonicPullupComponent implements OnInit, AfterContentInit, OnChanges
 
     e.preventDefault();
 
+    
+
     switch (e.type) {
       case 'pan':
         this.footerMeta.posY = e.deltaY + this.footerMeta.lastPosY;
@@ -284,7 +291,11 @@ export class IonicPullupComponent implements OnInit, AfterContentInit, OnChanges
         this.updateIonContentHeight(this.minBottomVisible - this.footerMeta.lastPosY);
 
         // emit last footer position after dragging ends
-        this.dragged.emit(this.footerMeta.lastPosY);
+        const handle = this.dragElements.first;
+        this.dragged.emit({
+          delta: this.footerMeta.lastPosY,
+          toolbarAbsolutePosition: handle ? handle.el.getBoundingClientRect() : null
+        });
 
         // TODO auto dock
         // if (this.footerMeta.lastPosY > this.footerMeta.height - this.footerMeta.defaultHeight) {
