@@ -29,4 +29,8 @@ export class Tab1Page implements OnInit {
 
   }
 
+  onDrag(value: number) {
+    console.log('Dragged', value);
+  }
+
 }
