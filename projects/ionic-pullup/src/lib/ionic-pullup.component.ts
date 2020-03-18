@@ -94,6 +94,11 @@ export class IonicPullupComponent implements OnInit, AfterContentInit, OnChanges
   @Output() collapsed = new EventEmitter<any>();
   @Output() minimized = new EventEmitter<any>();
 
+  /**
+   * Outputs the amount of pixels the user has dragged positive or negative
+   */
+  @Output() dragged = new EventEmitter<number>();
+
   @ViewChild('footer', { static: true }) childFooter;
   @ContentChildren('ionDragFooter') dragElements !: QueryList<any>;
 
@@ -277,6 +282,9 @@ export class IonicPullupComponent implements OnInit, AfterContentInit, OnChanges
 
         // ionContent scaling - FIX scrolling bug
         this.updateIonContentHeight(this.minBottomVisible - this.footerMeta.lastPosY);
+
+        // emit last footer position after dragging ends
+        this.dragged.emit(this.footerMeta.lastPosY);
 
         // TODO auto dock
         // if (this.footerMeta.lastPosY > this.footerMeta.height - this.footerMeta.defaultHeight) {
