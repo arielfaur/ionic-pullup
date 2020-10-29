@@ -1,5 +1,11 @@
 # Changelog
 
+## 2020-10-29 • v5.0.0-beta.3
+Fixed null check error when binding toolbarTopMargin property
+
+## 2020-10-13 • v5.0.0-beta.2
+Upgrade components for Ionic 5 and Angular 9 compatibility
+
 ## 2020-03-08 • v4.0.0-beta.4
 Fixed glitch when changing orientation or resuming app from background
 
