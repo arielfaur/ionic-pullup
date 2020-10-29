@@ -122,8 +122,8 @@ export class IonicPullupComponent implements OnInit, AfterContentInit, OnChanges
     this.currentViewMeta = { bottomSpace: screen.height - window.innerHeight };
 
     // sets initial state
-    this.initialState = this.initialState || IonPullUpFooterState.Collapsed;
-    this.defaultBehavior = this.defaultBehavior || IonPullUpFooterBehavior.Expand;
+    this.initialState = this.initialState ?? IonPullUpFooterState.Collapsed;
+    this.defaultBehavior = this.defaultBehavior ?? IonPullUpFooterBehavior.Expand;
   }
 
   ngOnInit() {
@@ -307,7 +307,7 @@ export class IonicPullupComponent implements OnInit, AfterContentInit, OnChanges
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes.state.isFirstChange() || changes.state.currentValue === changes.state.previousValue) { return; }
+    if (changes.state?.firstChange ?? changes.state?.currentValue === changes.state?.previousValue) { return; }
 
     switch (this.state) {
       case IonPullUpFooterState.Collapsed:
