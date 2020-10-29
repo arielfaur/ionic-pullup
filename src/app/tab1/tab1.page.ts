@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { IonPullUpFooterState, DraggedOutputEvent } from 'ionic-pullup';
 
 @Component({
@@ -6,13 +6,19 @@ import { IonPullUpFooterState, DraggedOutputEvent } from 'ionic-pullup';
   templateUrl: 'tab1.page.html',
   styleUrls: ['tab1.page.scss']
 })
-export class Tab1Page implements OnInit {
+export class Tab1Page implements OnInit, AfterViewInit {
   footerState: IonPullUpFooterState;
+  toolbarMargin: number;
 
   constructor() {}
 
   ngOnInit() {
     this.footerState = IonPullUpFooterState.Collapsed;
+  }
+
+  ngAfterViewInit() {
+    // set top margin dynamically
+    this.toolbarMargin = 100;
   }
 
   footerExpanded() {
