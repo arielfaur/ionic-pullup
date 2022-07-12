@@ -1,6 +1,6 @@
 {
   "name": "ionic-pullup",
-  "description": "ionic-pullup for Angular 9/Ionic 5",
+  "description": "ionic-pullup for Angular 12/Ionic 5",
   "version": "5.0.0-beta.3",
   "author": "Ariel Faur",
   "homepage": "https://github.com/arielfaur/ionic-pullup.git",
@@ -62,7 +62,7 @@
     "ng-packagr": "^12.2.7",
     "protractor": "~7.0.0",
     "ts-node": "~7.0.0",
-    "tsickle": "^0.40.0",
+    "tsickle": "^0.43.0",
     "tslint": "~6.1.0",
     "typescript": "~4.3.5"
   },
