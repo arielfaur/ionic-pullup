@@ -89,8 +89,7 @@
             "production": {
               "browserTarget": "app:build:production"
             },
-            "ci": {
-            }
+            "ci": {}
           }
         },
         "extract-i18n": {
@@ -189,6 +188,15 @@
             "tsConfig": "projects/ionic-pullup/tsconfig.spec.json",
             "karmaConfig": "projects/ionic-pullup/karma.conf.js"
           }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "projects/ionic-pullup/**/*.ts",
+              "projects/ionic-pullup/**/*.html"
+            ]
+          }
         }
       }
     }
@@ -196,6 +204,7 @@
   "cli": {
     "analytics": false,
     "schematicCollections": [
+      "@angular-eslint/schematics",
       "@ionic/angular-toolkit"
     ]
   },
