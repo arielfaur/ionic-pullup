@@ -12,7 +12,8 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-import { ChangeDetectionStrategy, Component, EventEmitter, Renderer2, ViewChild, Output, Input, OnInit, AfterContentInit, OnChanges, SimpleChanges, ContentChildren, QueryList, Inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Renderer2, ViewChild, Output, Input, OnInit, AfterContentInit, OnChanges, SimpleChanges, ContentChildren, Inject } from '@angular/core';
+import type { QueryList } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { HAMMER_GESTURE_CONFIG, HammerGestureConfig } from '@angular/platform-browser';
 import 'hammerjs';
