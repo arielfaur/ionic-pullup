@@ -1,0 +1,43 @@
+# This workflow will run tests using node and then publish a package to GitHub Packages when a release is created
+# For more information see: https://help.github.com/actions/language-and-framework-guides/publishing-nodejs-packages
+
+name: Publish to MyGet
+
+on:
+    workflow-dispatch:
+#   push:
+#     branches:
+#       - main
+
+jobs:
+#   version:
+#     - name: 🏷 Bump version and push tag
+#       id: version
+#       uses: cmnhospitals/github-tag-action@2.0.0
+#       env:
+#         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#         DEFAULT_BUMP: patch
+#         PREFIX: v
+#         RELEASE_BRANCHES: main
+#         PRERELEASE_SUFFIX: beta
+#         TAG_CONTEXT: branch
+        
+  publish-npm:
+    # needs: version
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - run: npm install
+      - run: |
+            sed -i -e 's/ionic-pullup/\@cmnhospitals\/ionic-pullup/g' projects/ionic-pullup/package.json
+            sed -i -e 's/arielfaur/cmnhospitals/g' projects/ionic-pullup/package.json
+      - run: npm run build-lib
+      - uses: JS-DevTools/npm-publish@v1
+        with:
+          token: ${{ secrets.NPM_TOKEN }}
+          package: ./projects/ionic-pullup/package.json
+          registry: https://www.myget.org/F/cmnhospitalsnpm/npm/
+          greater-version-only: true
