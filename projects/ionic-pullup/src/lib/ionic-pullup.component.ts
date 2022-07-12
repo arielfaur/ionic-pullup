@@ -12,7 +12,21 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-import { ChangeDetectionStrategy, Component, EventEmitter, Renderer2, ViewChild, Output, Input, OnInit, AfterContentInit, OnChanges, SimpleChanges, ContentChildren, Inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  Renderer2,
+  ViewChild,
+  Output,
+  Input,
+  OnInit,
+  AfterContentInit,
+  OnChanges,
+  SimpleChanges,
+  ContentChildren,
+  Inject
+} from '@angular/core';
 import type { QueryList } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { HAMMER_GESTURE_CONFIG, HammerGestureConfig } from '@angular/platform-browser';
@@ -77,7 +91,7 @@ export class IonicPullupComponent implements OnInit, AfterContentInit, OnChanges
 
   @Input() initialState: IonPullUpFooterState;          // TODO implemment
   @Input() defaultBehavior: IonPullUpFooterBehavior;    // TODO implemment
-  
+
 
 
   /**
@@ -127,6 +141,10 @@ export class IonicPullupComponent implements OnInit, AfterContentInit, OnChanges
     this.defaultBehavior = this.defaultBehavior ?? IonPullUpFooterBehavior.Expand;
   }
 
+  public get expandedHeight(): number {
+    return window.innerHeight - this.currentViewMeta.toolbarHeight - this.currentViewMeta.tabsHeight;
+  }
+
   ngOnInit() {
     // console.debug('ionic-pullup => Initializing footer...');
 
@@ -153,10 +171,6 @@ export class IonicPullupComponent implements OnInit, AfterContentInit, OnChanges
     this.updateUI();
   }
 
-  public get expandedHeight(): number {
-    return window.innerHeight - this.currentViewMeta.toolbarHeight - this.currentViewMeta.tabsHeight;
-  }
-
   computeDefaults() {
 
     setTimeout(() => {
@@ -177,7 +191,7 @@ export class IonicPullupComponent implements OnInit, AfterContentInit, OnChanges
     this.footerMeta.height = this.expandedHeight;
     this.footerMeta.toolbarDefaultExpandedPosition = -this.footerMeta.height + this.footerMeta.toolbarDefaultHeight + this.minBottomVisible;
     this.footerMeta.toolbarUpperBoundary = this.footerMeta.height - this.footerMeta.toolbarDefaultHeight - this.minBottomVisible;
-    
+
     this.renderer.setStyle(this.childFooter.nativeElement, 'height', this.footerMeta.height + 'px');
     this.renderer.setStyle(this.childFooter.nativeElement, 'top',
       `${window.innerHeight - this.footerMeta.toolbarDefaultHeight - this.currentViewMeta.tabsHeight - this.minBottomVisible}px`
@@ -215,7 +229,7 @@ export class IonicPullupComponent implements OnInit, AfterContentInit, OnChanges
     if (!this.childFooter) { return; }
     this.footerMeta.lastPosY = 0;
 
- 
+
     this.renderer.setStyle(this.childFooter.nativeElement, '-webkit-transform', `translate3d(0, ${this.footerMeta.lastPosY}px, 0)`);
     this.renderer.setStyle(this.childFooter.nativeElement, 'transform', `translate3d(0, ${this.footerMeta.lastPosY}px, 0)`);
 
@@ -266,7 +280,7 @@ export class IonicPullupComponent implements OnInit, AfterContentInit, OnChanges
 
     e.preventDefault();
 
-    
+
 
     switch (e.type) {
       case 'pan':
@@ -357,6 +371,7 @@ export class IonicPullupComponent implements OnInit, AfterContentInit, OnChanges
 
   /**
    * Update inner ion-content component height when footer is expanded, collapsed or dragged
+   *
    * @param maxHeight maximum ionContent height to set
    */
   private updateIonContentHeight(maxHeight?: number) {

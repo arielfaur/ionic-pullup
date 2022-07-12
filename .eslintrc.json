@@ -21,6 +21,13 @@
         "plugin:@angular-eslint/template/process-inline-templates"
       ],
       "rules": {
+        "@typescript-eslint/naming-convention": [
+          "error",
+          {
+            "selector": [ "enumMember" ],
+            "format": [ "PascalCase" ]
+          }
+        ],
         "@angular-eslint/component-class-suffix": [
           "error",
           {
@@ -35,7 +42,7 @@
           {
             "type": "element",
             "prefix": "app",
-            "style": "page"
+            "style": "kebab-case"
           }
         ],
         "@angular-eslint/directive-selector": [
