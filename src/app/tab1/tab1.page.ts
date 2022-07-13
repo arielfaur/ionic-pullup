@@ -14,11 +14,11 @@ export class Tab1Page implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.footerState = IonPullUpFooterState.Collapsed;
+    // set top margin dynamically
+    this.toolbarMargin = 100;
   }
 
   ngAfterViewInit() {
-    // set top margin dynamically
-    this.toolbarMargin = 100;
   }
 
   footerExpanded() {

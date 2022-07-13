@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
 
 import { IonicPullupComponent } from './ionic-pullup.component';
@@ -7,7 +7,7 @@ describe('IonicPullupComponent', () => {
   let component: IonicPullupComponent;
   let fixture: ComponentFixture<IonicPullupComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ IonicPullupComponent ],
       imports: [IonicModule.forRoot()]
