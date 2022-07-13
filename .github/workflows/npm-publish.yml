@@ -30,7 +30,7 @@ jobs:
         registry: https://www.myget.org/F/cmnhospitalsnpm/npm/
         greater-version-only: true
     - uses: cmnhospitals/github-tag-action@2.0.0
-        env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-            CUSTOM_TAG: v${{ steps.npm-publish.outputs.version }}
-            RELEASE_BRANCHES: internal
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        CUSTOM_TAG: v${{ steps.npm-publish.outputs.version }}
+        RELEASE_BRANCHES: internal
