@@ -28,7 +28,6 @@ jobs:
         token: ${{ secrets.NPM_TOKEN }}
         package: ./dist/ionic-pullup/package.json
         registry: https://www.myget.org/F/cmnhospitalsnpm/npm/
-        greater-version-only: true
     - uses: cmnhospitals/github-tag-action@2.0.0
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
