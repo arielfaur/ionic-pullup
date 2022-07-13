@@ -33,11 +33,12 @@ jobs:
       - run: |
             sed -i -e 's/ionic-pullup/\@cmnhospitals\/ionic-pullup/g' projects/ionic-pullup/package.json
             sed -i -e 's/arielfaur/cmnhospitals/g' projects/ionic-pullup/package.json
-            echo "//www.myget.org/F/cmnhospitalsnpm/npm/:_authToken=${{ secrets.NPM_TOKEN }}" >> ./projects/ionic-pullup/.npmrc
-      - run: npm run build-lib
+      - run: |
+            npm run build-lib
+            echo "//www.myget.org/F/cmnhospitalsnpm/npm/:_authToken=${{ secrets.NPM_TOKEN }}" >> .dist/ionic-pullup/.npmrc
       - uses: JS-DevTools/npm-publish@v1
         with:
           token: ${{ secrets.NPM_TOKEN }}
-          package: ./projects/ionic-pullup/package.json
+          package: .dist/ionic-pullup/package.json
           registry: https://www.myget.org/F/cmnhospitalsnpm/npm/
           greater-version-only: true
