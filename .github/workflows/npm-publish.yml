@@ -1,5 +1,6 @@
 name: "Publish to MyGet"
 on:
+  workflow_dispatch:
   push:
     branches:
     - internal
