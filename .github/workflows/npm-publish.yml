@@ -1,0 +1,35 @@
+name: "Publish to MyGet"
+on:
+  workflow_dispatch:
+  push:
+    branches:
+    - internal
+jobs:
+  publish-npm:
+    name: 🛠️ Build and Publish NPM Package
+    runs-on: ubuntu-latest
+    steps:
+    - name: "🚚 Get Latest Code"
+      uses: actions/checkout@v3
+    - name: "⚙️ Use Node.js 16"
+      uses: actions/setup-node@v3
+      with:
+        node-version: 16
+    - run: npm install
+    - run: |
+        sed -i -e 's/ionic-pullup/\@cmnhospitals\/ionic-pullup/g' projects/ionic-pullup/package.json
+        sed -i -e 's/arielfaur/cmnhospitals/g' projects/ionic-pullup/package.json
+    - run: |
+        npm run build-lib
+        echo "//www.myget.org/F/cmnhospitalsnpm/npm/:_authToken=${{ secrets.NPM_TOKEN }}" >> ./dist/ionic-pullup/.npmrc
+    - uses: JS-DevTools/npm-publish@v1
+      id: npm-publish
+      with:
+        token: ${{ secrets.NPM_TOKEN }}
+        package: ./dist/ionic-pullup/package.json
+        registry: https://www.myget.org/F/cmnhospitalsnpm/npm/
+    - uses: cmnhospitals/github-tag-action@2.0.0
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        CUSTOM_TAG: ${{ steps.npm-publish.outputs.version }}
+        RELEASE_BRANCHES: internal

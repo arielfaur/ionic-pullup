@@ -1,5 +1,11 @@
 # Changelog
 
+## 2022-07-28 • v6.1.0-beta.1
+Upgrade components for Ionic 6 and Angular 14 compatibility.
+
+## 2022-07-11 • v6.0.0-beta.1
+Upgrade components for Ionic 6 and Angular 13 compatibility. Including moving to eslint.
+
 ## 2020-10-29 • v5.0.0-beta.3
 Fixed null check error when binding toolbarTopMargin property
 
