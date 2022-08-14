@@ -1,9 +1,49 @@
 <ion-header>
-  <ion-toolbar>
+  <ion-toolbar color="secondary">
     <ion-title>
       Tab Two
     </ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content></ion-content>
+<ion-content class="main">
+  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Praesent semper feugiat nibh sed pulvinar proin. Sed lectus vestibulum mattis ullamcorper. Morbi enim nunc faucibus a pellentesque sit amet porttitor. Id diam vel quam elementum pulvinar etiam non. Sollicitudin ac orci phasellus egestas tellus rutrum tellus pellentesque. Aliquet enim tortor at auctor urna nunc id. Convallis a cras semper auctor. Tristique magna sit amet purus gravida quis blandit. Mi quis hendrerit dolor magna eget est lorem ipsum. Fringilla urna porttitor rhoncus dolor purus non. Diam phasellus vestibulum lorem sed risus ultricies. Sit amet nisl suscipit adipiscing bibendum est ultricies integer. Consequat mauris nunc congue nisi vitae suscipit tellus. Velit laoreet id donec ultrices tincidunt arcu non sodales neque. Ante in nibh mauris cursus mattis.</p>
+
+  <p>Enim facilisis gravida neque convallis. In aliquam sem fringilla ut morbi tincidunt augue interdum velit. Nisi lacus sed viverra tellus. Placerat orci nulla pellentesque dignissim enim sit amet venenatis. Nec feugiat in fermentum posuere urna nec tincidunt praesent. Ipsum nunc aliquet bibendum enim facilisis. Ipsum suspendisse ultrices gravida dictum fusce ut placerat orci. Dui faucibus in ornare quam viverra orci sagittis eu volutpat. Suspendisse interdum consectetur libero id faucibus. Varius duis at consectetur lorem donec massa sapien faucibus. Urna nunc id cursus metus. Tortor aliquam nulla facilisi cras. Leo vel orci porta non pulvinar neque laoreet. Eu consequat ac felis donec et odio pellentesque. Velit laoreet id donec ultrices tincidunt arcu. Commodo ullamcorper a lacus vestibulum sed arcu. Tristique senectus et netus et.</p>
+
+  <p>Duis ut diam quam nulla porttitor massa id neque. Id aliquet lectus proin nibh nisl. Sodales ut eu sem integer vitae justo eget. Cras fermentum odio eu feugiat pretium nibh ipsum consequat nisl. Morbi leo urna molestie at elementum eu. Integer feugiat scelerisque varius morbi enim. Interdum velit laoreet id donec ultrices tincidunt. Eget mauris pharetra et ultrices neque ornare aenean euismod elementum. Tellus rutrum tellus pellentesque eu tincidunt tortor. Maecenas accumsan lacus vel facilisis. Ante metus dictum at tempor commodo ullamcorper a lacus vestibulum. Ante metus dictum at tempor commodo ullamcorper. Venenatis a condimentum vitae sapien pellentesque habitant. Ut sem viverra aliquet eget sit amet tellus cras adipiscing. Sed blandit libero volutpat sed cras ornare arcu dui vivamus. Sed viverra tellus in hac habitasse platea. Vitae turpis massa sed elementum tempus. Mattis nunc sed blandit libero. In tellus integer feugiat scelerisque varius. Imperdiet dui accumsan sit amet nulla facilisi morbi tempus.</p>
+
+  <p>In fermentum posuere urna nec tincidunt praesent semper. Neque viverra justo nec ultrices dui sapien. In fermentum posuere urna nec tincidunt. Urna et pharetra pharetra massa massa. Elit pellentesque habitant morbi tristique senectus et. Cras semper auctor neque vitae tempus quam pellentesque nec nam. Odio facilisis mauris sit amet massa vitae tortor condimentum. Eleifend mi in nulla posuere sollicitudin aliquam ultrices sagittis orci. Est ultricies integer quis auctor elit. Magna ac placerat vestibulum lectus mauris ultrices eros in.</p>
+
+  <p>Diam quam nulla porttitor massa. Aenean vel elit scelerisque mauris pellentesque pulvinar. Molestie at elementum eu facilisis sed odio morbi. Est ullamcorper eget nulla facilisi etiam dignissim diam quis. Dignissim suspendisse in est ante. Arcu cursus vitae congue mauris. Lacus vel facilisis volutpat est velit. Nascetur ridiculus mus mauris vitae. Sodales ut etiam sit amet nisl purus in. Ultrices tincidunt arcu non sodales neque sodales ut etiam. Nunc pulvinar sapien et ligula ullamcorper malesuada proin libero. Id leo in vitae turpis massa sed. Urna nunc id cursus metus. Euismod in pellentesque massa placerat duis ultricies lacus.</p>
+</ion-content>
+
+<lib-ionic-pullup [(state)]="footerState" [minBottomVisible]="0" [dockable]="true">
+
+  <ion-toolbar color="dark" (click)="toggleFooter()" #ionDragFooter>
+    <ion-title>Another footer sample</ion-title>
+  </ion-toolbar>
+  <ion-content color="dark">
+    <ion-card>
+      <ion-card-header>
+        Header
+      </ion-card-header>
+      <ion-card-content>
+        The British use the term "header", but the American term "head-shot" the English simply refuse to adopt.
+      </ion-card-content>
+    </ion-card>
+    
+    <ion-list inset>
+
+      <ion-item *ngFor="let item of [].constructor(15); let i = index"> 
+        <ion-avatar slot="start">
+          <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAAAAACH5BAAAAAAALAAAAAABAAEAAAICTAEAOw==">
+        </ion-avatar>
+        <ion-label>
+          Item {{ i }}
+        </ion-label>
+      </ion-item>
+    </ion-list>
+    <div style="display: block; height: 72px"></div>
+  </ion-content>
+</lib-ionic-pullup>

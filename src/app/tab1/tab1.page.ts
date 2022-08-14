@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { IonPullUpFooterState, DraggedOutputEvent } from 'ionic-pullup';
 
 @Component({
@@ -6,7 +6,7 @@ import { IonPullUpFooterState, DraggedOutputEvent } from 'ionic-pullup';
   templateUrl: 'tab1.page.html',
   styleUrls: ['tab1.page.scss']
 })
-export class Tab1Page implements OnInit, AfterViewInit {
+export class Tab1Page implements OnInit {
   footerState: IonPullUpFooterState;
   toolbarMargin: number;
 
@@ -18,9 +18,6 @@ export class Tab1Page implements OnInit, AfterViewInit {
     this.toolbarMargin = 100;
   }
 
-  ngAfterViewInit() {
-  }
-
   footerExpanded() {
     console.log('Footer expanded!');
   }
@@ -30,9 +27,7 @@ export class Tab1Page implements OnInit, AfterViewInit {
   }
 
   toggleFooter() {
-
     this.footerState = this.footerState === IonPullUpFooterState.Collapsed ? IonPullUpFooterState.Expanded : IonPullUpFooterState.Collapsed;
-
   }
 
   onDrag(value: DraggedOutputEvent) {
