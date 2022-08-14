@@ -3,6 +3,10 @@
 A pull-up footer component for Ionic. The pull-up footer is a UI component built on top of Ionic's footer and offers an efficient way to hide/reveal information. The footer can fully expand to cover the content area of the screen or can be configured to expand to a maximum height. 
 The component will compute the available screen height providing for header and tabs.
 
+
+https://user-images.githubusercontent.com/3749268/184557012-471db4e7-a409-4c79-8566-5476754db0d5.mov
+
+
 *See [demo page](http://arielfaur.github.io/ionic-pullup)*
 
 ## Usage
