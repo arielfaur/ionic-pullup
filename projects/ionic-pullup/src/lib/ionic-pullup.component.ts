@@ -213,6 +213,7 @@ export class IonicPullupComponent implements OnInit, AfterContentInit, OnChanges
   }
 
   expand() {
+    if (!this.childFooter) { return; }  
     this.footerMeta.lastPosY = this.footerMeta.toolbarDefaultExpandedPosition;
 
     // reset ionContent scaling
