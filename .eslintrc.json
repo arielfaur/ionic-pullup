@@ -24,8 +24,12 @@
         "@typescript-eslint/naming-convention": [
           "error",
           {
-            "selector": [ "enumMember" ],
-            "format": [ "PascalCase" ]
+            "selector": [
+              "enumMember"
+            ],
+            "format": [
+              "PascalCase"
+            ]
           }
         ],
         "@angular-eslint/component-class-suffix": [
